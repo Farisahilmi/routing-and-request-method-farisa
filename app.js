@@ -137,25 +137,5 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-// Disable write operations in production
-app.use('/admin/products', function(req, res, next) {
-  if (req.method === 'POST' || req.method === 'PUT' || req.method === 'DELETE') {
-    return res.json({ 
-      success: false, 
-      message: 'Write operations disabled in demo mode. This is a read-only demo.' 
-    });
-  }
-  next();
-});
-
-app.use('/users', function(req, res, next) {
-  if (req.method === 'POST' && req.url !== '/register') {
-    return res.json({ 
-      success: false, 
-      message: 'User management disabled in demo mode.' 
-    });
-  }
-  next();
-});
 
 module.exports = app;
