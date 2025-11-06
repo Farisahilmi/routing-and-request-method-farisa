@@ -1,42 +1,56 @@
 [
   {
     "id": 1,
-    "name": "Laptop Gaming",
-    "description": "High-performance gaming laptop with RTX graphics",
+    "name": "Laptop Gaming RTX 4080",
+    "description": "High-performance gaming laptop dengan graphics terbaru",
     "price": 1299.99,
     "category": "Electronics",
     "stock": 15,
-    "image": "/images/laptop.jpg",
-    "createdAt": "2024-01-15T00:00:00.000Z"
+    "image": "/images/laptop.jpg"
   },
   {
     "id": 2,
-    "name": "Smartphone",
-    "description": "Latest smartphone with 5G and triple camera",
+    "name": "Smartphone 5G",
+    "description": "Latest smartphone dengan kamera 108MP",
     "price": 699.99,
-    "category": "Electronics",
+    "category": "Electronics", 
     "stock": 30,
-    "image": "/images/phone.jpg",
-    "createdAt": "2024-01-16T00:00:00.000Z"
+    "image": "/images/phone.jpg"
   },
   {
     "id": 3,
     "name": "Wireless Headphones",
-    "description": "Noise-cancelling wireless headphones",
+    "description": "Noise-cancelling headphones dengan battery 30 jam",
     "price": 199.99,
     "category": "Electronics",
     "stock": 50,
-    "image": "/images/headphones.jpg",
-    "createdAt": "2024-01-17T00:00:00.000Z"
+    "image": "/images/headphones.jpg"
   },
   {
     "id": 4,
     "name": "Running Shoes",
-    "description": "Comfortable running shoes for athletes",
+    "description": "Sepatu lari dengan cushioning terbaik",
     "price": 89.99,
     "category": "Fashion",
     "stock": 100,
-    "image": "/images/shoes.jpg",
-    "createdAt": "2024-01-18T00:00:00.000Z"
+    "image": "/images/shoes.jpg"
+  },
+  {
+    "id": 5, 
+    "name": "Smart Watch",
+    "description": "Smartwatch dengan health monitoring",
+    "price": 299.99,
+    "category": "Electronics",
+    "stock": 25,
+    "image": "/images/watch.jpg"
+  },
+  {
+    "id": 6,
+    "name": "Gaming Mouse",
+    "description": "Mouse gaming dengan RGB lighting",
+    "price": 79.99,
+    "category": "Electronics",
+    "stock": 40,
+    "image": "/images/mouse.jpg"
   }
 ]

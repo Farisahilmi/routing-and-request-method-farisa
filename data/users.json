@@ -1,8 +1,26 @@
 [
   {
     "id": "1",
-    "username": "farisahilmi",
-    "email": "farisahilmi123@gmail.com",
-    "password": "farisa1234"
+    "username": "Admin User",
+    "email": "admin@store.com", 
+    "password": "admin123",
+    "role": "admin",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "username": "John Customer",
+    "email": "john@email.com",
+    "password": "password123", 
+    "role": "customer",
+    "createdAt": "2024-01-02T00:00:00.000Z"
+  },
+  {
+    "id": "3", 
+    "username": "Sarah Buyer",
+    "email": "sarah@email.com",
+    "password": "password123",
+    "role": "customer",
+    "createdAt": "2024-01-03T00:00:00.000Z"
   }
 ]
