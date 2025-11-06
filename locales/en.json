@@ -1,0 +1,9 @@
+{
+  "welcome": "Welcome to Simple Store",
+  "products": "Products", 
+  "add_to_cart": "Add to Cart",
+  "price": "Price",
+  "description": "Description",
+  "in_stock": "In Stock",
+  "out_of_stock": "Out of Stock"
+}

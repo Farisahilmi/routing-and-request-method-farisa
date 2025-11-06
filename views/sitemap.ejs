@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+    <%- include('nav') %>
+    
+    <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+        <h1 style="color: #2c5aa0;">🗺️ Sitemap</h1>
+        <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08);">
+            <h3>Main Pages</h3>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Products</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/contact">Contact Us</a></li>
+            </ul>
+            
+            <h3>User Pages</h3>
+            <ul>
+                <li><a href="/users/html">Users</a></li>
+                <li><a href="/users/register">Register</a></li>
+                <li><a href="/cart">Shopping Cart</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <%- include('footer') %>
+</body>
+</html>

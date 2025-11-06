@@ -1,74 +1,224 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-
-    <%- include('nav') %>
-    
-    <div style="max-width: 500px; margin: 0 auto; padding: 20px;">
-
-    <h1><%= title %></h1>
-    <form id="updateUserForm" action="/users/<%= user ? user.id : '' %>?_method=PUT" method="POST">
-        <p>
-            <label for="username">Username:</label>
-            <input 
-              type="text" 
-              id="username" 
-              name="username" 
-              value="<%= user ? user.username : '' %>"
-              required
-            />
-        </p>
-        <p>
-            <label for="email">Email:</label>
-            <input 
-              type="email" 
-              id="email" 
-              name="email"
-              value="<%= user ? user.email : '' %>"
-              required
-            />
-        </p>
-        <p>
-            <label for="password">Password:</label> 
-            <input 
-              type="password" 
-              id="password" 
-              name="password"
-              value="<%= user ? user.password : '' %>"
-              required
-            />
-        </p>
-        <button type="submit">Update</button>
-    </form>
-    <script>
-      document.getElementById('updateUserForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const form = e.target;
-        const data = {
-          username: form.username.value,
-          email: form.email.value,
-          password: form.password.value
-        };
-        const userId = "<%= user ? user.id : '' %>";
-        const response = await fetch('/users/' + userId, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        });
-        const result = await response.json();
-        if (result.status === 'success') {
-          alert(result.message);
-          window.location.href = '/users';
-        } else {
-          alert(result.message || 'Failed to update user');
+    <style>
+        .update-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
         }
-      });
+        
+        .update-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            padding: 40px;
+            border: 1px solid #eaeaea;
+        }
+        
+        .card-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .card-header h1 {
+            margin: 0 0 10px 0;
+            color: #2c5aa0;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+                .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #2c5aa0;
+            box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .form-input:hover {
+            border-color: #c1c1c1;
+        }
+        
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-submit:active {
+            transform: translateY(-1px);
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #6c757d;
+            text-decoration: none;
+            margin-top: 20px;
+            transition: color 0.3s ease;
+        }
+        
+        .back-link:hover {
+            color: #2c5aa0;
+        }
+        
+        .form-note {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 30px;
+            border-left: 4px solid #2c5aa0;
+        }
+        
+        .form-note h4 {
+            margin: 0 0 8px 0;
+            color: #2c5aa0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-note p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <%- include('nav') %>
+    <%- include('notification') %>
+    <div class="update-container">
+        <div class="update-card">
+            <div class="card-header">
+                <h1>
+                    <span>✏️</span>
+                    Update User
+                </h1>
+                <p>Update user information</p>
+            </div>
+            
+            <!-- Sisanya sama seperti sebelumnya -->
+            <form id="updateUserForm">
+                <div class="form-group">
+                    <label for="username" class="form-label">
+                        <span>👤</span>
+                        Username
+                    </label>
+                    <input type="text" id="username" name="username" class="form-input"
+                           value="<%= user ? user.username : '' %>" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" class="form-label">
+                        <span>📧</span>
+                        Email
+                    </label>
+                    <input type="email" id="email" name="email" class="form-input"
+                           value="<%= user ? user.email : '' %>" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <span>🔒</span>
+                        Password
+                    </label>
+                    <input type="password" id="password" name="password" class="form-input"
+                           value="<%= user ? user.password : '' %>" required>
+                </div>
+                
+                <button type="submit" class="btn-submit">
+                    <span>💾</span>
+                    Update User
+                </button>
+            </form>
+            
+            <a href="/users/html" class="back-link">
+                <span>←</span>
+                Back to Users List
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('updateUserForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = {
+                username: form.username.value,
+                email: form.email.value,
+                password: form.password.value
+            };
+            const userId = "<%= user ? user.id : '' %>";
+            
+            try {
+                const response = await fetch('/users/' + userId, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    alert('✅ ' + result.message);
+                    window.location.href = '/users/html';
+                } else {
+                    alert('❌ ' + (result.message || 'Failed to update user'));
+                }
+            } catch (error) {
+                alert('❌ Error updating user');
+            }
+        });
     </script>
-  </body>
+</body>
 </html>

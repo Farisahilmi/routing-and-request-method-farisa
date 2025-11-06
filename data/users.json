@@ -1,20 +1,8 @@
 [
   {
     "id": "1",
-    "username": "Nugraha Nunu",
-    "email": "nugraha@nusaputra.ac.id",
-    "password": "noekasep@ok!!"
-  },
-  {
-    "id": "2",
-    "username": "Rizki Mudawali",
-    "email": "rizki@nusaputra.ac.id",
-    "password": "noekasep@ok!!"
-  },
-  {
-    "id": "3",
-    "username": "farisa",
-    "email": "farisahilmiexe@gmail.com",
-    "password": "farisa"
+    "username": "farisahilmi",
+    "email": "farisahilmi123@gmail.com",
+    "password": "farisa1234"
   }
 ]

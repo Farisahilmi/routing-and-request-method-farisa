@@ -14,7 +14,7 @@
     "name": "Smartphone",
     "description": "Latest smartphone with 5G and triple camera",
     "price": 699.99,
-    "category": "Electronics", 
+    "category": "Electronics",
     "stock": 30,
     "image": "/images/phone.jpg",
     "createdAt": "2024-01-16T00:00:00.000Z"

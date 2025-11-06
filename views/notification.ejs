@@ -1,0 +1,73 @@
+<!-- Custom Notification System -->
+<div id="customNotification" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); z-index: 10000; text-align: center; min-width: 300px;">
+    <div id="notificationIcon" style="font-size: 3rem; margin-bottom: 15px;"></div>
+    <h3 id="notificationTitle" style="margin: 0 0 10px 0; color: #2c5aa0;"></h3>
+    <p id="notificationMessage" style="margin: 0 0 20px 0; color: #666;"></p>
+    <button onclick="hideNotification()" style="background: #2c5aa0; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
+        OK
+    </button>
+</div>
+
+<div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999;"></div>
+
+<script>
+    // Global Notification Functions
+    function showNotification(type, title, message) {
+        const notification = document.getElementById('customNotification');
+        const overlay = document.getElementById('overlay');
+        const icon = document.getElementById('notificationIcon');
+        const notificationTitle = document.getElementById('notificationTitle');
+        const notificationMessage = document.getElementById('notificationMessage');
+        
+        // Set styles based on type
+        if (type === 'success') {
+            icon.textContent = '✅';
+            notification.style.borderLeft = '6px solid #28a745';
+        } else if (type === 'error') {
+            icon.textContent = '❌';
+            notification.style.borderLeft = '6px solid #dc3545';
+        } else if (type === 'warning') {
+            icon.textContent = '⚠️';
+            notification.style.borderLeft = '6px solid #ffc107';
+        } else {
+            icon.textContent = 'ℹ️';
+            notification.style.borderLeft = '6px solid #17a2b8';
+        }
+        
+        notificationTitle.textContent = title;
+        notificationMessage.textContent = message;
+        
+        // Show with animation
+        overlay.style.display = 'block';
+        notification.style.display = 'block';
+        
+        // Add entrance animation
+        notification.style.opacity = '0';
+        notification.style.transform = 'translate(-50%, -60%) scale(0.8)';
+        
+        setTimeout(() => {
+            notification.style.transition = 'all 0.3s ease';
+            notification.style.opacity = '1';
+            notification.style.transform = 'translate(-50%, -50%) scale(1)';
+        }, 10);
+    }
+    
+    function hideNotification() {
+        const notification = document.getElementById('customNotification');
+        const overlay = document.getElementById('overlay');
+        
+        notification.style.opacity = '0';
+        notification.style.transform = 'translate(-50%, -60%) scale(0.8)';
+        
+        setTimeout(() => {
+            notification.style.display = 'none';
+            overlay.style.display = 'none';
+        }, 300);
+    }
+
+    // Override default alert function
+    const originalAlert = window.alert;
+    window.alert = function(message) {
+        showNotification('info', 'Information', message);
+    };
+</script>

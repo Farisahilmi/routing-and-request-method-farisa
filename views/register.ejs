@@ -1,33 +1,206 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <%- include('nav') %> 
-    
-    <div style="max-width: 500px; margin: 0 auto; padding: 20px;">
-      <h1><%= title %></h1>
-      <form action="/users" method="post">
-          <p>
-              <label for="username">Username:</label>
-              <input type="text" id="username" name="username" required />
-          </p>
-          <p>
-              <label for="email">Email:</label>
-              <input type="email" id="email" name="email" required />
-          </p>
-          <p>
-              <label for="password">Password:</label> 
-              <input type="password" id="password" name="password" required />
-          </p>
-          <button type="submit">Register</button>
-      </form>
-      
-      <div style="margin-top: 20px;">
-        <a href="/users/html" style="color: #007bff;">← Back to Users</a>
-      </div>
+    <style>
+        .register-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .register-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            padding: 40px;
+            border: 1px solid #eaeaea;
+        }
+        
+        .card-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .card-header h1 {
+            margin: 0 0 10px 0;
+            color: #2c5aa0;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .card-header p {
+            color: #666;
+            margin: 0;
+            font-size: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #2c5aa0;
+            box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .form-input:hover {
+            border-color: #c1c1c1;
+        }
+        
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-submit:active {
+            transform: translateY(-1px);
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #6c757d;
+            text-decoration: none;
+            margin-top: 20px;
+            transition: color 0.3s ease;
+        }
+        
+        .back-link:hover {
+            color: #2c5aa0;
+        }
+        
+        .form-note {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 30px;
+            border-left: 4px solid #2c5aa0;
+        }
+        
+        .form-note h4 {
+            margin: 0 0 8px 0;
+            color: #2c5aa0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-note p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <%- include('nav') %>
+    <%- include('notification') %>
+    <div class="register-container">
+        <div class="register-card">
+            <div class="card-header">
+                <h1>
+                    <span>👤</span>
+                    User Registration
+                </h1>
+                <p>Create a new user account for your system</p>
+            </div>
+            
+            <form action="/users" method="post" type="hidden" name="role" value="customer">
+                <div class="form-group">
+                    <label for="username" class="form-label">
+                        <span>👤</span>
+                        Username
+                    </label>
+                    <input type="text" id="username" name="username" class="form-input" 
+                           placeholder="Enter username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" class="form-label">
+                        <span>📧</span>
+                        Email Address
+                    </label>
+                    <input type="email" id="email" name="email" class="form-input" 
+                           placeholder="Enter email address" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <span>🔒</span>
+                        Password
+                    </label>
+                    <input type="password" id="password" name="password" class="form-input" 
+                           placeholder="Enter password" required>
+                </div>
+                
+                <button type="submit" class="btn-submit">
+                    <span>🚀</span>
+                    Register User
+                </button>
+            </form>
+            
+            <a href="/users/html" class="back-link">
+                <span>←</span>
+                Back to Users List
+            </a>
+            
+            <div class="form-note">
+                <h4>
+                    <span>💡</span>
+                    Quick Tips
+                </h4>
+                <p>• Choose a unique username that's easy to remember<br>
+                   • Use a valid email address for account recovery<br>
+                   • Create a strong password with mixed characters</p>
+            </div>
+        </div>
     </div>
-  </body>
+</body>
 </html>

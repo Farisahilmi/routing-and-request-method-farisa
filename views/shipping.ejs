@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <style>
+        .shipping-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .info-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        
+        .shipping-option {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            border: 1px solid #eaeaea;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+        }
+        
+        .shipping-option:hover {
+            transform: translateX(10px);
+            border-color: #2c5aa0;
+        }
+    </style>
+</head>
+<body>
+    <%- include('nav') %>
+    
+    <div class="shipping-container">
+        <div class="page-header" style="text-align: center; margin-bottom: 40px;">
+            <h1 style="color: #2c5aa0; display: flex; align-items: center; justify-content: center; gap: 15px;">
+                🚚 Shipping Information
+            </h1>
+        </div>
+
+        <div class="info-card">
+            <h2 style="color: #2c5aa0; margin-bottom: 20px;">Shipping Options</h2>
+            
+            <div class="shipping-option">
+                <div style="font-size: 2rem;">📦</div>
+                <div>
+                    <h3 style="margin: 0 0 5px 0;">Standard Shipping</h3>
+                    <p style="margin: 0; color: #666;">3-5 business days • FREE on orders over $50</p>
+                </div>
+            </div>
+            
+            <div class="shipping-option">
+                <div style="font-size: 2rem;">⚡</div>
+                <div>
+                    <h3 style="margin: 0 0 5px 0;">Express Shipping</h3>
+                    <p style="margin: 0; color: #666;">1-2 business days • $9.99</p>
+                </div>
+            </div>
+            
+            <div class="shipping-option">
+                <div style="font-size: 2rem;">🚀</div>
+                <div>
+                    <h3 style="margin: 0 0 5px 0;">Overnight Shipping</h3>
+                    <p style="margin: 0; color: #666;">Next business day • $19.99</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('footer') %>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+    <%- include('nav') %>
+    
+    <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; margin-bottom: 40px;">
+            <h1 style="color: #2c5aa0; display: flex; align-items: center; justify-content: center; gap: 15px;">
+                ↩️ Returns & Refunds
+            </h1>
+        </div>
+
+        <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08);">
+            <h2 style="color: #2c5aa0;">Our Return Policy</h2>
+            <p style="color: #666; line-height: 1.6;">
+                We offer a 30-day return policy for all items in original condition. 
+                Your satisfaction is our priority!
+            </p>
+            
+            <h3 style="color: #2c5aa0; margin-top: 30px;">How to Return</h3>
+            <ol style="color: #666; line-height: 1.6;">
+                <li>Contact our customer service</li>
+                <li>Print the return label</li>
+                <li>Package your item securely</li>
+                <li>Drop off at any shipping location</li>
+            </ol>
+        </div>
+    </div>
+
+    <%- include('footer') %>
+</body>
+</html>

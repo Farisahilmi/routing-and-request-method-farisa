@@ -1,0 +1,9 @@
+{
+  "welcome": "Selamat datang di Simple Store", 
+  "products": "Produk",
+  "add_to_cart": "Tambah ke Keranjang",
+  "price": "Harga",
+  "description": "Deskripsi", 
+  "in_stock": "Tersedia",
+  "out_of_stock": "Habis"
+}
