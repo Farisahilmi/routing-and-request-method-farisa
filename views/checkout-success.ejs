@@ -67,21 +67,42 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
         }
         
         .btn-primary {
             background: linear-gradient(135deg, #2c5aa0, #3a7bd5);
             color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .btn-secondary {
             background: #6c757d;
             color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .btn-success:hover, .btn-primary:hover, .btn-secondary:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            text-decoration: none;
+            color: white;
         }
         
         .confirmation-message {
@@ -89,6 +110,54 @@
             font-size: 1.1rem;
             line-height: 1.6;
             margin-bottom: 25px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .success-container {
+                margin: 20px auto;
+                padding: 30px 20px;
+            }
+            
+            .success-title {
+                font-size: 1.5rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn-success, .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+                padding: 15px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .success-container {
+                padding: 20px 15px;
+                margin: 10px;
+            }
+            
+            .success-icon {
+                font-size: 3rem;
+            }
+            
+            .success-title {
+                font-size: 1.3rem;
+            }
+            
+            .order-details {
+                padding: 15px;
+            }
+            
+            .order-info {
+                flex-direction: column;
+                gap: 5px;
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -126,11 +195,11 @@
         </div>
         
         <div class="action-buttons">
-            <a href="/orders/<%= orderId %>" class="btn-success">
+            <a href="/orders/<%= orderId %>" class="btn-primary">
                 <span>📋</span>
                 View Order Details
             </a>
-            <a href="/products" class="btn-primary">
+            <a href="/products" class="btn-success">
                 <span>🛍️</span>
                 Continue Shopping
             </a>
@@ -148,5 +217,20 @@
     </div>
 
     <%- include('footer') %>
+
+    <script>
+        // Update cart count to 0 after successful checkout
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Checkout success page loaded');
+            if (typeof updateCartCount === 'function') {
+                // Force cart count to 0
+                const cartCounter = document.getElementById('cartCount');
+                if (cartCounter) {
+                    cartCounter.textContent = '0';
+                    cartCounter.style.display = 'none';
+                }
+            }
+        });
+    </script>
 </body>
 </html>

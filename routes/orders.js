@@ -1,21 +1,42 @@
 var express = require('express');
 var router = express.Router();
 const fs = require('fs');
+const path = require('path');
+
+function readJSONFile(filename) {
+  const filePath = path.join(__dirname, '../data', filename);
+  if (!fs.existsSync(filePath)) return [];
+  try {
+    const data = fs.readFileSync(filePath, 'utf8').trim();
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error(`Error reading ${filename}:`, error);
+    return [];
+  }
+}
+
+function writeJSONFile(filename, data) {
+  const filePath = path.join(__dirname, '../data', filename);
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+    return true;
+  } catch (error) {
+    console.error(`Error writing ${filename}:`, error);
+    return false;
+  }
+}
 
 // GET all orders (HTML)
 router.get('/', function(req, res, next) {
-  const orders = fs.readFileSync('data/orders.json', 'utf8');
-  const ordersArray = JSON.parse(orders);
-  const products = fs.readFileSync('data/products.json', 'utf8');
-  const productsArray = JSON.parse(products);
-  const users = fs.readFileSync('data/users.json', 'utf8');
-  const usersArray = JSON.parse(users);
+  const orders = readJSONFile('orders.json');
+  const products = readJSONFile('products.json');
+  const users = readJSONFile('users.json');
   
   // Enrich order data
-  const enrichedOrders = ordersArray.map(order => {
-    const user = usersArray.find(u => u.id === order.userId.toString());
+  const enrichedOrders = orders.map(order => {
+    const user = users.find(u => u.id === order.userId.toString());
     const orderProducts = order.products.map(op => {
-      const product = productsArray.find(p => p.id === op.productId);
+      const product = products.find(p => p.id === op.productId);
       return { ...op, productName: product ? product.name : 'Unknown Product' };
     });
     
@@ -35,14 +56,11 @@ router.get('/', function(req, res, next) {
 // GET single order (HTML)
 router.get('/:id', function(req, res, next) {
   const { id } = req.params;
-  const orders = fs.readFileSync('data/orders.json', 'utf8');
-  const ordersArray = JSON.parse(orders);
-  const products = fs.readFileSync('data/products.json', 'utf8');
-  const productsArray = JSON.parse(products);
-  const users = fs.readFileSync('data/users.json', 'utf8');
-  const usersArray = JSON.parse(users);
+  const orders = readJSONFile('orders.json');
+  const products = readJSONFile('products.json');
+  const users = readJSONFile('users.json');
   
-  const order = ordersArray.find(o => o.id === parseInt(id));
+  const order = orders.find(o => o.id === parseInt(id));
   
   if (!order) {
     return res.status(404).render('error', { 
@@ -50,9 +68,9 @@ router.get('/:id', function(req, res, next) {
     });
   }
   
-  const user = usersArray.find(u => u.id === order.userId.toString());
+  const user = users.find(u => u.id === order.userId.toString());
   const orderProducts = order.products.map(op => {
-    const product = productsArray.find(p => p.id === op.productId);
+    const product = products.find(p => p.id === op.productId);
     return { 
       ...op, 
       productName: product ? product.name : 'Unknown Product',
@@ -71,6 +89,81 @@ router.get('/:id', function(req, res, next) {
     title: `Order #${order.id}`, 
     order: enrichedOrder 
   });
+});
+
+// ✅ NEW: DELETE Order
+router.delete('/:id', function(req, res, next) {
+  const { id } = req.params;
+  console.log('🗑️ Deleting order:', id);
+  
+  const orders = readJSONFile('orders.json');
+  const orderIndex = orders.findIndex(o => o.id === parseInt(id));
+  
+  if (orderIndex === -1) {
+    return res.status(404).json({ 
+      success: false, 
+      message: 'Order not found' 
+    });
+  }
+  
+  // Remove order from array
+  const deletedOrder = orders.splice(orderIndex, 1)[0];
+  
+  if (writeJSONFile('orders.json', orders)) {
+    console.log('✅ Order deleted successfully:', id);
+    res.json({ 
+      success: true, 
+      message: 'Order deleted successfully',
+      deletedOrder: deletedOrder
+    });
+  } else {
+    console.log('❌ Failed to delete order:', id);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to delete order' 
+    });
+  }
+});
+
+// ✅ NEW: UPDATE Order Status
+router.put('/:id/status', function(req, res, next) {
+  const { id } = req.params;
+  const { status } = req.body;
+  
+  const validStatuses = ['pending', 'processing', 'completed', 'cancelled'];
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Invalid status' 
+    });
+  }
+  
+  const orders = readJSONFile('orders.json');
+  const order = orders.find(o => o.id === parseInt(id));
+  
+  if (!order) {
+    return res.status(404).json({ 
+      success: false, 
+      message: 'Order not found' 
+    });
+  }
+  
+  // Update status
+  order.status = status;
+  order.updatedAt = new Date().toISOString();
+  
+  if (writeJSONFile('orders.json', orders)) {
+    res.json({ 
+      success: true, 
+      message: `Order status updated to ${status}`,
+      order: order
+    });
+  } else {
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to update order status' 
+    });
+  }
 });
 
 module.exports = router;

@@ -1,13 +1,17 @@
 <nav class="navbar">
     <div class="nav-container">
-        <!-- Logo di kiri -->
         <a href="/" class="nav-logo">
             <span class="logo-icon">🏪</span>
-            Simple Store
+            <span class="logo-text">Simple Store</span>
         </a>
         
-        <!-- Navigation Links di tengah -->
-        <div class="nav-links">
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <div class="nav-links" id="navLinks">
             <a href="/" class="nav-link">🏠 Home</a>
             <a href="/products" class="nav-link">📦 Products</a>
             <a href="/orders" class="nav-link">📋 Orders</a>
@@ -15,13 +19,14 @@
             <a href="/users/register" class="nav-link">📝 Register</a>
             <a href="/about" class="nav-link">ℹ️ About</a>
             <a href="/contact" class="nav-link">📞 Contact</a>
-            <a href="/admin/products" class="nav-link" style="background: #28a745; color: white !important;">
-    👑 Manage Products</a>
+            <a href="/admin/products" class="nav-link admin-link">👑 Manage Products</a>
         </div>
         
-        <!-- Cart di kanan -->
         <div class="nav-cart">
-            <a href="/cart" class="nav-link cart-btn">🛒 Cart</a>
+            <a href="/cart" class="nav-link cart-btn">
+                🛒 Cart 
+                <span id="cartCount" class="cart-badge">0</span>
+            </a>
         </div>
     </div>
 </nav>
@@ -42,54 +47,81 @@
     .nav-container {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 0 20px;
+        padding: 0 15px;
         display: flex;
         align-items: center;
-        justify-content: space-between; /* Logo kiri, links tengah, cart kanan */
+        justify-content: space-between;
+        position: relative;
     }
     
     .nav-logo {
         font-weight: bold;
         color: #2c5aa0;
         text-decoration: none;
-        font-size: 22px;
+        font-size: 20px;
         display: flex;
         align-items: center;
         gap: 8px;
         transition: transform 0.3s ease;
-        flex-shrink: 0; /* Pastikan logo tidak mengecil */
+        flex-shrink: 0;
     }
     
     .nav-logo:hover {
         transform: scale(1.05);
     }
     
+    .logo-text {
+        display: inline;
+    }
+    
+    .mobile-menu-btn {
+        display: none;
+        flex-direction: column;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        gap: 4px;
+    }
+    
+    .mobile-menu-btn span {
+        width: 25px;
+        height: 3px;
+        background: #2c5aa0;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+    
     .nav-links {
         display: flex;
-        gap: 8px;
+        gap: 5px;
         justify-content: center;
-        flex: 1; /* Ambil space tengah */
-        margin: 0 20px; /* Beri jarak dari logo dan cart */
+        flex: 1;
+        margin: 0 20px;
     }
     
     .nav-cart {
-        flex-shrink: 0; /* Pastikan cart tidak mengecil */
+        flex-shrink: 0;
     }
     
     .nav-link {
         color: #666;
         text-decoration: none;
-        padding: 10px 18px;
+        padding: 10px 15px;
         border-radius: 8px;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         font-weight: 500;
         border: 1px solid transparent;
-        white-space: nowrap; /* Prevent text wrapping */
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 14px;
     }
     
     .nav-link:hover {
         background: #f8f9fa;
-        color: #2c5aa0;
+        color: #2c5aa0 !important; /* ✅ PERBAIKAN: Force color on hover */
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         border-color: #e9ecef;
@@ -106,6 +138,168 @@
         background: linear-gradient(135deg, #218838, #1e9e8a);
         transform: translateY(-2px) scale(1.05);
         box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
-        color: white !important;
+        color: white !important; /* ✅ PERBAIKAN: Maintain white color on hover */
+    }
+    
+    .cart-badge {
+        background: #dc3545;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 11px;
+        margin-left: 5px;
+        min-width: 18px;
+        height: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .admin-link {
+        background: #28a745;
+        color: white !important; /* ✅ PERBAIKAN: Force white color */
+    }
+    
+    .admin-link:hover {
+        background: #218838 !important; /* ✅ PERBAIKAN: Darker green on hover */
+        color: white !important; /* ✅ PERBAIKAN: Maintain white text */
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+
+    /* Mobile Styles */
+    @media (max-width: 1024px) {
+        .nav-links {
+            gap: 3px;
+            margin: 0 10px;
+        }
+        
+        .nav-link {
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .mobile-menu-btn {
+            display: flex;
+        }
+        
+        .nav-links {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            flex-direction: column;
+            margin: 0;
+            padding: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-radius: 0 0 10px 10px;
+            display: none;
+            gap: 5px;
+        }
+        
+        .nav-links.active {
+            display: flex;
+        }
+        
+        .nav-link {
+            padding: 12px 15px;
+            border-radius: 6px;
+            justify-content: flex-start;
+        }
+        
+        .logo-text {
+            display: none;
+        }
+        
+        .nav-logo {
+            font-size: 18px;
+        }
+
+        .admin-link {
+            background: #28a745;
+            color: white !important;
+        }
+        
+        .admin-link:hover {
+            background: #218838 !important;
+            color: white !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .nav-container {
+            padding: 0 10px;
+        }
+        
+        .nav-link {
+            padding: 10px 12px;
+            font-size: 12px;
+        }
+        
+        .cart-badge {
+            font-size: 10px;
+            padding: 1px 5px;
+            min-width: 16px;
+            height: 16px;
+        }
     }
 </style>
+
+<script>
+    // Function to update cart count - YANG DIPERBAIKI
+    async function updateCartCount() {
+        try {
+            console.log('🔄 Updating cart count...');
+            const response = await fetch('/cart/count');
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            console.log('📊 Cart count result:', result);
+            
+            const cartCounter = document.getElementById('cartCount');
+            if (cartCounter) {
+                cartCounter.textContent = result.count;
+                // Hide badge if count is 0
+                if (result.count === 0) {
+                    cartCounter.style.display = 'none';
+                } else {
+                    cartCounter.style.display = 'inline-flex';
+                }
+                console.log('✅ Cart counter updated to:', result.count);
+            } else {
+                console.log('❌ Cart counter element not found');
+            }
+        } catch (error) {
+            console.error('❌ Error updating cart count:', error);
+            // Fallback: set to 0 if error
+            const cartCounter = document.getElementById('cartCount');
+            if (cartCounter) {
+                cartCounter.textContent = '0';
+                cartCounter.style.display = 'none';
+            }
+        }
+    }
+
+    // Update cart count when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 Page loaded, initializing cart count...');
+        updateCartCount();
+    });
+
+    // Export function untuk dipanggil dari file lain - YANG DIPERBAIKI
+    window.updateCartCount = updateCartCount;
+    
+    // Debug function untuk test manual
+    window.debugCart = function() {
+        console.log('🔧 Manual cart debug:');
+        console.log('updateCartCount function:', typeof updateCartCount);
+        console.log('Cart counter element:', document.getElementById('cartCount'));
+        updateCartCount();
+    }
+</script>

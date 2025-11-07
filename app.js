@@ -11,8 +11,7 @@ var productsRouter = require('./routes/products');
 var ordersRouter = require('./routes/orders');
 var cartRouter = require('./routes/cart');
 var adminRouter = require('./routes/admin');
-
-
+var checkoutRouter = require('./routes/checkout');
 
 // Simple translations
 const translations = {
@@ -28,7 +27,28 @@ const translations = {
     error: 'Error',
     product_added_to_cart: 'Product added to cart!',
     failed_to_add_cart: 'Failed to add product to cart',
-    error_adding_cart: 'Error adding to cart'
+    error_adding_cart: 'Error adding to cart',
+    checkout: 'Checkout',
+    proceed_to_checkout: 'Proceed to Checkout',
+    order_success: 'Order Success',
+    order_id: 'Order ID',
+    order_date: 'Order Date',
+    customer_name: 'Customer Name',
+    customer_email: 'Customer Email',
+    shipping_address: 'Shipping Address',
+    payment_method: 'Payment Method',
+    order_total: 'Order Total',
+    order_status: 'Order Status',
+    processing: 'Processing',
+    completed: 'Completed',
+    cancelled: 'Cancelled',
+    order_items: 'Order Items',
+    quantity: 'Quantity',
+    price: 'Price',
+    subtotal: 'Subtotal',
+    no_orders: 'No orders found',
+    no_orders_message: 'You have not placed any orders yet.',
+    place_first_order: 'Place your first order!'
   },
   id: {
     in_stock: 'Tersedia',
@@ -42,7 +62,28 @@ const translations = {
     error: 'Error',
     product_added_to_cart: 'Produk ditambahkan ke keranjang!',
     failed_to_add_cart: 'Gagal menambahkan produk ke keranjang',
-    error_adding_cart: 'Error menambahkan ke keranjang'
+    error_adding_cart: 'Error menambahkan ke keranjang',
+    checkout: 'Checkout',
+    proceed_to_checkout: 'Lanjut ke Checkout',
+    order_success: 'Pesanan Berhasil',
+    order_id: 'ID Pesanan',
+    order_date: 'Tanggal Pesanan',
+    customer_name: 'Nama Pelanggan',
+    customer_email: 'Email Pelanggan',
+    shipping_address: 'Alamat Pengiriman',
+    payment_method: 'Metode Pembayaran',
+    order_total: 'Total Pesanan',
+    order_status: 'Status Pesanan',
+    processing: 'Sedang Diproses',
+    completed: 'Selesai',
+    cancelled: 'Dibatalkan',
+    order_items: 'Item Pesanan',
+    quantity: 'Jumlah',
+    price: 'Harga',
+    subtotal: 'Subtotal',
+    no_orders: 'Tidak ada pesanan',
+    no_orders_message: 'Anda belum melakukan pesanan apapun.',
+    place_first_order: 'Buat pesanan pertama Anda!'
   }
 };
 
@@ -93,6 +134,7 @@ app.use('/products', productsRouter);
 app.use('/orders', ordersRouter);
 app.use('/cart', cartRouter);
 app.use('/admin', adminRouter);
+app.use('/checkout', checkoutRouter); // ✅ PERBAIKAN: app.use yang benar
 
 // ... Static pages routes
 app.get('/about', function(req, res) {
@@ -167,7 +209,7 @@ app.use(function(err, req, res, next) {
   const isDevelopment = req.app.get('env') === 'development';
   res.locals.message = err.message;
   res.locals.error = isDevelopment ? err : {};
-  res.locals.isDevelopment = isDevelopment; // ✅ Kirim ke view
+  res.locals.isDevelopment = isDevelopment;
   
   // Render error page
   res.status(err.status || 500);
@@ -175,7 +217,7 @@ app.use(function(err, req, res, next) {
     title: 'Error - Simple Store',
     message: isDevelopment ? err.message : 'Something went wrong! Please try again later.',
     error: isDevelopment ? err : {},
-    isDevelopment: isDevelopment // ✅ Kirim ke view
+    isDevelopment: isDevelopment
   });
 });
 
@@ -188,7 +230,9 @@ if (require.main === module) {
     console.log(`🚀 Server is running on http://localhost:${PORT}`);
     console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(`⏰ Started at: ${new Date().toLocaleString()}`);
-    console.log(`🔒 Security: Password hashing enabled`);
+    console.log(`🛒 Cart system: ENABLED (File-based)`);
+    console.log(`📦 Order management: ENABLED`);
+    console.log(`💳 Checkout system: ENABLED`);
   });
 }
 
