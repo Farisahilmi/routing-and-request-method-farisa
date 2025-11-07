@@ -1,17 +1,134 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Error</title>
+<head>
+    <title><%= title || 'Error - Simple Store' %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <%- include('nav') %>  
+    <style>
+        .error-container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 40px;
+            text-align: center;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .error-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+        
+        .error-title {
+            color: #2c5aa0;
+            margin-bottom: 15px;
+            font-size: 2rem;
+        }
+        
+        .error-message {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .error-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-error {
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #2c5aa0, #3a7bd5);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-error:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .error-details {
+            text-align: left;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .error-details pre {
+            font-size: 12px;
+            color: #666;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <%- include('nav') %>
     
-    <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
-      <h1><%= message %></h1>
-      <h2><%= error.status %></h2>
-      <pre><%= error.stack %></pre>
-      <a href="/" style="color: #007bff;">← Back to Home</a>
+    <div class="error-container">
+        <div class="error-icon">
+            <% if (error && error.status === 404) { %>
+                🔍
+            <% } else { %>
+                😵
+            <% } %>
+        </div>
+        
+        <h1 class="error-title">
+            <% if (error && error.status === 404) { %>
+                Page Not Found
+            <% } else { %>
+                Oops! Something Went Wrong
+            <% } %>
+        </h1>
+        
+        <p class="error-message">
+            <%= message %>
+        </p>
+        
+        <div class="error-actions">
+            <a href="/" class="btn-error btn-primary">
+                <span>🏠</span>
+                Back to Home
+            </a>
+            <a href="/products" class="btn-error btn-secondary">
+                <span>📦</span>
+                Browse Products
+            </a>
+            <button onclick="history.back()" class="btn-error" style="background: #e9ecef; color: #495057;">
+                <span>↩️</span>
+                Go Back
+            </button>
+        </div>
+        
+        <!-- ✅ FIXED: Gunakan error.stack saja, tidak perlu cek process.env -->
+        <% if (error && error.stack) { %>
+            <div class="error-details">
+                <h3 style="margin: 0 0 10px 0; color: #dc3545;">Error Details:</h3>
+                <pre><%= error.stack %></pre>
+            </div>
+        <% } %>
     </div>
-  </body>
+
+    <%- include('footer') %>
+</body>
 </html>

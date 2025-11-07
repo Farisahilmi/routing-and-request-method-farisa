@@ -12,6 +12,8 @@ var ordersRouter = require('./routes/orders');
 var cartRouter = require('./routes/cart');
 var adminRouter = require('./routes/admin');
 
+
+
 // Simple translations
 const translations = {
   en: {
@@ -51,8 +53,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 app.use(cookieParser());
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -71,6 +73,11 @@ app.use(function(req, res, next) {
   res.locals.language = lang;
   res.locals.t = translations[lang] || translations['en'];
   
+  // Security headers
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  
   next();
 });
 
@@ -87,7 +94,7 @@ app.use('/orders', ordersRouter);
 app.use('/cart', cartRouter);
 app.use('/admin', adminRouter);
 
-// ... rest of your routes (about, contact, etc)
+// ... Static pages routes
 app.get('/about', function(req, res) {
   res.render('about', { title: 'About Us - Simple Store' });
 });
@@ -118,36 +125,70 @@ app.get('/sitemap', function(req, res) {
 
 app.post('/contact', function(req, res) {
   const { name, email, subject, message } = req.body;
+  
+  // Basic validation
+  if (!name || !email || !message) {
+    return res.status(400).json({
+      success: false,
+      message: 'Name, email, and message are required'
+    });
+  }
+  
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Please enter a valid email address'
+    });
+  }
+  
   res.json({ 
     success: true, 
     message: 'Thank you for your message, ' + name + '! We will get back to you within 24 hours.' 
   });
 });
 
-// catch 404 and forward to error handler
+// 404 Handler - Catch all undefined routes
 app.use(function(req, res, next) {
-  next(createError(404));
+  res.status(404).render('error', {
+    title: 'Page Not Found',
+    message: 'Sorry, the page you are looking for does not exist.',
+    error: { status: 404 }
+  });
 });
 
-// ... kode Anda yang lain ...
-
-// error handler
+// Global Error Handler
 app.use(function(err, req, res, next) {
+  // Log error
+  console.error('🚨 Error Stack:', err.stack);
+  
+  // Set locals
+  const isDevelopment = req.app.get('env') === 'development';
   res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.locals.error = isDevelopment ? err : {};
+  res.locals.isDevelopment = isDevelopment; // ✅ Kirim ke view
+  
+  // Render error page
   res.status(err.status || 500);
-  res.render('error');
+  res.render('error', {
+    title: 'Error - Simple Store',
+    message: isDevelopment ? err.message : 'Something went wrong! Please try again later.',
+    error: isDevelopment ? err : {},
+    isDevelopment: isDevelopment // ✅ Kirim ke view
+  });
 });
 
-// ✅ TAMBAHKAN INI untuk menjalankan server
+// ✅ Server startup
 const PORT = process.env.PORT || 3000;
 
-// Only start server if this file is run directly (not required by another module)
+// Only start server if this file is run directly
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`🚀 Server is running on http://localhost:${PORT}`);
     console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(`⏰ Started at: ${new Date().toLocaleString()}`);
+    console.log(`🔒 Security: Password hashing enabled`);
   });
 }
 

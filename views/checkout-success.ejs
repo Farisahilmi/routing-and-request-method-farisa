@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <style>
+        .success-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 40px;
+            text-align: center;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        .success-title {
+            color: #28a745;
+            margin-bottom: 15px;
+            font-size: 2rem;
+        }
+        
+        .order-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+            text-align: left;
+        }
+        
+        .order-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .order-info:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #2c5aa0;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #2c5aa0, #3a7bd5);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-success:hover, .btn-primary:hover, .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .confirmation-message {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('nav') %>
+    <%- include('notification') %>
+    
+    <div class="success-container">
+        <div class="success-icon">🎉</div>
+        
+        <h1 class="success-title">Order Confirmed!</h1>
+        
+        <p class="confirmation-message">
+            Thank you for your purchase! Your order has been successfully placed and is being processed.
+            You will receive a confirmation email shortly.
+        </p>
+        
+        <div class="order-details">
+            <div class="order-info">
+                <span>Order ID:</span>
+                <span style="font-weight: bold;">#<%= orderId %></span>
+            </div>
+            <div class="order-info">
+                <span>Order Total:</span>
+                <span style="font-weight: bold; color: #28a745;">$<%= orderTotal %></span>
+            </div>
+            <div class="order-info">
+                <span>Status:</span>
+                <span style="color: #fd7e14; font-weight: bold;">Processing</span>
+            </div>
+            <div class="order-info">
+                <span>Estimated Delivery:</span>
+                <span>3-5 business days</span>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="/orders/<%= orderId %>" class="btn-success">
+                <span>📋</span>
+                View Order Details
+            </a>
+            <a href="/products" class="btn-primary">
+                <span>🛍️</span>
+                Continue Shopping
+            </a>
+            <a href="/orders" class="btn-secondary">
+                <span>📦</span>
+                View All Orders
+            </a>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 15px; background: #e7f3ff; border-radius: 8px;">
+            <p style="margin: 0; color: #2c5aa0; font-size: 14px;">
+                💡 <strong>Need help?</strong> Contact our support team at support@simplestore.com
+            </p>
+        </div>
+    </div>
+
+    <%- include('footer') %>
+</body>
+</html>
