@@ -129,6 +129,8 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
+// ... kode Anda yang lain ...
+
 // error handler
 app.use(function(err, req, res, next) {
   res.locals.message = err.message;
@@ -137,5 +139,16 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+// ✅ TAMBAHKAN INI untuk menjalankan server
+const PORT = process.env.PORT || 3000;
+
+// Only start server if this file is run directly (not required by another module)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server is running on http://localhost:${PORT}`);
+    console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`⏰ Started at: ${new Date().toLocaleString()}`);
+  });
+}
 
 module.exports = app;
