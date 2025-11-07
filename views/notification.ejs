@@ -4,7 +4,7 @@
     <h3 id="notificationTitle" style="margin: 0 0 10px 0; color: #2c5aa0;"></h3>
     <p id="notificationMessage" style="margin: 0 0 20px 0; color: #666;"></p>
     <button onclick="hideNotification()" style="background: #2c5aa0; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
-        OK
+        <i class="fas fa-check"></i> OK
     </button>
 </div>
 
@@ -21,16 +21,16 @@
         
         // Set styles based on type
         if (type === 'success') {
-            icon.textContent = '✅';
+            icon.innerHTML = '<i class="fas fa-check-circle" style="color: #28a745;"></i>';
             notification.style.borderLeft = '6px solid #28a745';
         } else if (type === 'error') {
-            icon.textContent = '❌';
+            icon.innerHTML = '<i class="fas fa-times-circle" style="color: #dc3545;"></i>';
             notification.style.borderLeft = '6px solid #dc3545';
         } else if (type === 'warning') {
-            icon.textContent = '⚠️';
+            icon.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #ffc107;"></i>';
             notification.style.borderLeft = '6px solid #ffc107';
         } else {
-            icon.textContent = 'ℹ️';
+            icon.innerHTML = '<i class="fas fa-info-circle" style="color: #17a2b8;"></i>';
             notification.style.borderLeft = '6px solid #17a2b8';
         }
         

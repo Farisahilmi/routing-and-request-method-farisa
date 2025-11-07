@@ -155,46 +155,46 @@ router.get('/products/edit/:id', function(req, res, next) {
   });
 });
 
-// PUT Update Product (Coming Soon)
-router.put('/products/:id', function(req, res, next) {
-  const productId = parseInt(req.params.id);
-  const { name, description, price, category, stock, image } = req.body;
-  
-  const products = readJSONFile('products.json');
-  const productIndex = products.findIndex(p => p.id === productId);
-  
-  if (productIndex === -1) {
-    return res.json({ 
-      success: false, 
-      message: 'Product not found' 
-    });
-  }
-  
-  products[productIndex] = {
-    ...products[productIndex],
-    name: name,
-    description: description,
-    price: parseFloat(price),
-    category: category,
-    stock: parseInt(stock),
-    image: image || products[productIndex].image,
-    updatedAt: new Date().toISOString()
-  };
-  
-  if (writeJSONFile('products.json', products)) {
-    res.json({ 
-      success: true, 
-      message: 'Product updated successfully',
-      product: products[productIndex]
-    });
-  } else {
-    res.json({ 
-      success: false, 
-      message: 'Failed to update product' 
-    });
-  }
+// PUT Update Order Status
+router.put('/orders/:id/status', function(req, res, next) {
+    const orderId = parseInt(req.params.id);
+    const { status } = req.body;
+    
+    const orders = readJSONFile('orders.json');
+    const orderIndex = orders.findIndex(o => o.id === orderId);
+    
+    if (orderIndex === -1) {
+        return res.json({ 
+            success: false, 
+            message: 'Order not found' 
+        });
+    }
+    
+    // Validate status
+    const validStatuses = ['pending', 'processing', 'shipped', 'completed', 'cancelled'];
+    if (!validStatuses.includes(status)) {
+        return res.json({ 
+            success: false, 
+            message: 'Invalid status' 
+        });
+    }
+    
+    orders[orderIndex].status = status;
+    orders[orderIndex].updatedAt = new Date().toISOString();
+    
+    if (writeJSONFile('orders.json', orders)) {
+        res.json({ 
+            success: true, 
+            message: 'Order status updated successfully',
+            order: orders[orderIndex]
+        });
+    } else {
+        res.json({ 
+            success: false, 
+            message: 'Failed to update order status' 
+        });
+    }
 });
-
 // DELETE Product
 router.delete('/products/:id', function(req, res, next) {
   const productId = parseInt(req.params.id);

@@ -3,6 +3,7 @@
 <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .users-container {
             max-width: 1000px;
@@ -110,11 +111,9 @@
             text-align: center;
             padding: 60px 20px;
             color: #666;
-        }
-        
-        .empty-state h3 {
-            margin-bottom: 10px;
-            color: #495057;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
         
         .register-promo {
@@ -148,6 +147,26 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
         }
+
+        .user-role {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .role-admin {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .role-customer {
+            background: #28a745;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -156,18 +175,17 @@
     <div class="users-container">
         <div class="page-header">
             <h1 style="margin: 0; color: #2c5aa0; display: flex; align-items: center; gap: 10px;">
-                👥 <%= title %>
+                <i class="fas fa-users"></i> <%= title %>
             </h1>
             <a href="/users/register" class="btn-primary">
-                <span>➕</span>
-                Add New User
+                <i class="fas fa-user-plus"></i> Add New User
             </a>
         </div>
 
         <% if (users && users.length > 0) { %>
             <div class="users-table">
                 <div class="table-header">
-                    <h2>📊 User Management</h2>
+                    <h2><i class="fas fa-user-cog"></i> User Management</h2>
                 </div>
                 
                 <table>
@@ -176,26 +194,39 @@
                             <th>ID</th>
                             <th>Username</th>
                             <th>Email</th>
-                            <th>Password</th>
+                            <th>Role</th>
+                            <th>Created At</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% users.forEach(function(user) { %>
                             <tr>
-                                <td style="font-weight: bold; color: #2c5aa0;"><%= user.id %></td>
-                                <td style="font-weight: 500;"><%= user.username %></td>
-                                <td><%= user.email %></td>
-                                <td style="font-family: monospace; color: #666;"><%= user.password %></td>
+                                <td style="font-weight: bold; color: #2c5aa0;">
+                                    <i class="fas fa-id-card"></i> <%= user.id %>
+                                </td>
+                                <td style="font-weight: 500;">
+                                    <i class="fas fa-user"></i> <%= user.username %>
+                                </td>
+                                <td>
+                                    <i class="fas fa-envelope"></i> <%= user.email %>
+                                </td>
+                                <td>
+                                    <span class="user-role role-<%= user.role %>">
+                                        <i class="fas fa-<%= user.role === 'admin' ? 'crown' : 'user' %>"></i>
+                                        <%= user.role %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <i class="fas fa-calendar"></i> <%= new Date(user.createdAt).toLocaleDateString() %>
+                                </td>
                                 <td>
                                     <div class="action-buttons">
                                         <a href="/users/update/<%= user.id %>" class="btn btn-update">
-                                            <span>✏️</span>
-                                            Update
+                                            <i class="fas fa-edit"></i> Update
                                         </a>
                                         <button type="button" onclick="deleteUser('<%= user.id %>')" class="btn btn-delete">
-                                            <span>🗑️</span>
-                                            Delete
+                                            <i class="fas fa-trash"></i> Delete
                                         </button>
                                     </div>
                                 </td>
@@ -206,21 +237,20 @@
             </div>
         <% } else { %>
             <div class="empty-state">
-                <h3>👥 No Users Found</h3>
+                <i class="fas fa-users fa-3x" style="color: #ccc; margin-bottom: 20px;"></i>
+                <h3>No Users Found</h3>
                 <p>There are no users registered in the system yet.</p>
                 <a href="/users/register" class="btn-primary" style="margin-top: 20px;">
-                    <span>👤</span>
-                    Register First User
+                    <i class="fas fa-user-plus"></i> Register First User
                 </a>
             </div>
         <% } %>
         
         <div class="register-promo">
-            <h3>🚀 Ready to Grow?</h3>
+            <h3><i class="fas fa-rocket"></i> Ready to Grow?</h3>
             <p>Add more users to your system and manage them efficiently.</p>
             <a href="/users/register" class="btn-primary" style="background: rgba(255,255,255,0.2); border: 2px solid white;">
-                <span>🌟</span>
-                Get Started
+                <i class="fas fa-star"></i> Get Started
             </a>
         </div>
     </div>
@@ -236,13 +266,15 @@
                 const result = await response.json();
                 
                 if (result.status === 'success') {
-                    alert(result.message);
-                    window.location.reload();
+                    showNotification('success', 'User Deleted', result.message);
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
                 } else {
-                    alert(result.message || 'Failed to delete user.');
+                    showNotification('error', 'Delete Failed', result.message || 'Failed to delete user.');
                 }
             } catch (error) {
-                alert('Error deleting user');
+                showNotification('error', 'Error', 'Error deleting user');
             }
         }
     </script>

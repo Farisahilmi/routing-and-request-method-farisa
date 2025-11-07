@@ -3,6 +3,7 @@
 <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .register-container {
             max-width: 500px;
@@ -146,16 +147,18 @@
         <div class="register-card">
             <div class="card-header">
                 <h1>
-                    <span>👤</span>
+                    <i class="fas fa-user-plus"></i>
                     User Registration
                 </h1>
                 <p>Create a new user account for your system</p>
             </div>
             
-            <form action="/users" method="post" type="hidden" name="role" value="customer">
+            <form action="/users" method="post">
+                <input type="hidden" name="role" value="customer">
+                
                 <div class="form-group">
                     <label for="username" class="form-label">
-                        <span>👤</span>
+                        <i class="fas fa-user"></i>
                         Username
                     </label>
                     <input type="text" id="username" name="username" class="form-input" 
@@ -164,7 +167,7 @@
                 
                 <div class="form-group">
                     <label for="email" class="form-label">
-                        <span>📧</span>
+                        <i class="fas fa-envelope"></i>
                         Email Address
                     </label>
                     <input type="email" id="email" name="email" class="form-input" 
@@ -173,7 +176,7 @@
                 
                 <div class="form-group">
                     <label for="password" class="form-label">
-                        <span>🔒</span>
+                        <i class="fas fa-lock"></i>
                         Password
                     </label>
                     <input type="password" id="password" name="password" class="form-input" 
@@ -181,24 +184,26 @@
                 </div>
                 
                 <button type="submit" class="btn-submit">
-                    <span>🚀</span>
+                    <i class="fas fa-user-plus"></i>
                     Register User
                 </button>
             </form>
             
             <a href="/users/html" class="back-link">
-                <span>←</span>
+                <i class="fas fa-arrow-left"></i>
                 Back to Users List
             </a>
             
             <div class="form-note">
                 <h4>
-                    <span>💡</span>
+                    <i class="fas fa-lightbulb"></i>
                     Quick Tips
                 </h4>
-                <p>• Choose a unique username that's easy to remember<br>
-                   • Use a valid email address for account recovery<br>
-                   • Create a strong password with mixed characters</p>
+                <p>
+                    <i class="fas fa-check-circle"></i> Choose a unique username that's easy to remember<br>
+                    <i class="fas fa-check-circle"></i> Use a valid email address for account recovery<br>
+                    <i class="fas fa-check-circle"></i> Create a strong password with mixed characters
+                </p>
             </div>
         </div>
     </div>

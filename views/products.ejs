@@ -3,6 +3,7 @@
 <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .products-container {
             max-width: 1200px;
@@ -66,6 +67,10 @@
             color: #2c5aa0;
             margin-bottom: 30px;
             text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .products-grid {
@@ -352,33 +357,32 @@
         <!-- Settings Bar -->
         <div class="settings-bar">
             <div class="currency-switcher">
-                <span class="switcher-label">💰 Currency:</span>
-                <a href="/products?currency=IDR&lang=<%= language %>" 
-                   class="currency-btn <%= currency === 'IDR' ? 'active' : '' %>">
+                <span class="switcher-label">
+                    <i class="fas fa-money-bill-wave"></i> Currency:
+                </span>
+                <button class="currency-btn <%= currency === 'IDR' ? 'active' : '' %>" onclick="switchCurrency('IDR')">
                     IDR (Rp)
-                </a>
-                <a href="/products?currency=USD&lang=<%= language %>" 
-                   class="currency-btn <%= currency === 'USD' ? 'active' : '' %>">
+                </button>
+                <button class="currency-btn <%= currency === 'USD' ? 'active' : '' %>" onclick="switchCurrency('USD')">
                     USD ($)
-                </a>
+                </button>
             </div>
             
             <div class="language-switcher">
-                <span class="switcher-label">🌐 Language:</span>
-                <a href="/products?lang=en&currency=<%= currency %>" 
-                   class="language-btn <%= language === 'en' ? 'active' : '' %>">
+                <span class="switcher-label">
+                    <i class="fas fa-globe"></i> Language:
+                </span>
+                <button class="language-btn <%= language === 'en' ? 'active' : '' %>" onclick="switchLanguage('en')">
                     English
-                </a>
-                <a href="/products?lang=id&currency=<%= currency %>" 
-                   class="language-btn <%= language === 'id' ? 'active' : '' %>">
+                </button>
+                <button class="language-btn <%= language === 'id' ? 'active' : '' %>" onclick="switchLanguage('id')">
                     Indonesia
-                </a>
+                </button>
             </div>
         </div>
 
         <h1 class="page-title">
-            <span>📦</span>
-            <%= title %>
+            <i class="fas fa-boxes"></i> <%= title %>
         </h1>
         
         <% if (products && products.length > 0) { %>
@@ -389,10 +393,9 @@
                             <% if (product.image && product.image !== '/images/default.jpg') { %>
                                 <img src="<%= product.image %>" alt="<%= product.name %>">
                             <% } else { %>
-                                <div style="text-align: center; color: #666;">
-                                    <div style="font-size: 3rem;">🖼️</div>
-                                    <div style="font-size: 12px; margin-top: 5px;">Image Coming Soon</div>
-                                </div>
+                                <i class="fas fa-image fa-3x" style="color: #ccc;"></i>
+                                <br>
+                                <small style="color: #999;"><%= t ? t.image_coming_soon : 'Image Coming Soon' %></small>
                             <% } %>
                         </div>
                         
@@ -400,23 +403,26 @@
                         
                         <div class="product-price">
                             <% if (currency === 'IDR') { %>
-                                Rp <%= (product.price * 15000).toLocaleString('id-ID') %>
+                                <i class="fas fa-money-bill-wave"></i> Rp <%= (product.price * 15000).toLocaleString('id-ID') %>
                             <% } else { %>
-                                $<%= product.price %>
+                                <i class="fas fa-dollar-sign"></i> <%= product.price %>
                             <% } %>
                         </div>
                         
-                        <span class="product-category"><%= product.category %></span>
+                        <span class="product-category">
+                            <i class="fas fa-tag"></i> <%= product.category %>
+                        </span>
                         
                         <div class="<%= product.stock > 0 ? 'product-stock' : 'out-of-stock' %>">
                             <% if (product.stock > 0) { %>
-                                ✅ <%= t ? t.in_stock : 'In Stock' %> (<%= product.stock %>)
+                                <i class="fas fa-check-circle"></i> <%= t ? t.in_stock : 'In Stock' %> (<%= product.stock %>)
                             <% } else { %>
-                                ❌ <%= t ? t.out_of_stock : 'Out of Stock' %>
+                                <i class="fas fa-times-circle"></i> <%= t ? t.out_of_stock : 'Out of Stock' %>
                             <% } %>
                         </div>
                         
                         <div class="product-description">
+                            <i class="fas fa-info-circle"></i> 
                             <%= product.description.length > 100 ? 
                                 product.description.substring(0, 100) + '...' : 
                                 product.description %>
@@ -424,182 +430,105 @@
                         
                         <div class="action-buttons">
                             <a href="/products/<%= product.id %>" class="view-details">
-                                <span>👁️</span>
-                                <%= t ? t.view_details : 'View Details' %>
+                                <i class="fas fa-eye"></i> <%= t ? t.view_details : 'View Details' %>
                             </a>
                             <a href="/api/products/<%= product.id %>" class="api-link" target="_blank">
-                                <span>🔗</span>
-                                API
+                                <i class="fas fa-code"></i> API
                             </a>
-                            <% if (product.stock > 0) { %>
-                                <button class="add-to-cart-btn" data-product-id="<%= product.id %>">
-                                    <span>🛒</span>
-                                    <%= t ? t.add_to_cart : 'Add to Cart' %>
-                                </button>
-                            <% } else { %>
-                                <button class="add-to-cart-btn" disabled>
-                                    <span>❌</span>
-                                    <%= t ? t.out_of_stock : 'Out of Stock' %>
-                                </button>
-                            <% } %>
+                            <button class="add-to-cart-btn <%= product.stock === 0 ? 'disabled' : '' %>" 
+                                    data-product-id="<%= product.id %>"
+                                    <%= product.stock === 0 ? 'disabled' : '' %>>
+                                <i class="fas fa-cart-plus"></i> <%= t ? t.add_to_cart : 'Add to Cart' %>
+                            </button>
                         </div>
                     </div>
                 <% }) %>
             </div>
         <% } else { %>
             <div class="no-products">
-                <div class="no-products-icon">📦</div>
-                <h3 class="no-products-title">
-                    <%= t ? t.no_products : 'No Products Found' %>
-                </h3>
-                <p class="no-products-message">
-                    <%= t ? t.no_products_message : 'There are no products available at the moment. Please check back later.' %>
-                </p>
-                <a href="/" class="btn btn-primary" style="padding: 12px 24px;">
-                    <span>🏠</span>
-                    Back to Home
+                <div class="no-products-icon">
+                    <i class="fas fa-box-open"></i>
+                </div>
+                <h3 class="no-products-title"><%= t ? t.no_products : 'No products found' %></h3>
+                <p class="no-products-message"><%= t ? t.no_products_message : 'There are no products available at the moment.' %></p>
+                <a href="/admin/products" class="view-details">
+                    <i class="fas fa-plus"></i> Add Products
                 </a>
             </div>
         <% } %>
     </div>
 
     <script>
-    // GANTI function addToCart dengan ini:
-async function addToCart(productId, button) {
-    console.log('🛒 Adding to cart, product ID:', productId);
-    
-    // Show loading state
-    const originalText = button.innerHTML;
-    button.innerHTML = '<span>⏳</span> Adding...';
-    button.disabled = true;
-    
-    try {
-        const response = await fetch('/cart/add', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ 
-                productId: parseInt(productId), 
-                quantity: 1 
-            })
-        });
-        
-        console.log('📡 Response status:', response.status);
-        
-        // Check if response is JSON
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            const text = await response.text();
-            console.error('❌ Server returned non-JSON:', text.substring(0, 200));
-            throw new Error('Server error. Please try again.');
-        }
-        
-        const result = await response.json();
-        console.log('✅ Response result:', result);
-        
-        if (result.success) {
-            // Show success notification
-            if (typeof showNotification === 'function') {
-                showNotification('success', 
-                    'Success 🎉', 
-                    'Product added to cart successfully!'
-                );
-            } else {
-                alert('✅ Product added to cart!');
-            }
+        // Add to Cart functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-product-id');
+                    addToCart(productId);
+                });
+            });
             
-            // Update cart count - YANG DIPERBAIKI
-            console.log('🔄 Attempting to update cart count...');
-            if (typeof updateCartCount === 'function') {
-                console.log('✅ updateCartCount function is available, calling it...');
-                await updateCartCount(); // Tambah await untuk pastikan selesai
-            } else {
-                console.log('❌ updateCartCount function not available, checking window object...');
-                if (typeof window.updateCartCount === 'function') {
-                    console.log('✅ window.updateCartCount is available, calling it...');
-                    await window.updateCartCount();
-                } else {
-                    console.log('❌ No updateCartCount function found anywhere');
-                    // Fallback: reload page
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
-                }
-            }
-            
-        } else {
-            // Show error notification
-            if (typeof showNotification === 'function') {
-                showNotification('error', 
-                    'Error ❌', 
-                    result.message || 'Failed to add product to cart'
-                );
-            } else {
-                alert('❌ ' + (result.message || 'Failed to add product to cart'));
-            }
-        }
-    } catch (error) {
-        console.error('❌ Add to cart error:', error);
-        
-        // Show error notification
-        if (typeof showNotification === 'function') {
-            showNotification('error', 
-                'Error ❌', 
-                'Error adding to cart: ' + error.message
-            );
-        } else {
-            alert('❌ Error adding to cart: ' + error.message);
-        }
-    } finally {
-        // Reset button state
-        button.innerHTML = originalText;
-        button.disabled = false;
-    }
-}
-
-// PERBAIKI event listener dengan debug info:
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('✅ DOM loaded, initializing add to cart buttons...');
-    
-    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-            
-            const productId = this.getAttribute('data-product-id');
-            console.log('🛒 Add to cart clicked for product:', productId);
-            
-            if (productId) {
-                addToCart(productId, this);
-            } else {
-                console.error('❌ No product ID found on button');
-                if (typeof showNotification === 'function') {
-                    showNotification('error', 'Error', 'Product ID not found');
-                } else {
-                    alert('❌ Product ID not found');
-                }
-            }
-        });
-    });
-
-    // Debug info lengkap
-    console.log('=== CART SYSTEM DEBUG INFO ===');
-    console.log('🛒 Add to cart buttons found:', document.querySelectorAll('.add-to-cart-btn').length);
-    console.log('🔔 showNotification available:', typeof showNotification);
-    console.log('🔄 updateCartCount available:', typeof updateCartCount);
-    console.log('🔄 window.updateCartCount available:', typeof window.updateCartCount);
-    console.log('📊 Cart counter element:', document.getElementById('cartCount'));
-    console.log('==============================');
-    
-    // Test manual cart count update
-    setTimeout(() => {
-        console.log('🧪 Testing cart count update...');
-        if (typeof updateCartCount === 'function') {
+            // Update cart count on page load
             updateCartCount();
+        });
+
+        async function addToCart(productId) {
+            try {
+                const response = await fetch('/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ productId: productId, quantity: 1 })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('success', 'Success!', 'Product added to cart!');
+                    // Update cart count in navbar
+                    updateCartCount();
+                } else {
+                    showNotification('error', 'Error', result.message || 'Failed to add product to cart');
+                }
+            } catch (error) {
+                showNotification('error', 'Error', 'Error adding to cart');
+            }
         }
-    }, 1000);
-});
+
+        // Update cart count in navbar
+        async function updateCartCount() {
+            try {
+                const response = await fetch('/cart/count');
+                const result = await response.json();
+                
+                // Update cart counter in navbar
+                const cartCounter = document.querySelector('.cart-count');
+                if (cartCounter) {
+                    cartCounter.textContent = result.count;
+                    // Show/hide badge based on count
+                    if (result.count > 0) {
+                        cartCounter.style.display = 'flex';
+                    } else {
+                        cartCounter.style.display = 'none';
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating cart count:', error);
+            }
+        }
+
+        // Currency Switcher
+        function switchCurrency(newCurrency) {
+            const currentLang = '<%= language %>';
+            window.location.href = `/products?currency=${newCurrency}&lang=${currentLang}`;
+        }
+
+        // Language Switcher  
+        function switchLanguage(newLanguage) {
+            const currentCurrency = '<%= currency %>';
+            window.location.href = `/products?lang=${newLanguage}&currency=${currentCurrency}`;
+        }
     </script>
 </body>
 </html>

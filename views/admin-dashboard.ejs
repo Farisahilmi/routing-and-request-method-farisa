@@ -3,6 +3,7 @@
 <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .admin-container {
             max-width: 1200px;
@@ -50,6 +51,7 @@
         .stat-icon {
             font-size: 3rem;
             margin-bottom: 15px;
+            color: #2c5aa0;
         }
         
         .stat-number {
@@ -88,6 +90,7 @@
         .action-icon {
             font-size: 2.5rem;
             margin-bottom: 15px;
+            color: #2c5aa0;
         }
         
         .action-title {
@@ -130,83 +133,105 @@
     <div class="admin-container">
         <div class="admin-header">
             <h1 style="margin: 0; color: #2c5aa0; display: flex; align-items: center; gap: 10px;">
-                👑 Admin Dashboard
+                <i class="fas fa-crown"></i> Admin Dashboard
             </h1>
             <div style="color: #666; font-size: 14px;">
-                Welcome back, Administrator
+                <i class="fas fa-user-shield"></i> Welcome back, Administrator
             </div>
         </div>
 
         <!-- Statistics -->
-        <h2 style="color: #2c5aa0; margin-bottom: 20px;">📊 Store Overview</h2>
+        <h2 style="color: #2c5aa0; margin-bottom: 20px;">
+            <i class="fas fa-chart-bar"></i> Store Overview
+        </h2>
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon">📦</div>
+                <div class="stat-icon">
+                    <i class="fas fa-box"></i>
+                </div>
                 <div class="stat-number"><%= stats.totalProducts %></div>
                 <div class="stat-label">Total Products</div>
             </div>
             
             <div class="stat-card success">
-                <div class="stat-icon">👥</div>
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
                 <div class="stat-number"><%= stats.totalUsers %></div>
                 <div class="stat-label">Total Users</div>
             </div>
             
             <div class="stat-card">
-                <div class="stat-icon">📋</div>
+                <div class="stat-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
                 <div class="stat-number"><%= stats.totalOrders %></div>
                 <div class="stat-label">Total Orders</div>
             </div>
             
             <div class="stat-card warning">
-                <div class="stat-icon">💰</div>
+                <div class="stat-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
                 <div class="stat-number">$<%= stats.totalRevenue.toFixed(2) %></div>
                 <div class="stat-label">Total Revenue</div>
             </div>
             
             <div class="stat-card danger">
-                <div class="stat-icon">⚠️</div>
+                <div class="stat-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
                 <div class="stat-number"><%= stats.lowStockProducts %></div>
                 <div class="stat-label">Low Stock Items</div>
             </div>
         </div>
 
         <!-- Quick Actions -->
-        <h2 style="color: #2c5aa0; margin-bottom: 20px;">⚡ Quick Actions</h2>
+        <h2 style="color: #2c5aa0; margin-bottom: 20px;">
+            <i class="fas fa-bolt"></i> Quick Actions
+        </h2>
         <div class="admin-actions">
             <div class="action-card">
-                <div class="action-icon">📦</div>
+                <div class="action-icon">
+                    <i class="fas fa-box"></i>
+                </div>
                 <div class="action-title">Manage Products</div>
                 <div class="action-desc">Add, edit, or remove products from your store inventory</div>
                 <a href="/admin/products" class="btn-admin">
-                    Manage Products
+                    <i class="fas fa-cog"></i> Manage Products
                 </a>
             </div>
             
             <div class="action-card">
-                <div class="action-icon">👥</div>
+                <div class="action-icon">
+                    <i class="fas fa-users"></i>
+                </div>
                 <div class="action-title">Manage Users</div>
                 <div class="action-desc">View and manage customer accounts and admin users</div>
                 <a href="/users/html" class="btn-admin">
-                    Manage Users
+                    <i class="fas fa-user-cog"></i> Manage Users
                 </a>
             </div>
             
             <div class="action-card">
-                <div class="action-icon">📋</div>
+                <div class="action-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
                 <div class="action-title">View Orders</div>
                 <div class="action-desc">Process and track customer orders and shipments</div>
                 <a href="/orders" class="btn-admin">
-                    View Orders
+                    <i class="fas fa-eye"></i> View Orders
                 </a>
             </div>
             
             <div class="action-card">
-                <div class="action-icon">➕</div>
+                <div class="action-icon">
+                    <i class="fas fa-plus"></i>
+                </div>
                 <div class="action-title">Add New Product</div>
                 <div class="action-desc">Quickly add a new product to your store inventory</div>
                 <a href="/admin/products" class="btn-admin">
-                    Add Product
+                    <i class="fas fa-plus-circle"></i> Add Product
                 </a>
             </div>
         </div>

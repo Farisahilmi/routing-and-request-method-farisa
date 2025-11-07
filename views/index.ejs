@@ -3,6 +3,7 @@
 <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .hero-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -104,6 +105,7 @@
         .feature-icon {
             font-size: 3rem;
             margin-bottom: 20px;
+            color: #2c5aa0;
         }
         
         .feature-title {
@@ -158,18 +160,21 @@
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="hero-content">
-            <h1 class="hero-title">🚀 Welcome to Simple Store</h1>
+            <h1 class="hero-title">
+                <i class="fas fa-rocket"></i>
+                Welcome to Simple Store
+            </h1>
             <p class="hero-subtitle">
                 Discover amazing products at great prices. From electronics to fashion, 
                 we've got everything you need in one place. Fast shipping & excellent customer service guaranteed!
             </p>
             <div class="hero-buttons">
                 <a href="/products" class="hero-btn btn-primary">
-                    <span>🛍️</span>
+                    <i class="fas fa-shopping-bag"></i>
                     Shop Now
                 </a>
                 <a href="/products" class="hero-btn btn-secondary">
-                    <span>🔍</span>
+                    <i class="fas fa-search"></i>
                     Browse Products
                 </a>
             </div>
@@ -178,32 +183,42 @@
 
     <!-- Features Section -->
     <section class="features-section">
-        <h2 style="text-align: center; margin-bottom: 20px; color: #2c5aa0; font-size: 2.5rem;">✨ Why Choose Us?</h2>
+        <h2 style="text-align: center; margin-bottom: 20px; color: #2c5aa0; font-size: 2.5rem;">
+            <i class="fas fa-star"></i> Why Choose Us?
+        </h2>
         <p style="text-align: center; color: #666; font-size: 1.2rem; max-width: 600px; margin: 0 auto 40px;">
             We're committed to providing the best shopping experience for our customers
         </p>
         
         <div class="features-grid">
             <div class="feature-card">
-                <div class="feature-icon">🚚</div>
+                <div class="feature-icon">
+                    <i class="fas fa-shipping-fast"></i>
+                </div>
                 <h3 class="feature-title">Fast Shipping</h3>
                 <p class="feature-desc">Free shipping on orders over $50. Get your products delivered in 2-3 business days.</p>
             </div>
             
             <div class="feature-card">
-                <div class="feature-icon">💳</div>
+                <div class="feature-icon">
+                    <i class="fas fa-credit-card"></i>
+                </div>
                 <h3 class="feature-title">Secure Payment</h3>
                 <p class="feature-desc">Your payments are safe with us. We use industry-standard encryption technology.</p>
             </div>
             
             <div class="feature-card">
-                <div class="feature-icon">⭐</div>
+                <div class="feature-icon">
+                    <i class="fas fa-award"></i>
+                </div>
                 <h3 class="feature-title">Quality Products</h3>
                 <p class="feature-desc">We carefully select each product to ensure the highest quality for our customers.</p>
             </div>
             
             <div class="feature-card">
-                <div class="feature-icon">📞</div>
+                <div class="feature-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
                 <h3 class="feature-title">24/7 Support</h3>
                 <p class="feature-desc">Our customer service team is here to help you anytime you need assistance.</p>
             </div>
@@ -215,19 +230,27 @@
         <div class="stats-grid">
             <div class="stat-item">
                 <div class="stat-number">500+</div>
-                <div class="stat-label">Happy Customers</div>
+                <div class="stat-label">
+                    <i class="fas fa-smile"></i> Happy Customers
+                </div>
             </div>
             <div class="stat-item">
                 <div class="stat-number">1000+</div>
-                <div class="stat-label">Products Sold</div>
+                <div class="stat-label">
+                    <i class="fas fa-shopping-cart"></i> Products Sold
+                </div>
             </div>
             <div class="stat-item">
                 <div class="stat-number">99%</div>
-                <div class="stat-label">Satisfaction Rate</div>
+                <div class="stat-label">
+                    <i class="fas fa-chart-line"></i> Satisfaction Rate
+                </div>
             </div>
             <div class="stat-item">
                 <div class="stat-number">24/7</div>
-                <div class="stat-label">Customer Support</div>
+                <div class="stat-label">
+                    <i class="fas fa-clock"></i> Customer Support
+                </div>
             </div>
         </div>
     </section>

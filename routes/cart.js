@@ -35,18 +35,12 @@ function writeJSONFile(filename, data) {
   }
 }
 
-// GET Cart Count (for navbar)
+// GET Cart Count (for navbar) - HARUS DI ATAS
 router.get('/count', function(req, res, next) {
-  try {
-    const cartItems = readJSONFile('cart.json');
-    const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-    
-    console.log(`📊 Cart count: ${totalItems} items`);
-    res.json({ count: totalItems });
-  } catch (error) {
-    console.error('❌ Error getting cart count:', error);
-    res.json({ count: 0 });
-  }
+  const cartItems = readJSONFile('cart.json');
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  
+  res.json({ count: totalItems });
 });
 
 // GET Cart Page
@@ -55,7 +49,7 @@ router.get('/', function(req, res, next) {
     const cartItems = readJSONFile('cart.json');
     const products = readJSONFile('products.json');
     
-    console.log(`🛒 Loading cart page with ${cartItems.length} items`);
+    console.log(`🛒 Loading cart with ${cartItems.length} items`);
 
     // Enrich cart items with product details
     const enrichedCart = cartItems.map(item => {
@@ -104,74 +98,53 @@ router.post('/add', function(req, res, next) {
     
     console.log(`🛒 Add to cart request:`, { productId, quantity });
 
-    if (!productId) {
-      return res.json({ 
-        success: false, 
-        message: 'Product ID is required' 
-      });
-    }
-
     const cartItems = readJSONFile('cart.json');
     const products = readJSONFile('products.json');
     
     const product = products.find(p => p.id === parseInt(productId));
     if (!product) {
-      return res.json({ 
-        success: false, 
-        message: 'Product not found' 
-      });
+      return res.json({ success: false, message: 'Product not found' });
     }
 
     // Check stock
     if (product.stock < parseInt(quantity)) {
-      return res.json({ 
-        success: false, 
-        message: 'Not enough stock available' 
-      });
+      return res.json({ success: false, message: 'Not enough stock available' });
     }
 
     // Check if product already in cart
-    const existingItemIndex = cartItems.findIndex(item => item.productId === parseInt(productId));
+    const existingItem = cartItems.find(item => item.productId === parseInt(productId));
     
-    if (existingItemIndex !== -1) {
+    if (existingItem) {
       // Update quantity
-      cartItems[existingItemIndex].quantity += parseInt(quantity);
-      console.log(`✅ Updated existing item: ${product.name}, new quantity: ${cartItems[existingItemIndex].quantity}`);
+      const newQuantity = existingItem.quantity + parseInt(quantity);
+      if (newQuantity > product.stock) {
+        return res.json({ success: false, message: 'Not enough stock available' });
+      }
+      existingItem.quantity = newQuantity;
     } else {
       // Add new item
-      const newId = cartItems.length > 0 ? Math.max(...cartItems.map(i => i.id)) + 1 : 1;
-      const newItem = {
-        id: newId,
+      cartItems.push({
+        id: cartItems.length > 0 ? Math.max(...cartItems.map(i => i.id)) + 1 : 1,
         productId: parseInt(productId),
         quantity: parseInt(quantity),
         addedAt: new Date().toISOString()
-      };
-      cartItems.push(newItem);
-      console.log(`✅ Added new item: ${product.name}, quantity: ${quantity}`);
+      });
     }
 
-    // Save to file
     if (writeJSONFile('cart.json', cartItems)) {
-      const updatedCart = readJSONFile('cart.json');
-      const totalItems = updatedCart.reduce((sum, item) => sum + item.quantity, 0);
-      
+      // Update cart count for response
+      const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
       res.json({ 
         success: true, 
-        message: 'Product added to cart successfully',
-        cartCount: totalItems
+        message: 'Product added to cart',
+        cartCount: totalItems 
       });
     } else {
-      res.json({ 
-        success: false, 
-        message: 'Failed to save cart' 
-      });
+      res.json({ success: false, message: 'Failed to add to cart' });
     }
   } catch (error) {
-    console.error('❌ Add to cart error:', error);
-    res.json({ 
-      success: false, 
-      message: 'Error adding to cart: ' + error.message 
-    });
+    console.error('❌ Error adding to cart:', error);
+    res.json({ success: false, message: 'Error adding to cart' });
   }
 });
 
@@ -184,42 +157,37 @@ router.put('/update/:id', function(req, res, next) {
     console.log(`✏️ Update cart item:`, { id, quantity });
 
     const cartItems = readJSONFile('cart.json');
-    const itemIndex = cartItems.findIndex(item => item.id === parseInt(id));
+    const item = cartItems.find(item => item.id === parseInt(id));
     
-    if (itemIndex === -1) {
-      return res.json({ 
-        success: false, 
-        message: 'Item not found in cart' 
-      });
+    if (!item) {
+      return res.json({ success: false, message: 'Item not found in cart' });
     }
 
     if (quantity <= 0) {
       // Remove item if quantity is 0 or less
-      const removedItem = cartItems.splice(itemIndex, 1)[0];
-      console.log(`🗑️ Removed item from cart: ${removedItem.productId}`);
-    } else {
-      // Update quantity
-      cartItems[itemIndex].quantity = parseInt(quantity);
-      console.log(`✅ Updated item quantity: ${cartItems[itemIndex].productId} to ${quantity}`);
+      const updatedCart = cartItems.filter(item => item.id !== parseInt(id));
+      writeJSONFile('cart.json', updatedCart);
+      return res.json({ 
+        success: true, 
+        message: 'Item removed from cart',
+        cartCount: updatedCart.reduce((sum, item) => sum + item.quantity, 0)
+      });
     }
 
+    item.quantity = parseInt(quantity);
+    
     if (writeJSONFile('cart.json', cartItems)) {
       res.json({ 
         success: true, 
-        message: 'Cart updated successfully' 
+        message: 'Cart updated',
+        cartCount: cartItems.reduce((sum, item) => sum + item.quantity, 0)
       });
     } else {
-      res.json({ 
-        success: false, 
-        message: 'Failed to update cart' 
-      });
+      res.json({ success: false, message: 'Failed to update cart' });
     }
   } catch (error) {
-    console.error('❌ Update cart error:', error);
-    res.json({ 
-      success: false, 
-      message: 'Error updating cart: ' + error.message 
-    });
+    console.error('❌ Error updating cart:', error);
+    res.json({ success: false, message: 'Error updating cart' });
   }
 });
 
@@ -228,42 +196,27 @@ router.delete('/remove/:id', function(req, res, next) {
   try {
     const { id } = req.params;
 
-    console.log(`🗑️ Remove from cart request:`, { id });
+    console.log(`🗑️ Remove cart item:`, { id });
 
     const cartItems = readJSONFile('cart.json');
-    const itemIndex = cartItems.findIndex(item => item.id === parseInt(id));
+    const updatedCart = cartItems.filter(item => item.id !== parseInt(id));
     
-    if (itemIndex === -1) {
-      return res.json({ 
-        success: false, 
-        message: 'Item not found in cart' 
-      });
-    }
-
-    const removedItem = cartItems.splice(itemIndex, 1)[0];
-    console.log(`✅ Removed item: ${removedItem.productId}`);
-
-    if (writeJSONFile('cart.json', cartItems)) {
+    if (writeJSONFile('cart.json', updatedCart)) {
       res.json({ 
         success: true, 
-        message: 'Item removed from cart successfully' 
+        message: 'Item removed from cart',
+        cartCount: updatedCart.reduce((sum, item) => sum + item.quantity, 0)
       });
     } else {
-      res.json({ 
-        success: false, 
-        message: 'Failed to remove item from cart' 
-      });
+      res.json({ success: false, message: 'Failed to remove item' });
     }
   } catch (error) {
-    console.error('❌ Remove from cart error:', error);
-    res.json({ 
-      success: false, 
-      message: 'Error removing item from cart: ' + error.message 
-    });
+    console.error('❌ Error removing from cart:', error);
+    res.json({ success: false, message: 'Error removing item from cart' });
   }
 });
 
-// POST Checkout
+// POST Checkout - CREATE REAL ORDER
 router.post('/checkout', function(req, res, next) {
   try {
     const cartItems = readJSONFile('cart.json');
@@ -271,73 +224,92 @@ router.post('/checkout', function(req, res, next) {
     const orders = readJSONFile('orders.json');
     const users = readJSONFile('users.json');
     
-    console.log(`💰 Checkout request with ${cartItems.length} items`);
+    console.log(`💰 Checkout process started with ${cartItems.length} items`);
 
     if (cartItems.length === 0) {
-      return res.json({ 
-        success: false, 
-        message: 'Cart is empty' 
-      });
+      return res.json({ success: false, message: 'Cart is empty' });
     }
 
-    // Calculate total and prepare order items
-    let orderTotal = 0;
-    const orderProducts = cartItems.map(item => {
-      const product = products.find(p => p.id === item.productId);
-      const itemTotal = product ? product.price * item.quantity : 0;
-      orderTotal += itemTotal;
+    // Validate stock and calculate total
+    let totalAmount = 0;
+    const orderProducts = [];
+    
+    for (const cartItem of cartItems) {
+      const product = products.find(p => p.id === cartItem.productId);
+      if (!product) {
+        return res.json({ success: false, message: `Product ${cartItem.productId} not found` });
+      }
       
-      return {
-        productId: item.productId,
-        quantity: item.quantity,
-        price: product ? product.price : 0,
-        productName: product ? product.name : 'Unknown Product'
-      };
-    });
-
-    // Generate new order ID
-    const newOrderId = orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1;
+      if (product.stock < cartItem.quantity) {
+        return res.json({ 
+          success: false, 
+          message: `Not enough stock for ${product.name}. Available: ${product.stock}, Requested: ${cartItem.quantity}` 
+        });
+      }
+      
+      totalAmount += product.price * cartItem.quantity;
+      orderProducts.push({
+        productId: cartItem.productId,
+        quantity: cartItem.quantity,
+        price: product.price
+      });
+      
+      // Update product stock
+      product.stock -= cartItem.quantity;
+    }
 
     // Create new order
     const newOrder = {
-      id: newOrderId,
-      userId: "2", // Default user ID (John Customer)
+      id: orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1,
+      userId: "2", // Default user for demo (John Customer)
       products: orderProducts,
-      totalAmount: orderTotal,
-      status: "processing",
-      shippingAddress: "123 Main St, Jakarta, Indonesia",
+      totalAmount: parseFloat(totalAmount.toFixed(2)),
+      status: "processing", // Default status
+      shippingAddress: "123 Main St, Jakarta, Indonesia", // Default address
       createdAt: new Date().toISOString()
     };
 
-    console.log(`✅ Creating new order #${newOrderId} with total: $${orderTotal}`);
-
-    // Add to orders
+    // Save order
     orders.push(newOrder);
     
-    // Save orders and clear cart
-    if (writeJSONFile('orders.json', orders) && writeJSONFile('cart.json', [])) {
-      console.log(`🎉 Checkout successful! Order #${newOrderId} created`);
-      
-      res.json({ 
-        success: true, 
-        message: 'Checkout successful! Order has been placed.',
-        orderId: newOrderId,
-        orderTotal: orderTotal
-      });
-    } else {
-      console.log(`❌ Failed to save order or clear cart`);
-      res.json({ 
-        success: false, 
-        message: 'Failed to process checkout' 
-      });
+    // Update products stock
+    if (!writeJSONFile('products.json', products)) {
+      return res.json({ success: false, message: 'Failed to update product stock' });
     }
+    
+    // Save orders
+    if (!writeJSONFile('orders.json', orders)) {
+      return res.json({ success: false, message: 'Failed to create order' });
+    }
+    
+    // Clear cart
+    writeJSONFile('cart.json', []);
+
+    console.log(`✅ Checkout successful! Order #${newOrder.id} created`);
+
+    res.json({ 
+      success: true, 
+      message: 'Checkout successful! Order has been placed.',
+      orderId: newOrder.id,
+      orderTotal: newOrder.totalAmount
+    });
   } catch (error) {
     console.error('❌ Checkout error:', error);
-    res.json({ 
-      success: false, 
-      message: 'Error during checkout: ' + error.message 
-    });
+    res.json({ success: false, message: 'Error during checkout process' });
   }
+});
+
+// GET Checkout Success Page
+router.get('/checkout/success', function(req, res, next) {
+  const { order_id, total } = req.query;
+  
+  console.log(`🎉 Checkout success page for order:`, { order_id, total });
+
+  res.render('checkout-success', { 
+    title: 'Order Confirmed - Simple Store',
+    orderId: order_id || 'N/A',
+    orderTotal: total || '0.00'
+  });
 });
 
 module.exports = router;
