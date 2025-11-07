@@ -3,6 +3,7 @@
 <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .products-grid {
             display: grid;
@@ -128,7 +129,9 @@
         <!-- Settings Bar -->
         <div class="settings-bar">
             <div class="currency-switcher">
-                <span style="font-weight: 600;">💰 Currency:</span>
+                <span style="font-weight: 600;">
+                    <i class="fas fa-money-bill-wave"></i> Currency:
+                </span>
                 <button class="currency-btn <%= currency === 'IDR' ? 'active' : '' %>" onclick="switchCurrency('IDR')">
                     IDR (Rp)
                 </button>
@@ -138,7 +141,9 @@
             </div>
             
             <div class="language-switcher">
-                <span style="font-weight: 600;">🌐 Language:</span>
+                <span style="font-weight: 600;">
+                    <i class="fas fa-globe"></i> Language:
+                </span>
                 <button class="language-btn <%= language === 'en' ? 'active' : '' %>" onclick="switchLanguage('en')">
                     English
                 </button>
@@ -148,7 +153,9 @@
             </div>
         </div>
 
-        <h1><%= title %></h1>
+        <h1>
+            <i class="fas fa-boxes"></i> <%= title %>
+        </h1>
         
         <% if (products && products.length > 0) { %>
             <div class="products-grid">
@@ -158,7 +165,9 @@
                             <% if (product.image && product.image !== '/images/default.jpg') { %>
                                 <img src="<%= product.image %>" alt="<%= product.name %>" style="max-width: 100%; max-height: 200px; object-fit: cover;">
                             <% } else { %>
-                                🖼️ <%= t ? t.image_coming_soon : 'Image Coming Soon' %>
+                                <i class="fas fa-image fa-3x" style="color: #ccc;"></i>
+                                <br>
+                                <%= t ? t.image_coming_soon : 'Image Coming Soon' %>
                             <% } %>
                         </div>
                         
@@ -167,24 +176,27 @@
                         <!-- Dynamic Currency Display -->
                         <div class="product-price">
                             <% if (currency === 'IDR') { %>
-                                Rp <%= (product.price * 15000).toLocaleString('id-ID') %>
+                                <i class="fas fa-money-bill-wave"></i> Rp <%= (product.price * 15000).toLocaleString('id-ID') %>
                             <% } else { %>
-                                $<%= product.price %>
+                                <i class="fas fa-dollar-sign"></i> <%= product.price %>
                             <% } %>
                         </div>
                         
-                        <span class="product-category"><%= product.category %></span>
+                        <span class="product-category">
+                            <i class="fas fa-tag"></i> <%= product.category %>
+                        </span>
                         
                         <!-- Dynamic Stock Message -->
                         <div class="<%= product.stock > 0 ? 'product-stock' : 'out-of-stock' %>">
                             <% if (product.stock > 0) { %>
-                                ✅ <%= t ? t.in_stock : 'In Stock' %> (<%= product.stock %>)
+                                <i class="fas fa-check-circle"></i> <%= t ? t.in_stock : 'In Stock' %> (<%= product.stock %>)
                             <% } else { %>
-                                ❌ <%= t ? t.out_of_stock : 'Out of Stock' %>
+                                <i class="fas fa-times-circle"></i> <%= t ? t.out_of_stock : 'Out of Stock' %>
                             <% } %>
                         </div>
                         
                         <p style="color: #666; font-size: 14px; margin: 10px 0;">
+                            <i class="fas fa-info-circle"></i> 
                             <%= product.description.length > 100 ? 
                                 product.description.substring(0, 100) + '...' : 
                                 product.description %>
@@ -192,14 +204,14 @@
                         
                         <div class="action-buttons">
                             <a href="/products/<%= product.id %>" class="view-details">
-                                <%= t ? t.view_details : 'View Details' %>
+                                <i class="fas fa-eye"></i> <%= t ? t.view_details : 'View Details' %>
                             </a>
                             <a href="/api/products/<%= product.id %>" class="view-details" style="background: #28a745;" target="_blank">
-                                API
+                                <i class="fas fa-code"></i> API
                             </a>
                             <button class="view-details add-to-cart-btn" style="background: #ffc107; color: black; border: none; cursor: pointer;" 
                                     data-product-id="<%= product.id %>">
-                                <%= t ? t.add_to_cart : 'Add to Cart' %>
+                                <i class="fas fa-cart-plus"></i> <%= t ? t.add_to_cart : 'Add to Cart' %>
                             </button>
                         </div>
                     </div>
@@ -207,62 +219,90 @@
             </div>
         <% } else { %>
             <div style="text-align: center; padding: 40px;">
+                <i class="fas fa-box-open fa-3x" style="color: #ccc; margin-bottom: 20px;"></i>
                 <h3><%= t ? t.no_products : 'No products found' %></h3>
                 <p><%= t ? t.no_products_message : 'There are no products available at the moment.' %></p>
             </div>
         <% } %>
     </div>
 
-    <script>
-        // Add to Cart functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const productId = this.getAttribute('data-product-id');
-                    addToCart(productId);
-                });
+<script>
+    // Add to Cart functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.getAttribute('data-product-id');
+                addToCart(productId);
             });
         });
+        
+        // Update cart count on page load
+        updateCartCount();
+    });
 
-        async function addToCart(productId) {
-            try {
-                const response = await fetch('/cart/add', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ productId: productId, quantity: 1 })
-                });
-                
-                const result = await response.json();
-                if (result.success) {
-                    showNotification('success', 
-                        '<%= t ? t.success : "Success" %>', 
-                        '<%= t ? t.product_added_to_cart : "Product added to cart!" %> 🛒'
-                    );
-                } else {
-                    showNotification('error', 
-                        '<%= t ? t.error : "Error" %>', 
-                        '<%= t ? t.failed_to_add_cart : "Failed to add product to cart" %>: ' + result.message
-                    );
-                }
-            } catch (error) {
+    async function addToCart(productId) {
+        try {
+            const response = await fetch('/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ productId: productId, quantity: 1 })
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                showNotification('success', 
+                    'Success!', 
+                    'Product added to cart!'
+                );
+                // Update cart count in navbar
+                updateCartCount();
+            } else {
                 showNotification('error', 
-                    '<%= t ? t.error : "Error" %>', 
-                    '<%= t ? t.error_adding_cart : "Error adding to cart" %>'
+                    'Error', 
+                    result.message || 'Failed to add product to cart'
                 );
             }
+        } catch (error) {
+            showNotification('error', 
+                'Error', 
+                'Error adding to cart'
+            );
         }
+    }
 
-        // Currency Switcher
-        function switchCurrency(newCurrency) {
-            window.location.href = '/products?currency=' + newCurrency;
+    // Update cart count in navbar
+    async function updateCartCount() {
+        try {
+            const response = await fetch('/cart/count');
+            const result = await response.json();
+            
+            // Update cart counter in navbar
+            const cartCounter = document.querySelector('.cart-count');
+            if (cartCounter) {
+                cartCounter.textContent = result.count;
+                // Show/hide badge based on count
+                if (result.count > 0) {
+                    cartCounter.style.display = 'inline';
+                } else {
+                    cartCounter.style.display = 'none';
+                }
+            }
+        } catch (error) {
+            console.error('Error updating cart count:', error);
         }
+    }
 
-        // Language Switcher  
-        function switchLanguage(newLanguage) {
-            window.location.href = '/products?lang=' + newLanguage;
-        }
-    </script>
+    // Currency Switcher
+    function switchCurrency(newCurrency) {
+        window.location.href = '/products?currency=' + newCurrency;
+    }
+
+    // Language Switcher  
+    function switchLanguage(newLanguage) {
+        window.location.href = '/products?lang=' + newLanguage;
+    }
+</script>
 </body>
 </html>

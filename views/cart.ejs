@@ -3,6 +3,7 @@
 <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .cart-container {
             max-width: 1000px;
@@ -252,6 +253,7 @@
         .empty-icon {
             font-size: 4rem;
             margin-bottom: 20px;
+            color: #ccc;
         }
         
         .empty-title {
@@ -348,18 +350,20 @@
     <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-spinner">
             <div class="spinner"></div>
-            <p style="margin: 0; color: #2c5aa0; font-weight: 600;">Processing Checkout...</p>
+            <p style="margin: 0; color: #2c5aa0; font-weight: 600;">
+                <i class="fas fa-spinner"></i> Processing Checkout...
+            </p>
         </div>
     </div>
 
     <div class="cart-container">
         <div class="cart-header">
             <h1 class="cart-title">
-                <span>🛒</span>
+                <i class="fas fa-shopping-cart"></i>
                 Shopping Cart
             </h1>
             <a href="/products" class="continue-shopping">
-                <span>←</span>
+                <i class="fas fa-arrow-left"></i>
                 Continue Shopping
             </a>
         </div>
@@ -368,11 +372,11 @@
             <!-- Cart Statistics -->
             <div class="cart-stats">
                 <div class="stat-item">
-                    <span>📦</span>
+                    <i class="fas fa-box"></i>
                     <span><%= cartItems.length %> <%= cartItems.length === 1 ? 'Item' : 'Items' %></span>
                 </div>
                 <div class="stat-item">
-                    <span>💰</span>
+                    <i class="fas fa-money-bill-wave"></i>
                     <span>Total: $<%= total.toFixed(2) %></span>
                 </div>
             </div>
@@ -387,32 +391,38 @@
                                      style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
                             <% } else { %>
                                 <div style="text-align: center; color: #666;">
-                                    <div style="font-size: 2rem;">📦</div>
+                                    <i class="fas fa-box fa-2x"></i>
                                 </div>
                             <% } %>
                         </div>
                         
                         <div class="cart-item-details">
                             <div class="cart-item-name"><%= item.product.name %></div>
-                            <div class="cart-item-price">$<%= item.product.price %></div>
+                            <div class="cart-item-price">
+                                <i class="fas fa-dollar-sign"></i><%= item.product.price %>
+                            </div>
                             
                             <div class="quantity-controls">
-                                <button class="quantity-btn minus-btn" data-item-id="<%= item.id %>">-</button>
+                                <button class="quantity-btn minus-btn" data-item-id="<%= item.id %>">
+                                    <i class="fas fa-minus"></i>
+                                </button>
                                 <input type="number" class="quantity-input" value="<%= item.quantity %>" 
                                        min="1" max="<%= item.product.stock %>" data-item-id="<%= item.id %>">
-                                <button class="quantity-btn plus-btn" data-item-id="<%= item.id %>">+</button>
+                                <button class="quantity-btn plus-btn" data-item-id="<%= item.id %>">
+                                    <i class="fas fa-plus"></i>
+                                </button>
                                 <span style="color: #666; font-size: 0.9rem; margin-left: 10px;">
-                                    Stock: <%= item.product.stock %>
+                                    <i class="fas fa-warehouse"></i> Stock: <%= item.product.stock %>
                                 </span>
                             </div>
                         </div>
                         
                         <div class="item-total">
-                            $<%= (item.product.price * item.quantity).toFixed(2) %>
+                            <i class="fas fa-dollar-sign"></i><%= (item.product.price * item.quantity).toFixed(2) %>
                         </div>
                         
                         <button class="remove-btn" data-item-id="<%= item.id %>">
-                            <span>🗑️</span>
+                            <i class="fas fa-trash"></i>
                             Remove
                         </button>
                     </div>
@@ -422,56 +432,62 @@
             <!-- Cart Summary -->
             <div class="cart-summary">
                 <h2 class="summary-title">
-                    <span>📋</span>
+                    <i class="fas fa-receipt"></i>
                     Order Summary
                 </h2>
                 
                 <div class="summary-row">
                     <span>Subtotal (<%= cartItems.length %> items):</span>
-                    <span>$<%= total.toFixed(2) %></span>
+                    <span><i class="fas fa-dollar-sign"></i><%= total.toFixed(2) %></span>
                 </div>
                 
                 <div class="summary-row">
                     <span>Shipping:</span>
-                    <span style="color: #28a745;">FREE</span>
+                    <span style="color: #28a745;">
+                        <i class="fas fa-truck"></i> FREE
+                    </span>
                 </div>
                 
                 <div class="summary-row">
                     <span>Tax:</span>
-                    <span>$<%= (total * 0.1).toFixed(2) %></span>
+                    <span><i class="fas fa-dollar-sign"></i><%= (total * 0.1).toFixed(2) %></span>
                 </div>
                 
                 <div class="summary-row">
                     <span>Total:</span>
-                    <span style="font-weight: bold;">$<%= (total * 1.1).toFixed(2) %></span>
+                    <span style="font-weight: bold;">
+                        <i class="fas fa-dollar-sign"></i><%= (total * 1.1).toFixed(2) %>
+                    </span>
                 </div>
                 
                 <div class="total-amount">
-                    Total: $<%= (total * 1.1).toFixed(2) %>
+                    Total: <i class="fas fa-dollar-sign"></i><%= (total * 1.1).toFixed(2) %>
                 </div>
                 
                 <button class="checkout-btn" onclick="checkout()">
-                    <span>🚀</span>
+                    <i class="fas fa-rocket"></i>
                     Proceed to Checkout
                 </button>
                 
                 <div style="text-align: center; margin-top: 15px;">
                     <p style="color: #666; font-size: 0.9rem;">
-                        🔒 Your payment information is secure and encrypted
+                        <i class="fas fa-lock"></i> Your payment information is secure and encrypted
                     </p>
                 </div>
             </div>
         <% } else { %>
             <!-- Empty Cart State -->
             <div class="empty-cart">
-                <div class="empty-icon">🛒</div>
+                <div class="empty-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
                 <h2 class="empty-title">Your Cart is Empty</h2>
                 <p class="empty-message">
                     Looks like you haven't added any products to your cart yet.<br>
                     Start shopping to discover amazing products!
                 </p>
                 <a href="/products" class="browse-btn">
-                    <span>🛍️</span>
+                    <i class="fas fa-shopping-bag"></i>
                     Browse Products
                 </a>
             </div>
@@ -568,35 +584,35 @@
             }
         }
 
-        async function checkout() {
-            // Show loading overlay
-            document.getElementById('loadingOverlay').style.display = 'flex';
-            
-            try {
-                const response = await fetch('/cart/checkout', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    showNotification('success', 'Order Placed!', 'Your order has been successfully placed');
-                    // Redirect to success page dengan order details
-                    setTimeout(() => {
-                        window.location.href = `/cart/checkout/success?order_id=${result.orderId}&total=${result.orderTotal}`;
-                    }, 1500);
-                } else {
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                    showNotification('error', 'Checkout Failed', result.message);
-                }
-            } catch (error) {
-                document.getElementById('loadingOverlay').style.display = 'none';
-                showNotification('error', 'Checkout Error', 'An error occurred during checkout. Please try again.');
+async function checkout() {
+    // Show loading overlay
+    document.getElementById('loadingOverlay').style.display = 'flex';
+    
+    try {
+        const response = await fetch('/cart/checkout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
             }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification('success', 'Order Placed!', 'Your order has been successfully placed');
+            // Redirect to success page dengan order details
+            setTimeout(() => {
+                window.location.href = `/cart/checkout/success?order_id=${result.orderId}&total=${result.orderTotal}`;
+            }, 1500);
+        } else {
+            document.getElementById('loadingOverlay').style.display = 'none';
+            showNotification('error', 'Checkout Failed', result.message);
         }
+    } catch (error) {
+        document.getElementById('loadingOverlay').style.display = 'none';
+        showNotification('error', 'Checkout Error', 'An error occurred during checkout. Please try again.');
+    }
+}
 
         // Update cart count in navbar
         async function updateCartCount() {
