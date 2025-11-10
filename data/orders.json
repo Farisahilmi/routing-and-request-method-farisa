@@ -51,5 +51,66 @@
     "shippingAddress": "123 Main St, Jakarta, Indonesia",
     "createdAt": "2025-11-07T16:29:44.567Z",
     "updatedAt": "2025-11-07T16:39:05.909Z"
+  },
+  {
+    "id": 4,
+    "userId": "2",
+    "products": [
+      {
+        "productId": 2,
+        "quantity": 1,
+        "price": 699.99
+      }
+    ],
+    "totalAmount": 699.99,
+    "status": "processing",
+    "shippingAddress": "123 Main St, Jakarta, Indonesia",
+    "createdAt": "2025-11-07T17:01:13.323Z"
+  },
+  {
+    "id": 5,
+    "userId": "2",
+    "products": [
+      {
+        "productId": 1,
+        "quantity": 1,
+        "price": 1299.99
+      }
+    ],
+    "totalAmount": 1299.99,
+    "status": "processing",
+    "shippingAddress": "123 Main St, Jakarta, Indonesia",
+    "createdAt": "2025-11-10T16:41:18.484Z"
+  },
+  {
+    "id": 6,
+    "userId": "2",
+    "products": [
+      {
+        "productId": 2,
+        "quantity": 1,
+        "price": 699.99
+      }
+    ],
+    "totalAmount": 699.99,
+    "status": "cancelled",
+    "shippingAddress": "123 Main St, Jakarta, Indonesia",
+    "createdAt": "2025-11-10T16:52:14.329Z",
+    "updatedAt": "2025-11-10T16:52:38.267Z"
+  },
+  {
+    "id": 7,
+    "userId": "2",
+    "products": [
+      {
+        "productId": 5,
+        "quantity": 1,
+        "price": 299.99
+      }
+    ],
+    "totalAmount": 299.99,
+    "status": "processing",
+    "shippingAddress": "123 Main St, Jakarta, Indonesia",
+    "createdAt": "2025-11-10T16:52:59.460Z"
   }
 ]

@@ -5,7 +5,7 @@
     "description": "High-performance gaming laptop dengan graphics terbaru",
     "price": 1299.99,
     "category": "Electronics",
-    "stock": 14,
+    "stock": 13,
     "image": "/images/laptop.jpg"
   },
   {
@@ -14,7 +14,7 @@
     "description": "Latest smartphone dengan kamera 108MP",
     "price": 699.99,
     "category": "Electronics",
-    "stock": 30,
+    "stock": 28,
     "image": "/images/phone.jpg"
   },
   {
@@ -41,7 +41,7 @@
     "description": "Smartwatch dengan health monitoring",
     "price": 299.99,
     "category": "Electronics",
-    "stock": 25,
+    "stock": 24,
     "image": "/images/watch.jpg"
   },
   {

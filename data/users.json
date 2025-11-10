@@ -2,7 +2,7 @@
   {
     "id": "1",
     "username": "Admin User",
-    "email": "admin@store.com", 
+    "email": "admin@store.com",
     "password": "admin123",
     "role": "admin",
     "createdAt": "2024-01-01T00:00:00.000Z"
@@ -11,12 +11,12 @@
     "id": "2",
     "username": "John Customer",
     "email": "john@email.com",
-    "password": "password123", 
+    "password": "password123",
     "role": "customer",
     "createdAt": "2024-01-02T00:00:00.000Z"
   },
   {
-    "id": "3", 
+    "id": "3",
     "username": "Sarah Buyer",
     "email": "sarah@email.com",
     "password": "password123",
