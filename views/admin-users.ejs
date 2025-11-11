@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        .admin-title {
+            color: #2c5aa0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            text-align: center;
+            border-left: 6px solid #2c5aa0;
+        }
+        
+        .stat-card.admin {
+            border-left-color: #28a745;
+        }
+        
+        .stat-card.customer {
+            border-left-color: #17a2b8;
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #2c5aa0;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c5aa0;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .users-table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            border: 1px solid #eaeaea;
+        }
+        
+        .table-header {
+            background: linear-gradient(135deg, #2c5aa0, #3a7bd5);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .table-title {
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: #f8f9fa;
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #e9ecef;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e9ecef;
+            color: #666;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .role-badge {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .role-admin {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .role-customer {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: nowrap;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+        
+        .btn-promote {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-promote:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+        
+        .btn-demote {
+            background: #ffc107;
+            color: black;
+        }
+        
+        .btn-demote:hover {
+            background: #e0a800;
+            transform: translateY(-1px);
+        }
+        
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+        
+        .btn-disabled {
+            background: #6c757d;
+            color: white;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .btn-disabled:hover {
+            transform: none;
+        }
+        
+        .user-email {
+            color: #2c5aa0;
+            font-weight: 500;
+        }
+        
+        .user-id {
+            font-size: 12px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+            color: #666;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .empty-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #2c5aa0;
+        }
+        
+        .empty-message {
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 15px;
+            }
+            
+            .admin-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .users-table-container {
+                overflow-x: auto;
+            }
+            
+            table {
+                min-width: 800px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .btn-sm {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('nav') %>
+    
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1 class="admin-title">
+                <i class="fas fa-users"></i> <%= t.users_management || 'Users Management' %>
+            </h1>
+            <div style="display: flex; gap: 10px;">
+                <a href="/admin" class="btn-admin-action" style="background: #6c757d;">
+                    <i class="fas fa-chart-bar"></i> Dashboard
+                </a>
+                <a href="/admin/products" class="btn-admin-action" style="background: #28a745;">
+                    <i class="fas fa-box"></i> Products
+                </a>
+                <a href="/admin/orders" class="btn-admin-action" style="background: #17a2b8;">
+                    <i class="fas fa-clipboard-list"></i> Orders
+                </a>
+            </div>
+        </div>
+
+        <!-- Users Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-number"><%= userStats.total %></div>
+                <div class="stat-label"><%= t.total_users || 'Total Users' %></div>
+            </div>
+            
+            <div class="stat-card admin">
+                <div class="stat-icon">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <div class="stat-number"><%= userStats.admins %></div>
+                <div class="stat-label"><%= t.admin_users || 'Admin Users' %></div>
+            </div>
+            
+            <div class="stat-card customer">
+                <div class="stat-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="stat-number"><%= userStats.customers %></div>
+                <div class="stat-label"><%= t.customer_users || 'Customer Users' %></div>
+            </div>
+        </div>
+
+        <% if (users && users.length > 0) { %>
+            <div class="users-table-container">
+                <div class="table-header">
+                    <h2 class="table-title">
+                        <i class="fas fa-list"></i> <%= t.users_management || 'Users List' %>
+                    </h2>
+                    <span style="opacity: 0.9; display: flex; align-items: center; gap: 5px;">
+                        <i class="fas fa-chart-bar"></i> <%= users.length %> <%= users.length === 1 ? 'user' : 'users' %>
+                    </span>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-id-card"></i> <%= t.user_id || 'User ID' %>
+                                </div>
+                            </th>
+                            <th>
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-user"></i> <%= t.username || 'Username' %>
+                                </div>
+                            </th>
+                            <th>
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-envelope"></i> <%= t.email || 'Email' %>
+                                </div>
+                            </th>
+                            <th>
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-user-tag"></i> <%= t.role || 'Role' %>
+                                </div>
+                            </th>
+                            <th>
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-calendar"></i> <%= t.created_at || 'Created At' %>
+                                </div>
+                            </th>
+                            <th>
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-cog"></i> <%= t.actions || 'Actions' %>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% users.forEach(function(user) { %>
+                            <tr>
+                                <td>
+                                    <div class="user-id">
+                                        <i class="fas fa-hashtag"></i> <%= user.id %>
+                                    </div>
+                                </td>
+                                <td style="font-weight: 500;">
+                                    <%= user.username %>
+                                    <% if (user.id === user.id) { %>
+                                        <div style="font-size: 11px; color: #28a745; margin-top: 2px;">
+                                            <i class="fas fa-star"></i> Current User
+                                        </div>
+                                    <% } %>
+                                </td>
+                                <td class="user-email"><%= user.email %></td>
+                                <td>
+                                    <span class="role-badge <%= user.role === 'admin' ? 'role-admin' : 'role-customer' %>">
+                                        <% if (user.role === 'admin') { %>
+                                            <i class="fas fa-crown"></i>
+                                        <% } else { %>
+                                            <i class="fas fa-user"></i>
+                                        <% } %>
+                                        <%= user.role %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <%= new Date(user.createdAt).toLocaleDateString() %>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <% if (user.role === 'customer') { %>
+                                            <button class="btn-sm btn-promote promote-user-btn" 
+                                                    data-user-id="<%= user.id %>"
+                                                    data-user-name="<%= user.username %>">
+                                                <i class="fas fa-crown"></i> <%= t.promote_to_admin || 'Promote to Admin' %>
+                                            </button>
+                                        <% } else { %>
+                                            <button class="btn-sm btn-demote demote-user-btn" 
+                                                    data-user-id="<%= user.id %>"
+                                                    data-user-name="<%= user.username %>"
+                                                    <%= userStats.admins <= 1 ? 'disabled' : '' %>>
+                                                <i class="fas fa-user"></i> <%= t.demote_to_customer || 'Demote to Customer' %>
+                                            </button>
+                                        <% } %>
+                                        
+                                        <button class="btn-sm btn-delete delete-user-btn" 
+                                                data-user-id="<%= user.id %>"
+                                                data-user-name="<%= user.username %>"
+                                                <%= user.id === user.id || (user.role === 'admin' && userStats.admins <= 1) ? 'disabled' : '' %>>
+                                            <i class="fas fa-trash"></i> <%= t.delete_user || 'Delete' %>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="empty-title"><%= t.no_users || 'No Users Found' %></h3>
+                <p class="empty-message"><%= t.no_users_message || 'There are no users in the system yet.' %></p>
+            </div>
+        <% } %>
+    </div>
+
+    <%- include('notification') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Promote user to admin
+            document.querySelectorAll('.promote-user-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const userId = this.getAttribute('data-user-id');
+                    const userName = this.getAttribute('data-user-name');
+                    promoteUser(userId, userName);
+                });
+            });
+            
+            // Demote user to customer
+            document.querySelectorAll('.demote-user-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    if (this.disabled) return;
+                    const userId = this.getAttribute('data-user-id');
+                    const userName = this.getAttribute('data-user-name');
+                    demoteUser(userId, userName);
+                });
+            });
+            
+            // Delete user
+            document.querySelectorAll('.delete-user-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    if (this.disabled) return;
+                    const userId = this.getAttribute('data-user-id');
+                    const userName = this.getAttribute('data-user-name');
+                    deleteUser(userId, userName);
+                });
+            });
+        });
+
+        async function promoteUser(userId, userName) {
+            if (!confirm(`Are you sure you want to promote "${userName}" to admin?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/admin/users/${userId}/role`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ role: 'admin' })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('success', 'Success!', `"${userName}" has been promoted to admin`);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showNotification('error', 'Failed', result.message);
+                }
+            } catch (error) {
+                showNotification('error', 'Error', 'Error promoting user: ' + error.message);
+            }
+        }
+
+        async function demoteUser(userId, userName) {
+            if (!confirm(`Are you sure you want to demote "${userName}" to customer?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/admin/users/${userId}/role`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ role: 'customer' })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('success', 'Success!', `"${userName}" has been demoted to customer`);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showNotification('error', 'Failed', result.message);
+                }
+            } catch (error) {
+                showNotification('error', 'Error', 'Error demoting user: ' + error.message);
+            }
+        }
+
+        async function deleteUser(userId, userName) {
+            if (!confirm(`Are you sure you want to delete user "${userName}"? This action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/admin/users/${userId}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('success', 'Success!', `User "${userName}" has been deleted`);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showNotification('error', 'Failed', result.message);
+                }
+            } catch (error) {
+                showNotification('error', 'Error', 'Error deleting user: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

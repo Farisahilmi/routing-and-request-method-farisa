@@ -41,15 +41,14 @@
     "userId": "2",
     "products": [
       {
-        "productId": 4,
+        "productId": 6,
         "quantity": 1,
-        "price": 89.99
+        "price": 79.99
       }
     ],
-    "totalAmount": 89.99,
-    "status": "completed",
+    "totalAmount": 79.99,
+    "status": "processing",
     "shippingAddress": "123 Main St, Jakarta, Indonesia",
-    "createdAt": "2025-11-11T05:51:15.986Z",
-    "updatedAt": "2025-11-11T05:51:28.589Z"
+    "createdAt": "2025-11-11T07:33:34.067Z"
   }
 ]

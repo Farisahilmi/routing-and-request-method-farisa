@@ -31,13 +31,104 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/register', function(req, res, next) {
-  res.render('register', { title: 'Register' });
+  res.render('register', { 
+    title: 'Register',
+    error: null,
+    username: '',
+    email: '',
+    user: null
+  });
+});
+
+router.post('/register', async function(req, res, next) {
+  const { username, email, password, confirmPassword } = req.body;
+
+  if (!username || !email || !password || !confirmPassword) {
+    return res.render('register', {
+      title: 'Register',
+      error: 'All fields are required!',
+      username: username,
+      email: email,
+      user: null
+    });
+  }
+
+  if (password !== confirmPassword) {
+    return res.render('register', {
+      title: 'Register',
+      error: 'Passwords do not match!',
+      username: username,
+      email: email,
+      user: null
+    });
+  }
+
+  let usersArray = readJSONFile('users.json');
+
+  const existingUser = usersArray.find(user => user.email === email);
+  if (existingUser) {
+    return res.render('register', {
+      title: 'Register',
+      error: 'Email already exists!',
+      username: username,
+      email: email,
+      user: null
+    });
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const id = usersArray.length > 0 
+      ? String(Math.max(...usersArray.map(u => parseInt(u.id || 0))) + 1)
+      : '1';
+
+    const newUser = {
+      id,
+      username,
+      email,
+      password: hashedPassword,
+      role: 'customer',
+      createdAt: new Date().toISOString()
+    };
+
+    usersArray.push(newUser);
+
+    if (writeJSONFile('users.json', usersArray)) {
+      res.redirect('/users/login?message=Registration successful');
+    } else {
+      res.render('register', {
+        title: 'Register',
+        error: 'Failed to create account. Please try again.',
+        username: username,
+        email: email,
+        user: null
+      });
+    }
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.render('register', {
+      title: 'Register',
+      error: 'Error creating account. Please try again.',
+      username: username,
+      email: email,
+      user: null
+    });
+  }
+});
+
+router.get('/login', function(req, res, next) {
+  res.render('login', { 
+    title: 'Login',
+    error: null,
+    message: req.query.message || null,
+    user: null
+  });
 });
 
 router.get('/html', function(req, res, next) {
   const usersArray = readJSONFile('users.json');
   
-  // Remove passwords from response for security
   const usersWithoutPasswords = usersArray.map(user => ({
     id: user.id,
     username: user.username,
@@ -48,7 +139,8 @@ router.get('/html', function(req, res, next) {
   
   res.render('users', { 
     title: 'Users in HTML', 
-    users: usersWithoutPasswords 
+    users: usersWithoutPasswords,
+    user: null
   });
 });
 
@@ -64,7 +156,6 @@ router.get('/:id', function(req, res, next) {
     });
   }
   
-  // Don't return password in API response
   const { password, ...userWithoutPassword } = user;
   res.json(userWithoutPassword);
 });
@@ -82,11 +173,11 @@ router.get('/update/:id', function(req, res, next) {
   
   res.render('update', { 
     title: 'Update User', 
-    user: user 
+    user: user,
+    error: null
   });
 });
 
-// UPDATE user using PUT method
 router.put('/:id', async function(req, res, next) {
   const { id } = req.params;
   const { username, email, password } = req.body;
@@ -102,7 +193,6 @@ router.put('/:id', async function(req, res, next) {
   }
 
   try {
-    // Hash new password if provided
     let hashedPassword = usersArray[userIndex].password;
     if (password && password !== '') {
       hashedPassword = await bcrypt.hash(password, 10);
@@ -136,7 +226,6 @@ router.put('/:id', async function(req, res, next) {
   }
 });
 
-// CREATE user using POST method
 router.post('/', async function(req, res, next) {
   const { username, email, password, role = 'customer' } = req.body;
 
@@ -149,7 +238,6 @@ router.post('/', async function(req, res, next) {
 
   let usersArray = readJSONFile('users.json');
 
-  // Check if email already exists
   const existingUser = usersArray.find(user => user.email === email);
   if (existingUser) {
     return res.status(400).json({
@@ -159,10 +247,8 @@ router.post('/', async function(req, res, next) {
   }
 
   try {
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Generate new id as string for consistency
     const id = usersArray.length > 0 
       ? String(Math.max(...usersArray.map(u => parseInt(u.id || 0))) + 1)
       : '1';
@@ -198,7 +284,6 @@ router.post('/', async function(req, res, next) {
   }
 });
 
-// DELETE user using DELETE method
 router.delete('/:id', function(req, res, next) {
   const { id } = req.params;
   const usersArray = readJSONFile('users.json');
@@ -211,7 +296,6 @@ router.delete('/:id', function(req, res, next) {
     });
   }
   
-  // Prevent deleting the last admin
   const userToDelete = usersArray[userIndex];
   if (userToDelete.role === 'admin') {
     const adminCount = usersArray.filter(u => u.role === 'admin').length;

@@ -3,7 +3,7 @@
     "id": "1",
     "username": "Admin User",
     "email": "admin@store.com",
-    "password": "admin123",
+    "password": "$2b$12$zi7kLlUNIvyICTHlgb7XLex72wM8tvnX4DZxUTpR/Cl112FPTZ2Uq",
     "role": "admin",
     "createdAt": "2024-01-01T00:00:00.000Z"
   },
@@ -11,7 +11,7 @@
     "id": "2",
     "username": "John Customer",
     "email": "john@email.com",
-    "password": "password123",
+    "password": "$2b$12$Qih./mL7y0Hc08Qb94pFFOrrBYdNAVMS/z7OnNwtMJ/c27bUpqfOq",
     "role": "customer",
     "createdAt": "2024-01-02T00:00:00.000Z"
   },
@@ -19,8 +19,16 @@
     "id": "3",
     "username": "Sarah Buyer",
     "email": "sarah@email.com",
-    "password": "password123",
+    "password": "$2b$12$MJYWhvnPyMTGNU8gD6DOwe6v7pV0wSxq6uy8fwavTvxqC3EamRmmW",
     "role": "customer",
     "createdAt": "2024-01-03T00:00:00.000Z"
+  },
+  {
+    "id": "4",
+    "username": "iyan",
+    "email": "iyan@gmail.com",
+    "password": "$2b$10$OoXmXfdKOP/SyP0NDrQAOOZwuEZ6B/oKIakL8aAMgZPSl/gkfPS7.",
+    "role": "customer",
+    "createdAt": "2025-11-11T07:32:21.073Z"
   }
 ]

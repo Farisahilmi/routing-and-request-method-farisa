@@ -14,7 +14,7 @@
     "description": "Latest smartphone dengan kamera 108MP",
     "price": 699.99,
     "category": "Electronics",
-    "stock": 28,
+    "stock": 27,
     "image": "/images/phone.jpg"
   },
   {
@@ -41,7 +41,7 @@
     "description": "Smartwatch dengan health monitoring",
     "price": 299.99,
     "category": "Electronics",
-    "stock": 24,
+    "stock": 23,
     "image": "/images/watch.jpg"
   },
   {
@@ -50,7 +50,7 @@
     "description": "Mouse gaming dengan RGB lighting",
     "price": 79.99,
     "category": "Electronics",
-    "stock": 40,
+    "stock": 39,
     "image": "/images/mouse.jpg"
   }
 ]

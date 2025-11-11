@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var methodOverride = require('method-override');
+var session = require('express-session'); // ✅ ADD SESSION
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -12,6 +13,7 @@ var ordersRouter = require('./routes/orders');
 var cartRouter = require('./routes/cart');
 var adminRouter = require('./routes/admin');
 var checkoutRouter = require('./routes/checkout');
+var authRouter = require('./routes/auth'); // ✅ ADD AUTH ROUTES
 
 // Simple translations
 const translations = {
@@ -100,7 +102,18 @@ app.use(cookieParser());
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 🌐 GLOBAL MIDDLEWARE - Currency & Language
+// ✅ SESSION MIDDLEWARE (TARUH SEBELUM ROUTES)
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'simple-store-secret-key-change-in-production',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { 
+    secure: false, // Set true jika menggunakan HTTPS
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
+
+// 🌐 GLOBAL MIDDLEWARE - Currency, Language & User Session
 app.use(function(req, res, next) {
   // Currency handling
   if (req.query.currency) {
@@ -113,6 +126,9 @@ app.use(function(req, res, next) {
   const lang = req.query.lang || 'en';
   res.locals.language = lang;
   res.locals.t = translations[lang] || translations['en'];
+  
+  // User session handling - make user available in all views
+  res.locals.user = req.session.user || null;
   
   // Security headers
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -134,35 +150,57 @@ app.use('/products', productsRouter);
 app.use('/orders', ordersRouter);
 app.use('/cart', cartRouter);
 app.use('/admin', adminRouter);
-app.use('/checkout', checkoutRouter); // ✅ PERBAIKAN: app.use yang benar
+app.use('/checkout', checkoutRouter);
+app.use('/', authRouter); // ✅ ADD AUTH ROUTES (login, register, logout)
 
 // ... Static pages routes
 app.get('/about', function(req, res) {
-  res.render('about', { title: 'About Us - Simple Store' });
+  res.render('about', { 
+    title: 'About Us - Simple Store',
+    user: req.session.user // ✅ Add user to all pages
+  });
 });
 
 app.get('/contact', function(req, res) {
-  res.render('contact', { title: 'Contact Us - Simple Store' });
+  res.render('contact', { 
+    title: 'Contact Us - Simple Store',
+    user: req.session.user // ✅ Add user to all pages
+  });
 });
 
 app.get('/shipping', function(req, res) {
-  res.render('shipping', { title: 'Shipping Info - Simple Store' });
+  res.render('shipping', { 
+    title: 'Shipping Info - Simple Store',
+    user: req.session.user // ✅ Add user to all pages
+  });
 });
 
 app.get('/returns', function(req, res) {
-  res.render('returns', { title: 'Returns & Refunds - Simple Store' });
+  res.render('returns', { 
+    title: 'Returns & Refunds - Simple Store',
+    user: req.session.user // ✅ Add user to all pages
+  });
 });
 
 app.get('/privacy', function(req, res) {
-  res.render('privacy', { title: 'Privacy Policy - Simple Store' });
+  res.render('privacy', { 
+    title: 'Privacy Policy - Simple Store',
+    user: req.session.user // ✅ Add user to all pages
+  });
 });
 
 app.get('/terms', function(req, res) {
-  res.render('terms', { title: 'Terms of Service - Simple Store' });
+  res.render('terms', { 
+    title: 'Terms of Service - Simple Store',
+    user: req.session.user // ✅ Add user to all pages
+  });
 });
 
 app.get('/sitemap', function(req, res) {
-  res.render('sitemap', { title: 'Sitemap - Simple Store' });
+  res.render('sitemap', { 
+    title: 'Sitemap - Simple Store',
+    user: req.session.user // ✅ Add user to all pages
+  });
 });
 
 app.post('/contact', function(req, res) {
@@ -196,7 +234,8 @@ app.use(function(req, res, next) {
   res.status(404).render('error', {
     title: 'Page Not Found',
     message: 'Sorry, the page you are looking for does not exist.',
-    error: { status: 404 }
+    error: { status: 404 },
+    user: req.session.user // ✅ Add user to error pages
   });
 });
 
@@ -217,7 +256,8 @@ app.use(function(err, req, res, next) {
     title: 'Error - Simple Store',
     message: isDevelopment ? err.message : 'Something went wrong! Please try again later.',
     error: isDevelopment ? err : {},
-    isDevelopment: isDevelopment
+    isDevelopment: isDevelopment,
+    user: req.session.user // ✅ Add user to error pages
   });
 });
 
@@ -233,6 +273,8 @@ if (require.main === module) {
     console.log(`🛒 Cart system: ENABLED (File-based)`);
     console.log(`📦 Order management: ENABLED`);
     console.log(`💳 Checkout system: ENABLED`);
+    console.log(`🔐 Authentication: ENABLED`); // ✅ NEW
+    console.log(`👤 Session management: ENABLED`); // ✅ NEW
   });
 }
 
