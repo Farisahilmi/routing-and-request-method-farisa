@@ -49,8 +49,8 @@ router.post('/register', async function(req, res, next) {
     return res.render('register', {
       title: 'Register',
       error: 'All fields are required!',
-      username: username,
-      email: email,
+      username: username || '',
+      email: email || '',
       user: null
     });
   }
@@ -59,8 +59,8 @@ router.post('/register', async function(req, res, next) {
     return res.render('register', {
       title: 'Register',
       error: 'Passwords do not match!',
-      username: username,
-      email: email,
+      username: username || '',
+      email: email || '',
       user: null
     });
   }
@@ -72,8 +72,8 @@ router.post('/register', async function(req, res, next) {
     return res.render('register', {
       title: 'Register',
       error: 'Email already exists!',
-      username: username,
-      email: email,
+      username: username || '',
+      email: email || '',
       user: null
     });
   }
@@ -102,8 +102,8 @@ router.post('/register', async function(req, res, next) {
       res.render('register', {
         title: 'Register',
         error: 'Failed to create account. Please try again.',
-        username: username,
-        email: email,
+        username: username || '',
+        email: email || '',
         user: null
       });
     }
@@ -112,8 +112,8 @@ router.post('/register', async function(req, res, next) {
     res.render('register', {
       title: 'Register',
       error: 'Error creating account. Please try again.',
-      username: username,
-      email: email,
+      username: username || '',
+      email: email || '',
       user: null
     });
   }
@@ -163,7 +163,6 @@ router.post('/login', async function(req, res, next) {
       });
     }
 
-    // Set session
     req.session.user = {
       id: user.id,
       username: user.username,

@@ -153,6 +153,19 @@ app.use('/admin', adminRouter);
 app.use('/checkout', checkoutRouter);
 app.use('/', authRouter);
 
+// Redirect routes untuk URL pendek
+app.get('/register', function(req, res) {
+  res.redirect('/users/register');
+});
+
+app.get('/login', function(req, res) {
+  res.redirect('/users/login');
+});
+
+app.get('/logout', function(req, res) {
+  res.redirect('/users/logout');
+});
+
 // Static pages routes
 app.get('/about', function(req, res) {
   res.render('about', { 

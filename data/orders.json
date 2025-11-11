@@ -202,9 +202,10 @@
       }
     ],
     "totalAmount": 89.99,
-    "status": "pending",
+    "status": "cancelled",
     "shippingAddress": "jl,cisaat",
     "paymentMethod": "cash",
-    "createdAt": "2025-11-11T08:17:34.912Z"
+    "createdAt": "2025-11-11T08:17:34.912Z",
+    "updatedAt": "2025-11-11T08:32:32.780Z"
   }
 ]
