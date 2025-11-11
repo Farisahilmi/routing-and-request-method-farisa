@@ -110,6 +110,7 @@
             color: #495057;
             border-bottom: 2px solid #e9ecef;
             font-size: 14px;
+            white-space: nowrap;
         }
         
         td {
@@ -117,6 +118,7 @@
             border-bottom: 1px solid #e9ecef;
             color: #666;
             font-size: 14px;
+            vertical-align: middle;
         }
         
         tr:hover {
@@ -139,10 +141,11 @@
         .action-buttons {
             display: flex;
             gap: 8px;
+            flex-wrap: nowrap;
         }
         
         .btn-sm {
-            padding: 6px 12px;
+            padding: 8px 12px;
             border: none;
             border-radius: 6px;
             text-decoration: none;
@@ -153,6 +156,9 @@
             display: inline-flex;
             align-items: center;
             gap: 5px;
+            white-space: nowrap;
+            min-width: 70px;
+            justify-content: center;
         }
         
         .btn-edit {
@@ -268,12 +274,15 @@
             background: white;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex-wrap: wrap;
+            gap: 15px;
         }
         
-        .currency-switcher {
+        .currency-switcher, .language-switcher {
             display: flex;
             gap: 10px;
             align-items: center;
+            flex-wrap: wrap;
         }
         
         .currency-btn {
@@ -286,6 +295,7 @@
             font-weight: 500;
             text-decoration: none;
             color: #333;
+            display: inline-block;
         }
         
         .currency-btn.active {
@@ -294,7 +304,7 @@
             border-color: #2c5aa0;
         }
         
-        .currency-btn:hover {
+        .currency-btn:hover:not(.active) {
             border-color: #2c5aa0;
             text-decoration: none;
             color: #333;
@@ -385,7 +395,7 @@
                 align-items: stretch;
             }
             
-            .currency-switcher {
+            .currency-switcher, .language-switcher {
                 justify-content: center;
                 flex-wrap: wrap;
             }
@@ -417,7 +427,7 @@
                 padding: 12px 15px;
             }
             
-            .currency-switcher {
+            .currency-switcher, .language-switcher {
                 flex-direction: column;
                 gap: 8px;
             }
@@ -483,28 +493,43 @@
         }
 
         .status-badge {
-            padding: 4px 8px;
+            padding: 6px 12px;
             border-radius: 12px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 500;
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            text-transform: uppercase;
+            white-space: nowrap;
         }
         
         .status-in-stock {
             background: #d4edda;
             color: #155724;
+            border: 1px solid #c3e6cb;
         }
         
         .status-low-stock {
             background: #fff3cd;
             color: #856404;
+            border: 1px solid #ffeaa7;
         }
         
         .status-out-of-stock {
             background: #f8d7da;
             color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Table Header Fix */
+        .table-header-row {
+            display: table-row;
+        }
+
+        .table-header-cell {
+            display: table-cell;
+            vertical-align: middle;
         }
     </style>
 </head>
@@ -526,17 +551,32 @@
             </div>
         </div>
 
-        <!-- Currency Switcher -->
+        <!-- Currency & Language Switcher -->
         <div class="settings-bar">
             <div class="currency-switcher">
                 <span style="font-weight: 600; display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-money-bill-wave"></i> Currency:
                 </span>
-                <button class="currency-btn <%= currency === 'IDR' ? 'active' : '' %>" onclick="switchCurrency('IDR')">
+                <a href="/admin/products?currency=IDR&lang=<%= language %>" 
+                   class="currency-btn <%= currency === 'IDR' ? 'active' : '' %>">
                     IDR (Rp)
                 </a>
-                <a href="/admin/products?currency=USD" class="currency-btn <%= currency === 'USD' ? 'active' : '' %>">
+                <a href="/admin/products?currency=USD&lang=<%= language %>" 
+                   class="currency-btn <%= currency === 'USD' ? 'active' : '' %>">
                     USD ($)
+                </a>
+            </div>
+            <div class="language-switcher">
+                <span style="font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-language"></i> Language:
+                </span>
+                <a href="/admin/products?currency=<%= currency %>&lang=en" 
+                   class="currency-btn <%= language === 'en' ? 'active' : '' %>">
+                    English
+                </a>
+                <a href="/admin/products?currency=<%= currency %>&lang=id" 
+                   class="currency-btn <%= language === 'id' ? 'active' : '' %>">
+                    Bahasa
                 </a>
             </div>
         </div>
@@ -623,27 +663,41 @@
                 
                 <table>
                     <thead>
-                        <tr>
-                            <th style="display: flex; align-items: center; gap: 5px;">
-                                <i class="fas fa-image"></i> Image
+                        <tr class="table-header-row">
+                            <th class="table-header-cell">
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-image"></i> Image
+                                </div>
                             </th>
-                            <th style="display: flex; align-items: center; gap: 5px;">
-                                <i class="fas fa-tag"></i> Product Name
+                            <th class="table-header-cell">
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-tag"></i> Product Name
+                                </div>
                             </th>
-                            <th style="display: flex; align-items: center; gap: 5px;">
-                                <i class="fas fa-folder"></i> Category
+                            <th class="table-header-cell">
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-folder"></i> Category
+                                </div>
                             </th>
-                            <th style="display: flex; align-items: center; gap: 5px;">
-                                <i class="fas fa-dollar-sign"></i> Price
+                            <th class="table-header-cell">
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-dollar-sign"></i> Price
+                                </div>
                             </th>
-                            <th style="display: flex; align-items: center; gap: 5px;">
-                                <i class="fas fa-boxes"></i> Stock
+                            <th class="table-header-cell">
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-boxes"></i> Stock
+                                </div>
                             </th>
-                            <th style="display: flex; align-items: center; gap: 5px;">
-                                <i class="fas fa-info-circle"></i> Status
+                            <th class="table-header-cell">
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-info-circle"></i> Status
+                                </div>
                             </th>
-                            <th style="display: flex; align-items: center; gap: 5px;">
-                                <i class="fas fa-cog"></i> Actions
+                            <th class="table-header-cell">
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-cog"></i> Actions
+                                </div>
                             </th>
                         </tr>
                     </thead>
@@ -677,7 +731,7 @@
                                         </span>
                                     <% } else { %>
                                         <span style="display: flex; align-items: center; gap: 5px;">
-                                            <i class="fas fa-dollar-sign"></i> <%= product.price %>
+                                            <i class="fas fa-dollar-sign"></i> $<%= product.price.toFixed(2) %>
                                         </span>
                                     <% } %>
                                 </td>
@@ -733,6 +787,8 @@
     <script>
         // Event Listeners untuk tombol
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Admin Products Page Loaded');
+            
             // Show Add Product Form
             document.getElementById('showAddProductBtn')?.addEventListener('click', showAddProductForm);
             document.getElementById('showAddProductEmptyBtn')?.addEventListener('click', showAddProductForm);
@@ -759,6 +815,29 @@
                 button.addEventListener('click', function() {
                     const productId = this.getAttribute('data-product-id');
                     deleteProduct(productId);
+                });
+            });
+
+            // Add focus effects to form inputs
+            const formInputs = document.querySelectorAll('#productForm input, #productForm textarea');
+            
+            formInputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.style.borderColor = '#2c5aa0';
+                    this.style.boxShadow = '0 0 0 3px rgba(44, 90, 160, 0.1)';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.style.borderColor = '#e9ecef';
+                    this.style.boxShadow = 'none';
+                });
+            });
+
+            // Fix untuk currency buttons yang stuck
+            document.querySelectorAll('.currency-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    console.log('Currency button clicked:', this.href);
+                    // Biarkan link bekerja normal
                 });
             });
         });
@@ -788,6 +867,17 @@
                 image: document.getElementById('productImage').value || '/images/default.jpg'
             };
             
+            // Validasi input
+            if (!productData.name || !productData.description || !productData.price || !productData.category || isNaN(productData.stock)) {
+                showNotification('error', 'Validation Error', 'Please fill all required fields correctly');
+                return;
+            }
+            
+            if (productData.price < 0 || productData.stock < 0) {
+                showNotification('error', 'Validation Error', 'Price and stock cannot be negative');
+                return;
+            }
+            
             try {
                 const response = await fetch('/admin/products', {
                     method: 'POST',
@@ -808,6 +898,7 @@
                     showNotification('error', 'Failed', 'Failed to add product: ' + result.message);
                 }
             } catch (error) {
+                console.error('Error adding product:', error);
                 showNotification('error', 'Error', 'Error adding product: ' + error.message);
             }
         }
@@ -824,7 +915,10 @@
             
             try {
                 const response = await fetch('/admin/products/' + productId, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
                 });
                 
                 const result = await response.json();
@@ -838,6 +932,7 @@
                     showNotification('error', 'Failed', 'Failed to delete product: ' + result.message);
                 }
             } catch (error) {
+                console.error('Error deleting product:', error);
                 showNotification('error', 'Error', 'Error deleting product: ' + error.message);
             }
         }
@@ -846,22 +941,12 @@
             showNotification('info', 'Coming Soon', 'Export feature will be available soon!');
         }
 
-        // Add focus effects to form inputs
-        document.addEventListener('DOMContentLoaded', function() {
-            const formInputs = document.querySelectorAll('#productForm input, #productForm textarea');
-            
-            formInputs.forEach(input => {
-                input.addEventListener('focus', function() {
-                    this.style.borderColor = '#2c5aa0';
-                    this.style.boxShadow = '0 0 0 3px rgba(44, 90, 160, 0.1)';
-                });
-                
-                input.addEventListener('blur', function() {
-                    this.style.borderColor = '#e9ecef';
-                    this.style.boxShadow = 'none';
-                });
-            });
-        });
+        // Currency switcher function
+        function switchCurrency(currency) {
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('currency', currency);
+            window.location.href = currentUrl.toString();
+        }
     </script>
 </body>
 </html>
