@@ -1,167 +1,256 @@
 var express = require('express');
 var router = express.Router();
-const fs = require('fs');
-const path = require('path');
+const { readJSONFile, writeJSONFile } = require('../helpers/database');
 
-function readJSONFile(filename) {
-  const filePath = path.join(__dirname, '../data', filename);
-  if (!fs.existsSync(filePath)) return [];
-  try {
-    const data = fs.readFileSync(filePath, 'utf8').trim();
-    return data ? JSON.parse(data) : [];
-  } catch (error) {
-    console.error(`Error reading ${filename}:`, error);
-    return [];
-  }
-}
-
-function writeJSONFile(filename, data) {
-  const filePath = path.join(__dirname, '../data', filename);
-  try {
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-    return true;
-  } catch (error) {
-    console.error(`Error writing ${filename}:`, error);
-    return false;
-  }
-}
-
-// GET all orders (HTML)
+/* GET orders listing. */
 router.get('/', function(req, res, next) {
-  const orders = readJSONFile('orders.json');
-  const products = readJSONFile('products.json');
-  const users = readJSONFile('users.json');
+  if (!req.session.user) {
+    return res.redirect('/users/login?message=Please login to view your orders');
+  }
+
+  const ordersArray = readJSONFile('orders.json');
+  const usersArray = readJSONFile('users.json');
   
-  // Enrich order data
-  const enrichedOrders = orders.map(order => {
-    const user = users.find(u => u.id === order.userId.toString());
-    const orderProducts = order.products.map(op => {
-      const product = products.find(p => p.id === op.productId);
-      return { ...op, productName: product ? product.name : 'Unknown Product' };
-    });
+  const userOrders = ordersArray.filter(order => order.userId == req.session.user.id);
+  
+  const ordersWithUserData = userOrders.map(order => {
+    const user = usersArray.find(u => u.id == order.userId);
+    const orderItems = order.items || order.products || [];
     
     return {
       ...order,
-      userName: user ? user.username : 'Unknown User',
-      products: orderProducts
+      items: orderItems,
+      user: user ? {
+        id: user.id,
+        username: user.username,
+        email: user.email
+      } : {
+        username: req.session.user.username,
+        email: req.session.user.email
+      }
     };
   });
-  
-  res.render('orders', { 
-    title: 'All Orders', 
-    orders: enrichedOrders 
+
+  res.render('orders', {
+    title: 'My Orders',
+    orders: ordersWithUserData,
+    user: req.session.user
   });
 });
 
-// GET single order (HTML)
+// GET order details
 router.get('/:id', function(req, res, next) {
+  if (!req.session.user) {
+    return res.redirect('/users/login?message=Please login to view order details');
+  }
+
   const { id } = req.params;
-  const orders = readJSONFile('orders.json');
-  const products = readJSONFile('products.json');
-  const users = readJSONFile('users.json');
+  const ordersArray = readJSONFile('orders.json');
+  const usersArray = readJSONFile('users.json');
   
-  const order = orders.find(o => o.id === parseInt(id));
+  const order = ordersArray.find(order => order.id == id);
   
   if (!order) {
-    return res.status(404).render('error', { 
-      message: 'Order not found' 
+    return res.status(404).render('error', {
+      message: 'Order not found',
+      user: req.session.user
     });
   }
+
+  if (order.userId != req.session.user.id && req.session.user.role !== 'admin') {
+    return res.status(403).render('error', {
+      message: 'Access denied. You can only view your own orders.',
+      user: req.session.user
+    });
+  }
+
+  const user = usersArray.find(u => u.id == order.userId);
+  const orderItems = order.items || order.products || [];
   
-  const user = users.find(u => u.id === order.userId.toString());
-  const orderProducts = order.products.map(op => {
-    const product = products.find(p => p.id === op.productId);
-    return { 
-      ...op, 
-      productName: product ? product.name : 'Unknown Product',
-      productImage: product ? product.image : '/images/default.jpg'
-    };
-  });
-  
-  const enrichedOrder = {
-    ...order,
-    userName: user ? user.username : 'Unknown User',
-    userEmail: user ? user.email : 'Unknown Email',
-    products: orderProducts
-  };
-  
-  res.render('order-detail', { 
-    title: `Order #${order.id}`, 
-    order: enrichedOrder 
+  res.render('order-details', {
+    title: 'Order Details',
+    order: {
+      ...order,
+      items: orderItems,
+      user: user ? {
+        id: user.id,
+        username: user.username,
+        email: user.email
+      } : {
+        username: req.session.user.username,
+        email: req.session.user.email
+      }
+    },
+    user: req.session.user
   });
 });
 
-// ✅ NEW: DELETE Order
-router.delete('/:id', function(req, res, next) {
-  const { id } = req.params;
-  console.log('🗑️ Deleting order:', id);
-  
-  const orders = readJSONFile('orders.json');
-  const orderIndex = orders.findIndex(o => o.id === parseInt(id));
-  
-  if (orderIndex === -1) {
-    return res.status(404).json({ 
-      success: false, 
-      message: 'Order not found' 
+// GET orders in JSON format
+router.get('/api/json', function(req, res, next) {
+  if (!req.session.user) {
+    return res.status(401).json({
+      status: "error",
+      message: "Please login to view orders"
     });
   }
+
+  const ordersArray = readJSONFile('orders.json');
+  const userOrders = ordersArray.filter(order => order.userId == req.session.user.id);
   
-  // Remove order from array
-  const deletedOrder = orders.splice(orderIndex, 1)[0];
+  res.json({
+    status: "success",
+    message: "Orders found",
+    orders: userOrders
+  });
+});
+
+// CREATE order using POST method
+router.post('/', function(req, res, next) {
+  if (!req.session.user) {
+    return res.status(401).json({
+      status: "error",
+      message: "Please login to create order"
+    });
+  }
+
+  const { items, totalAmount, shippingAddress, paymentMethod } = req.body;
+  const userId = req.session.user.id;
+
+  if (!items || items.length === 0) {
+    return res.status(400).json({
+      status: "error",
+      message: "Order items are required"
+    });
+  }
+
+  const ordersArray = readJSONFile('orders.json');
   
-  if (writeJSONFile('orders.json', orders)) {
-    console.log('✅ Order deleted successfully:', id);
-    res.json({ 
-      success: true, 
-      message: 'Order deleted successfully',
-      deletedOrder: deletedOrder
+  const orderId = ordersArray.length > 0 
+    ? Math.max(...ordersArray.map(o => parseInt(o.id))) + 1
+    : 1;
+
+  const newOrder = {
+    id: orderId,
+    userId: userId,
+    items: items,
+    totalAmount: totalAmount,
+    shippingAddress: shippingAddress,
+    paymentMethod: paymentMethod || 'cash',
+    status: 'pending',
+    createdAt: new Date().toISOString()
+  };
+
+  ordersArray.push(newOrder);
+
+  if (writeJSONFile('orders.json', ordersArray)) {
+    res.json({
+      status: "success",
+      message: "Order created successfully",
+      orderId: orderId
     });
   } else {
-    console.log('❌ Failed to delete order:', id);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Failed to delete order' 
+    res.status(500).json({
+      status: "error",
+      message: "Failed to create order"
     });
   }
 });
 
-// ✅ NEW: UPDATE Order Status
-router.put('/:id/status', function(req, res, next) {
+// UPDATE order status using PUT method
+router.put('/:id', function(req, res, next) {
   const { id } = req.params;
   const { status } = req.body;
   
-  const validStatuses = ['pending', 'processing', 'completed', 'cancelled'];
+  if (!req.session.user) {
+    return res.status(401).json({
+      success: false,
+      message: "Please login to update order"
+    });
+  }
+
+  const ordersArray = readJSONFile('orders.json');
+  const orderIndex = ordersArray.findIndex(order => order.id == id);
+  
+  if (orderIndex === -1) {
+    return res.status(404).json({
+      success: false,
+      message: "Order not found"
+    });
+  }
+
+  if (ordersArray[orderIndex].userId != req.session.user.id && req.session.user.role !== 'admin') {
+    return res.status(403).json({
+      success: false,
+      message: "Access denied. You can only update your own orders."
+    });
+  }
+
+  const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
   if (!validStatuses.includes(status)) {
-    return res.status(400).json({ 
-      success: false, 
-      message: 'Invalid status' 
+    return res.status(400).json({
+      success: false,
+      message: "Invalid status. Must be one of: " + validStatuses.join(', ')
     });
   }
-  
-  const orders = readJSONFile('orders.json');
-  const order = orders.find(o => o.id === parseInt(id));
-  
-  if (!order) {
-    return res.status(404).json({ 
-      success: false, 
-      message: 'Order not found' 
-    });
-  }
-  
-  // Update status
-  order.status = status;
-  order.updatedAt = new Date().toISOString();
-  
-  if (writeJSONFile('orders.json', orders)) {
-    res.json({ 
-      success: true, 
-      message: `Order status updated to ${status}`,
-      order: order
+
+  ordersArray[orderIndex] = {
+    ...ordersArray[orderIndex],
+    status: status,
+    updatedAt: new Date().toISOString()
+  };
+
+  if (writeJSONFile('orders.json', ordersArray)) {
+    res.json({
+      success: true,
+      message: "Order status updated successfully"
     });
   } else {
-    res.status(500).json({ 
-      success: false, 
-      message: 'Failed to update order status' 
+    res.status(500).json({
+      success: false,
+      message: "Failed to update order status"
+    });
+  }
+});
+
+// DELETE order using DELETE method
+router.delete('/:id', function(req, res, next) {
+  const { id } = req.params;
+  
+  if (!req.session.user) {
+    return res.status(401).json({
+      success: false,
+      message: "Please login to delete order"
+    });
+  }
+
+  const ordersArray = readJSONFile('orders.json');
+  const orderIndex = ordersArray.findIndex(order => order.id == id);
+  
+  if (orderIndex === -1) {
+    return res.status(404).json({
+      success: false,
+      message: "Order not found"
+    });
+  }
+
+  if (ordersArray[orderIndex].userId != req.session.user.id && req.session.user.role !== 'admin') {
+    return res.status(403).json({
+      success: false,
+      message: "Access denied. You can only delete your own orders."
+    });
+  }
+  
+  ordersArray.splice(orderIndex, 1);
+  
+  if (writeJSONFile('orders.json', ordersArray)) {
+    res.json({
+      success: true,
+      message: "Order deleted successfully"
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete order"
     });
   }
 });

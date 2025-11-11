@@ -35,7 +35,7 @@ function writeJSONFile(filename, data) {
   }
 }
 
-// GET Cart Count (for navbar) - HARUS DI ATAS
+// GET Cart Count (for navbar)
 router.get('/count', function(req, res, next) {
   const cartItems = readJSONFile('cart.json');
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -67,7 +67,7 @@ router.get('/', function(req, res, next) {
           stock: 0
         }
       };
-    }).filter(item => item.product); // Remove items with invalid products
+    }).filter(item => item.product);
 
     // Calculate total
     const total = enrichedCart.reduce((sum, item) => {
@@ -79,14 +79,16 @@ router.get('/', function(req, res, next) {
     res.render('cart', { 
       title: 'Shopping Cart',
       cartItems: enrichedCart,
-      total: total
+      total: total,
+      user: req.session.user || null
     });
   } catch (error) {
     console.error('❌ Error loading cart page:', error);
     res.render('cart', { 
       title: 'Shopping Cart',
       cartItems: [],
-      total: 0
+      total: 0,
+      user: req.session.user || null
     });
   }
 });
@@ -132,7 +134,6 @@ router.post('/add', function(req, res, next) {
     }
 
     if (writeJSONFile('cart.json', cartItems)) {
-      // Update cart count for response
       const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
       res.json({ 
         success: true, 
@@ -164,7 +165,6 @@ router.put('/update/:id', function(req, res, next) {
     }
 
     if (quantity <= 0) {
-      // Remove item if quantity is 0 or less
       const updatedCart = cartItems.filter(item => item.id !== parseInt(id));
       writeJSONFile('cart.json', updatedCart);
       return res.json({ 
@@ -219,20 +219,29 @@ router.delete('/remove/:id', function(req, res, next) {
 // POST Checkout - CREATE REAL ORDER
 router.post('/checkout', function(req, res, next) {
   try {
+    // ✅ CEK USER LOGIN
+    if (!req.session.user) {
+      return res.json({ success: false, message: 'Please login to checkout' });
+    }
+
+    const { shippingAddress, paymentMethod } = req.body;
     const cartItems = readJSONFile('cart.json');
     const products = readJSONFile('products.json');
     const orders = readJSONFile('orders.json');
-    const users = readJSONFile('users.json');
     
-    console.log(`💰 Checkout process started with ${cartItems.length} items`);
+    console.log(`💰 Checkout process started with ${cartItems.length} items for user: ${req.session.user.username}`);
 
     if (cartItems.length === 0) {
       return res.json({ success: false, message: 'Cart is empty' });
     }
 
+    if (!shippingAddress) {
+      return res.json({ success: false, message: 'Shipping address is required' });
+    }
+
     // Validate stock and calculate total
     let totalAmount = 0;
-    const orderProducts = [];
+    const orderItems = [];
     
     for (const cartItem of cartItems) {
       const product = products.find(p => p.id === cartItem.productId);
@@ -248,24 +257,27 @@ router.post('/checkout', function(req, res, next) {
       }
       
       totalAmount += product.price * cartItem.quantity;
-      orderProducts.push({
+      orderItems.push({
         productId: cartItem.productId,
+        name: product.name,
+        price: product.price,
         quantity: cartItem.quantity,
-        price: product.price
+        image: product.image
       });
       
       // Update product stock
       product.stock -= cartItem.quantity;
     }
 
-    // Create new order
+    // Create new order - ✅ GUNAKAN USER YANG LOGIN
     const newOrder = {
-      id: orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1,
-      userId: "2", // Default user for demo (John Customer)
-      products: orderProducts,
+      id: orders.length > 0 ? Math.max(...orders.map(o => parseInt(o.id))) + 1 : 1,
+      userId: req.session.user.id, // ✅ USER YANG SEDANG LOGIN
+      items: orderItems,
       totalAmount: parseFloat(totalAmount.toFixed(2)),
-      status: "processing", // Default status
-      shippingAddress: "123 Main St, Jakarta, Indonesia", // Default address
+      status: "pending",
+      shippingAddress: shippingAddress,
+      paymentMethod: paymentMethod || 'cash',
       createdAt: new Date().toISOString()
     };
 
@@ -285,7 +297,7 @@ router.post('/checkout', function(req, res, next) {
     // Clear cart
     writeJSONFile('cart.json', []);
 
-    console.log(`✅ Checkout successful! Order #${newOrder.id} created`);
+    console.log(`✅ Checkout successful! Order #${newOrder.id} created for user ${req.session.user.username}`);
 
     res.json({ 
       success: true, 
@@ -299,6 +311,50 @@ router.post('/checkout', function(req, res, next) {
   }
 });
 
+// GET Checkout Page
+router.get('/checkout', function(req, res, next) {
+  try {
+    // ✅ CEK USER LOGIN
+    if (!req.session.user) {
+      return res.redirect('/users/login?message=Please login to checkout');
+    }
+
+    const cartItems = readJSONFile('cart.json');
+    const products = readJSONFile('products.json');
+    
+    if (cartItems.length === 0) {
+      return res.redirect('/cart?message=Your cart is empty');
+    }
+
+    // Enrich cart items with product details
+    const enrichedCart = cartItems.map(item => {
+      const product = products.find(p => p.id === item.productId);
+      return {
+        ...item,
+        product: product || { 
+          name: 'Product Not Found', 
+          price: 0
+        }
+      };
+    });
+
+    // Calculate total
+    const totalAmount = enrichedCart.reduce((sum, item) => {
+      return sum + (item.product.price * item.quantity);
+    }, 0);
+
+    res.render('checkout', {
+      title: 'Checkout',
+      cartItems: enrichedCart,
+      totalAmount: totalAmount,
+      user: req.session.user
+    });
+  } catch (error) {
+    console.error('❌ Error loading checkout page:', error);
+    res.redirect('/cart?message=Error loading checkout page');
+  }
+});
+
 // GET Checkout Success Page
 router.get('/checkout/success', function(req, res, next) {
   const { order_id, total } = req.query;
@@ -308,8 +364,24 @@ router.get('/checkout/success', function(req, res, next) {
   res.render('checkout-success', { 
     title: 'Order Confirmed - Simple Store',
     orderId: order_id || 'N/A',
-    orderTotal: total || '0.00'
+    orderTotal: total || '0.00',
+    user: req.session.user || null
   });
+});
+
+// CLEAR entire cart
+router.delete('/clear', function(req, res, next) {
+  try {
+    writeJSONFile('cart.json', []);
+    
+    res.json({
+      success: true,
+      message: 'Cart cleared successfully'
+    });
+  } catch (error) {
+    console.error('❌ Error clearing cart:', error);
+    res.json({ success: false, message: 'Error clearing cart' });
+  }
 });
 
 module.exports = router;

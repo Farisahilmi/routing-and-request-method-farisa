@@ -5,7 +5,7 @@
     "description": "High-performance gaming laptop dengan graphics terbaru",
     "price": 1299.99,
     "category": "Electronics",
-    "stock": 13,
+    "stock": 11,
     "image": "/images/laptop.jpg"
   },
   {
@@ -14,7 +14,7 @@
     "description": "Latest smartphone dengan kamera 108MP",
     "price": 699.99,
     "category": "Electronics",
-    "stock": 27,
+    "stock": 26,
     "image": "/images/phone.jpg"
   },
   {
@@ -32,7 +32,7 @@
     "description": "Sepatu lari dengan cushioning terbaik",
     "price": 89.99,
     "category": "Fashion",
-    "stock": 99,
+    "stock": 98,
     "image": "/images/shoes.jpg"
   },
   {
@@ -41,7 +41,7 @@
     "description": "Smartwatch dengan health monitoring",
     "price": 299.99,
     "category": "Electronics",
-    "stock": 23,
+    "stock": 22,
     "image": "/images/watch.jpg"
   },
   {
@@ -50,7 +50,7 @@
     "description": "Mouse gaming dengan RGB lighting",
     "price": 79.99,
     "category": "Electronics",
-    "stock": 39,
+    "stock": 34,
     "image": "/images/mouse.jpg"
   }
 ]

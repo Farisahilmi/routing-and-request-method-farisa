@@ -340,6 +340,140 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Checkout Modal Styles */
+        .checkout-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eaeaea;
+        }
+
+        .modal-title {
+            color: #2c5aa0;
+            font-size: 1.5rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            padding: 5px;
+        }
+
+        .close-modal:hover {
+            color: #dc3545;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #2c5aa0;
+            box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            flex: 1;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel:hover {
+            background: #5a6268;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            flex: 2;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -353,6 +487,82 @@
             <p style="margin: 0; color: #2c5aa0; font-weight: 600;">
                 <i class="fas fa-spinner"></i> Processing Checkout...
             </p>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="checkout-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-shipping-fast"></i>
+                    Checkout Information
+                </h2>
+                <button class="close-modal" onclick="closeCheckoutModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="checkoutForm">
+                <div class="form-group">
+                    <label for="shippingAddress" class="form-label">
+                        <i class="fas fa-map-marker-alt"></i> Shipping Address
+                    </label>
+                    <textarea 
+                        id="shippingAddress" 
+                        name="shippingAddress" 
+                        class="form-textarea" 
+                        rows="4" 
+                        placeholder="Enter your complete shipping address (street, city, postal code, country)..."
+                        required
+                    ></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="paymentMethod" class="form-label">
+                        <i class="fas fa-credit-card"></i> Payment Method
+                    </label>
+                    <select id="paymentMethod" name="paymentMethod" class="form-select" required>
+                        <option value="">Select payment method</option>
+                        <option value="cash">Cash on Delivery</option>
+                        <option value="bank">Bank Transfer</option>
+                        <option value="card">Credit Card</option>
+                    </select>
+                </div>
+                
+                <div class="order-summary">
+                    <h3 style="color: #2c5aa0; margin-bottom: 15px;">
+                        <i class="fas fa-receipt"></i> Order Summary
+                    </h3>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 6px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span>Subtotal:</span>
+                            <span>$<%= total.toFixed(2) %></span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span>Shipping:</span>
+                            <span style="color: #28a745;">FREE</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span>Tax (10%):</span>
+                            <span>$<%= (total * 0.1).toFixed(2) %></span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; border-top: 1px solid #ddd; padding-top: 8px;">
+                            <span>Total:</span>
+                            <span style="color: #28a745;">$<%= (total * 1.1).toFixed(2) %></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeCheckoutModal()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn-confirm">
+                        <i class="fas fa-check"></i> Confirm Order
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -464,7 +674,7 @@
                     Total: <i class="fas fa-dollar-sign"></i><%= (total * 1.1).toFixed(2) %>
                 </div>
                 
-                <button class="checkout-btn" onclick="checkout()">
+                <button class="checkout-btn" onclick="openCheckoutModal()">
                     <i class="fas fa-rocket"></i>
                     Proceed to Checkout
                 </button>
@@ -495,6 +705,15 @@
     </div>
 
     <script>
+        // Modal functions
+        function openCheckoutModal() {
+            document.getElementById('checkoutModal').style.display = 'flex';
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').style.display = 'none';
+        }
+
         // Event listeners untuk tombol quantity
         document.addEventListener('DOMContentLoaded', function() {
             // Tombol minus
@@ -537,6 +756,12 @@
                     removeFromCart(itemId);
                 });
             });
+
+            // Checkout form submission
+            document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                processCheckout();
+            });
         });
 
         async function updateQuantity(itemId, newQuantity) {
@@ -553,7 +778,6 @@
                 
                 const result = await response.json();
                 if (result.success) {
-                    // Update cart count
                     updateCartCount();
                     location.reload();
                 } else {
@@ -567,8 +791,6 @@
         async function removeFromCart(itemId) {
             if (!confirm('Are you sure you want to remove this item from your cart?')) return;
             
-            console.log('🗑️ Removing item from cart:', itemId);
-            
             try {
                 const response = await fetch('/cart/remove/' + itemId, {
                     method: 'DELETE',
@@ -577,25 +799,18 @@
                     }
                 });
                 
-                console.log('📡 Remove response status:', response.status);
-                
                 const result = await response.json();
-                console.log('✅ Remove response result:', result);
                 
                 if (result.success) {
                     showNotification('success', 'Item Removed', 'Item has been removed from your cart');
-                    // Update cart count
-                    if (typeof updateCartCount === 'function') {
-                        updateCartCount();
-                    }
-                    // Remove item from UI dengan animasi
+                    updateCartCount();
+                    
                     const itemElement = document.getElementById('cart-item-' + itemId);
                     if (itemElement) {
                         itemElement.style.opacity = '0';
                         itemElement.style.transform = 'translateX(-100%)';
                         setTimeout(() => {
                             itemElement.remove();
-                            // Reload page jika cart kosong
                             const remainingItems = document.querySelectorAll('.cart-item');
                             if (remainingItems.length === 0) {
                                 location.reload();
@@ -608,30 +823,46 @@
                     showNotification('error', 'Remove Failed', result.message);
                 }
             } catch (error) {
-                console.error('❌ Error removing item:', error);
                 showNotification('error', 'Error', 'Error removing item from cart');
             }
         }
 
-        async function checkout() {
+        async function processCheckout() {
+            const shippingAddress = document.getElementById('shippingAddress').value;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            
+            if (!shippingAddress.trim()) {
+                showNotification('error', 'Checkout Failed', 'Please enter shipping address');
+                return;
+            }
+            
+            if (!paymentMethod) {
+                showNotification('error', 'Checkout Failed', 'Please select payment method');
+                return;
+            }
+
             // Show loading overlay
             document.getElementById('loadingOverlay').style.display = 'flex';
+            closeCheckoutModal();
             
             try {
                 const response = await fetch('/cart/checkout', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    body: JSON.stringify({
+                        shippingAddress: shippingAddress,
+                        paymentMethod: paymentMethod
+                    })
                 });
                 
                 const result = await response.json();
                 
                 if (result.success) {
                     showNotification('success', 'Order Placed!', 'Your order has been successfully placed');
-                    // Update cart count
                     updateCartCount();
-                    // Redirect to success page dengan order details
+                    
                     setTimeout(() => {
                         window.location.href = `/cart/checkout/success?order_id=${result.orderId}&total=${result.orderTotal}`;
                     }, 1500);
@@ -651,7 +882,6 @@
                 const response = await fetch('/cart/count');
                 const result = await response.json();
                 
-                // Update cart counter in navbar
                 const cartCounter = document.querySelector('.cart-count');
                 if (cartCounter) {
                     cartCounter.textContent = result.count;

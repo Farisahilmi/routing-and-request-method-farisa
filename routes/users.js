@@ -30,16 +30,18 @@ router.get('/', function(req, res, next) {
   });
 });
 
+// GET register page
 router.get('/register', function(req, res, next) {
   res.render('register', { 
     title: 'Register',
     error: null,
     username: '',
     email: '',
-    user: null
+    user: req.session.user || null
   });
 });
 
+// POST register
 router.post('/register', async function(req, res, next) {
   const { username, email, password, confirmPassword } = req.body;
 
@@ -117,12 +119,77 @@ router.post('/register', async function(req, res, next) {
   }
 });
 
+// GET login page
 router.get('/login', function(req, res, next) {
   res.render('login', { 
     title: 'Login',
     error: null,
     message: req.query.message || null,
     user: null
+  });
+});
+
+// POST login
+router.post('/login', async function(req, res, next) {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.render('login', {
+      title: 'Login',
+      error: 'Email and password are required!',
+      user: null
+    });
+  }
+
+  const usersArray = readJSONFile('users.json');
+  const user = usersArray.find(user => user.email === email);
+
+  if (!user) {
+    return res.render('login', {
+      title: 'Login',
+      error: 'Invalid email or password!',
+      user: null
+    });
+  }
+
+  try {
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    
+    if (!passwordMatch) {
+      return res.render('login', {
+        title: 'Login',
+        error: 'Invalid email or password!',
+        user: null
+      });
+    }
+
+    // Set session
+    req.session.user = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role
+    };
+
+    res.redirect('/?message=Login successful');
+
+  } catch (error) {
+    console.error('Login error:', error);
+    res.render('login', {
+      title: 'Login',
+      error: 'Login failed. Please try again.',
+      user: null
+    });
+  }
+});
+
+// GET logout
+router.get('/logout', function(req, res, next) {
+  req.session.destroy(function(err) {
+    if (err) {
+      console.error('Logout error:', err);
+    }
+    res.redirect('/');
   });
 });
 
@@ -140,7 +207,7 @@ router.get('/html', function(req, res, next) {
   res.render('users', { 
     title: 'Users in HTML', 
     users: usersWithoutPasswords,
-    user: null
+    user: req.session.user || null
   });
 });
 
@@ -178,6 +245,7 @@ router.get('/update/:id', function(req, res, next) {
   });
 });
 
+// UPDATE user using PUT method
 router.put('/:id', async function(req, res, next) {
   const { id } = req.params;
   const { username, email, password } = req.body;
@@ -226,6 +294,7 @@ router.put('/:id', async function(req, res, next) {
   }
 });
 
+// CREATE user using POST method (API endpoint)
 router.post('/', async function(req, res, next) {
   const { username, email, password, role = 'customer' } = req.body;
 
@@ -284,6 +353,7 @@ router.post('/', async function(req, res, next) {
   }
 });
 
+// DELETE user using DELETE method
 router.delete('/:id', function(req, res, next) {
   const { id } = req.params;
   const usersArray = readJSONFile('users.json');

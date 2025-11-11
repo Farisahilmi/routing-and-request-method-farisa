@@ -49,6 +49,162 @@
     "totalAmount": 79.99,
     "status": "processing",
     "shippingAddress": "123 Main St, Jakarta, Indonesia",
-    "createdAt": "2025-11-11T07:33:34.067Z"
+    "createdAt": "2025-11-11T07:41:04.146Z"
+  },
+  {
+    "id": 4,
+    "userId": "2",
+    "products": [
+      {
+        "productId": 1,
+        "quantity": 1,
+        "price": 1299.99
+      }
+    ],
+    "totalAmount": 1299.99,
+    "status": "processing",
+    "shippingAddress": "123 Main St, Jakarta, Indonesia",
+    "createdAt": "2025-11-11T07:42:13.801Z"
+  },
+  {
+    "id": 5,
+    "userId": "2",
+    "products": [
+      {
+        "productId": 1,
+        "quantity": 1,
+        "price": 1299.99
+      }
+    ],
+    "totalAmount": 1299.99,
+    "status": "processing",
+    "shippingAddress": "123 Main St, Jakarta, Indonesia",
+    "createdAt": "2025-11-11T07:44:43.255Z"
+  },
+  {
+    "id": 6,
+    "userId": "2",
+    "products": [
+      {
+        "productId": 2,
+        "quantity": 1,
+        "price": 699.99
+      }
+    ],
+    "totalAmount": 699.99,
+    "status": "processing",
+    "shippingAddress": "123 Main St, Jakarta, Indonesia",
+    "createdAt": "2025-11-11T07:44:59.168Z"
+  },
+  {
+    "id": 7,
+    "userId": "4",
+    "items": [
+      {
+        "productId": 6,
+        "name": "Gaming Mouse",
+        "price": 79.99,
+        "quantity": 1,
+        "image": "/images/mouse.jpg"
+      }
+    ],
+    "totalAmount": 79.99,
+    "status": "cancelled",
+    "shippingAddress": "jl cisaat, 001",
+    "paymentMethod": "cash",
+    "createdAt": "2025-11-11T08:00:21.999Z",
+    "updatedAt": "2025-11-11T08:16:45.696Z"
+  },
+  {
+    "id": 8,
+    "userId": "4",
+    "items": [
+      {
+        "productId": 5,
+        "name": "Smart Watch",
+        "price": 299.99,
+        "quantity": 1,
+        "image": "/images/watch.jpg"
+      }
+    ],
+    "totalAmount": 299.99,
+    "status": "pending",
+    "shippingAddress": "fsfahfjahfe",
+    "paymentMethod": "bank",
+    "createdAt": "2025-11-11T08:01:30.827Z"
+  },
+  {
+    "id": 9,
+    "userId": "4",
+    "items": [
+      {
+        "productId": 6,
+        "name": "Gaming Mouse",
+        "price": 79.99,
+        "quantity": 1,
+        "image": "/images/mouse.jpg"
+      }
+    ],
+    "totalAmount": 79.99,
+    "status": "pending",
+    "shippingAddress": "jl cisaat, 101",
+    "paymentMethod": "cash",
+    "createdAt": "2025-11-11T08:05:56.071Z"
+  },
+  {
+    "id": 10,
+    "userId": "1",
+    "items": [
+      {
+        "productId": 6,
+        "name": "Gaming Mouse",
+        "price": 79.99,
+        "quantity": 1,
+        "image": "/images/mouse.jpg"
+      }
+    ],
+    "totalAmount": 79.99,
+    "status": "cancelled",
+    "shippingAddress": "dsfkafsdajlk",
+    "paymentMethod": "cash",
+    "createdAt": "2025-11-11T08:10:46.406Z",
+    "updatedAt": "2025-11-11T08:18:34.273Z"
+  },
+  {
+    "id": 11,
+    "userId": "4",
+    "items": [
+      {
+        "productId": 6,
+        "name": "Gaming Mouse",
+        "price": 79.99,
+        "quantity": 1,
+        "image": "/images/mouse.jpg"
+      }
+    ],
+    "totalAmount": 79.99,
+    "status": "cancelled",
+    "shippingAddress": "jl,cisaat,101",
+    "paymentMethod": "cash",
+    "createdAt": "2025-11-11T08:16:23.138Z",
+    "updatedAt": "2025-11-11T08:16:36.544Z"
+  },
+  {
+    "id": 12,
+    "userId": "4",
+    "items": [
+      {
+        "productId": 4,
+        "name": "Running Shoes",
+        "price": 89.99,
+        "quantity": 1,
+        "image": "/images/shoes.jpg"
+      }
+    ],
+    "totalAmount": 89.99,
+    "status": "pending",
+    "shippingAddress": "jl,cisaat",
+    "paymentMethod": "cash",
+    "createdAt": "2025-11-11T08:17:34.912Z"
   }
 ]

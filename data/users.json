@@ -8,22 +8,6 @@
     "createdAt": "2024-01-01T00:00:00.000Z"
   },
   {
-    "id": "2",
-    "username": "John Customer",
-    "email": "john@email.com",
-    "password": "$2b$12$Qih./mL7y0Hc08Qb94pFFOrrBYdNAVMS/z7OnNwtMJ/c27bUpqfOq",
-    "role": "customer",
-    "createdAt": "2024-01-02T00:00:00.000Z"
-  },
-  {
-    "id": "3",
-    "username": "Sarah Buyer",
-    "email": "sarah@email.com",
-    "password": "$2b$12$MJYWhvnPyMTGNU8gD6DOwe6v7pV0wSxq6uy8fwavTvxqC3EamRmmW",
-    "role": "customer",
-    "createdAt": "2024-01-03T00:00:00.000Z"
-  },
-  {
     "id": "4",
     "username": "iyan",
     "email": "iyan@gmail.com",
