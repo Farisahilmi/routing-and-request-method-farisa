@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .addresses-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        .page-title {
+            color: #2c5aa0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #2c5aa0, #3a7bd5);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(44, 90, 160, 0.4);
+        }
+        
+        .addresses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .address-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 2px solid #eaeaea;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .address-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+        }
+        
+        .address-card.default {
+            border-color: #2c5aa0;
+            background: linear-gradient(135deg, #f8f9ff, #ffffff);
+        }
+        
+        .default-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #2c5aa0;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .address-label {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c5aa0;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .address-details {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .address-details p {
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .address-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-sm {
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-edit {
+            background: #ffc107;
+            color: black;
+        }
+        
+        .btn-edit:hover {
+            background: #e0a800;
+            transform: translateY(-1px);
+        }
+        
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+        
+        .btn-set-default {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-set-default:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin: 40px 0;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+        
+        .empty-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #2c5aa0;
+        }
+        
+        .empty-message {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .addresses-container {
+                padding: 15px;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .addresses-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .address-actions {
+                flex-direction: column;
+            }
+            
+            .btn-sm {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('nav') %>
+    <%- include('notification') %>
+    
+    <div class="addresses-container">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-map-marker-alt"></i>
+                My Addresses
+            </h1>
+            <a href="/addresses/add" class="btn-primary">
+                <i class="fas fa-plus"></i>
+                Add New Address
+            </a>
+        </div>
+
+        <% if (addresses && addresses.length > 0) { %>
+            <div class="addresses-grid">
+                <% addresses.forEach(function(address) { %>
+                    <div class="address-card <%= address.isDefault ? 'default' : '' %>">
+                        <% if (address.isDefault) { %>
+                            <div class="default-badge">
+                                <i class="fas fa-star"></i> Default
+                            </div>
+                        <% } %>
+                        
+                        <div class="address-label">
+                            <i class="fas fa-home"></i>
+                            <%= address.label %>
+                        </div>
+                        
+                        <div class="address-details">
+                            <p>
+                                <i class="fas fa-user"></i>
+                                <strong><%= address.fullName %></strong>
+                            </p>
+                            <p>
+                                <i class="fas fa-phone"></i>
+                                <%= address.phone %>
+                            </p>
+                            <p>
+                                <i class="fas fa-map-marker-alt"></i>
+                                <%= address.street %>
+                            </p>
+                            <p>
+                                <i class="fas fa-city"></i>
+                                <%= address.city %><% if (address.state) { %>, <%= address.state %><% } %>
+                            </p>
+                            <p>
+                                <i class="fas fa-mail-bulk"></i>
+                                <%= address.postalCode %>
+                            </p>
+                            <p>
+                                <i class="fas fa-flag"></i>
+                                <%= address.country %>
+                            </p>
+                        </div>
+                        
+                        <div class="address-actions">
+                            <a href="/addresses/edit/<%= address.id %>" class="btn-sm btn-edit">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            
+                            <% if (!address.isDefault) { %>
+                                <button class="btn-sm btn-set-default set-default-btn" data-address-id="<%= address.id %>">
+                                    <i class="fas fa-star"></i> Set Default
+                                </button>
+                            <% } %>
+                            
+                            <button class="btn-sm btn-delete delete-address-btn" data-address-id="<%= address.id %>" data-address-label="<%= address.label %>">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h2 class="empty-title">No Addresses Yet</h2>
+                <p class="empty-message">
+                    You haven't added any addresses yet.<br>
+                    Add your first address to make checkout faster and easier!
+                </p>
+                <a href="/addresses/add" class="btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Add Your First Address
+                </a>
+            </div>
+        <% } %>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set Default Address
+            document.querySelectorAll('.set-default-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const addressId = this.getAttribute('data-address-id');
+                    setDefaultAddress(addressId);
+                });
+            });
+            
+            // Delete Address
+            document.querySelectorAll('.delete-address-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const addressId = this.getAttribute('data-address-id');
+                    const addressLabel = this.getAttribute('data-address-label');
+                    deleteAddress(addressId, addressLabel);
+                });
+            });
+        });
+
+        async function setDefaultAddress(addressId) {
+            try {
+                const response = await fetch(`/addresses/set-default/${addressId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('success', 'Success!', 'Default address updated successfully');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showNotification('error', 'Failed', result.message);
+                }
+            } catch (error) {
+                showNotification('error', 'Error', 'Error setting default address: ' + error.message);
+            }
+        }
+
+        async function deleteAddress(addressId, addressLabel) {
+            if (!confirm(`Are you sure you want to delete address "${addressLabel}"? This action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/addresses/delete/${addressId}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('success', 'Success!', 'Address deleted successfully');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showNotification('error', 'Failed', result.message);
+                }
+            } catch (error) {
+                showNotification('error', 'Error', 'Error deleting address: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

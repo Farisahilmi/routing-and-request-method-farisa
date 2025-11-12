@@ -5,78 +5,384 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .checkout-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .checkout-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        
+        .order-summary {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        
+        .checkout-form {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #2c5aa0;
+            box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+        }
+        
+        .address-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .address-option:hover {
+            border-color: #2c5aa0;
+        }
+        
+        .address-option.selected {
+            border-color: #2c5aa0;
+            background: #f8f9ff;
+        }
+        
+        .address-radio {
+            margin-top: 3px;
+        }
+        
+        .address-details h4 {
+            margin: 0 0 5px 0;
+            color: #2c5aa0;
+        }
+        
+        .address-details p {
+            margin: 2px 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .default-badge {
+            background: #28a745;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-left: 8px;
+        }
+        
+        .new-address-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #2c5aa0, #3a7bd5);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(44, 90, 160, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .total {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #eaeaea;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-layout {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .checkout-container {
+                padding: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Checkout</h1>
-        
-        <% if (error) { %>
-            <div class="alert alert-error">
-                <%= error %>
-            </div>
-        <% } %>
+    <%- include('nav') %>
+    <%- include('notification') %>
+    
+    <div class="checkout-container">
+        <h1 style="color: #2c5aa0; margin-bottom: 30px;">
+            <i class="fas fa-shopping-cart"></i> Checkout
+        </h1>
 
         <div class="checkout-layout">
+            <!-- Order Summary -->
             <div class="order-summary">
-                <h2>Order Summary</h2>
-                <% if (cart && cart.length > 0) { %>
-                    <% cart.forEach(item => { %>
+                <h2 style="color: #2c5aa0; margin-bottom: 20px;">
+                    <i class="fas fa-receipt"></i> Order Summary
+                </h2>
+                
+                <% if (cartItems && cartItems.length > 0) { %>
+                    <% cartItems.forEach(item => { %>
                         <div class="cart-item">
-                            <span class="item-name"><%= item.name %></span>
-                            <span class="item-quantity">Qty: <%= item.quantity %></span>
-                            <span class="item-price">Rp <%= (item.price * item.quantity).toLocaleString() %></span>
+                            <div>
+                                <strong><%= item.name %></strong>
+                                <div style="color: #666; font-size: 0.9rem;">Qty: <%= item.quantity %></div>
+                            </div>
+                            <div style="font-weight: bold; color: #2c5aa0;">
+                                $<%= (item.price * item.quantity).toFixed(2) %>
+                            </div>
                         </div>
                     <% }) %>
                     <div class="total">
-                        <strong>Total: Rp <%= cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toLocaleString() %></strong>
+                        Total: $<%= totalAmount.toFixed(2) %>
                     </div>
                 <% } else { %>
                     <p>Your cart is empty</p>
                 <% } %>
+                
+                <a href="/cart" class="btn-secondary" style="display: block; text-align: center;">
+                    <i class="fas fa-arrow-left"></i> Back to Cart
+                </a>
             </div>
 
+            <!-- Checkout Form -->
             <div class="checkout-form">
-                <form action="/checkout" method="POST">
-                    <h2>Customer Information</h2>
-                    
+                <h2 style="color: #2c5aa0; margin-bottom: 20px;">
+                    <i class="fas fa-shipping-fast"></i> Shipping Information
+                </h2>
+                
+                <form id="checkoutForm">
+                    <!-- Address Selection -->
                     <div class="form-group">
-                        <label for="name">Full Name *</label>
-                        <input type="text" id="name" name="name" required>
+                        <label class="form-label">Select Shipping Address</label>
+                        
+                        <% if (addresses && addresses.length > 0) { %>
+                            <% addresses.forEach(function(address) { %>
+                                <div class="address-option <%= address.isDefault ? 'selected' : '' %>" 
+                                     onclick="selectAddress('<%= address.id %>', this)">
+                                    <input type="radio" name="addressId" value="<%= address.id %>" 
+                                           class="address-radio" 
+                                           <%= address.isDefault ? 'checked' : '' %>>
+                                    <div class="address-details">
+                                        <h4>
+                                            <%= address.label %>
+                                            <% if (address.isDefault) { %>
+                                                <span class="default-badge">Default</span>
+                                            <% } %>
+                                        </h4>
+                                        <p><strong><%= address.fullName %></strong> • <%= address.phone %></p>
+                                        <p><%= address.street %></p>
+                                        <p><%= address.city %><%= address.state ? ', ' + address.state : '' %> <%= address.postalCode %></p>
+                                        <p><%= address.country %></p>
+                                    </div>
+                                </div>
+                            <% }) %>
+                            
+                            <div class="address-option" onclick="selectAddress('new', this)">
+                                <input type="radio" name="addressId" value="new" class="address-radio">
+                                <div class="address-details">
+                                    <h4>➕ Use New Address</h4>
+                                    <p>Enter a new shipping address</p>
+                                </div>
+                            </div>
+                        <% } else { %>
+                            <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                                <p style="margin-bottom: 15px;">No addresses saved yet</p>
+                                <a href="/addresses/add" class="btn-secondary">
+                                    <i class="fas fa-plus"></i> Add Your First Address
+                                </a>
+                            </div>
+                            <input type="hidden" name="addressId" value="new">
+                        <% } %>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="email">Email *</label>
-                        <input type="email" id="email" name="email" required>
+
+                    <!-- New Address Form (Hidden by Default) -->
+                    <div id="newAddressSection" class="new-address-section">
+                        <h4 style="color: #2c5aa0; margin-bottom: 15px;">
+                            <i class="fas fa-map-marker-alt"></i> Enter New Address
+                        </h4>
+                        
+                        <div class="form-group">
+                            <label for="shippingAddress" class="form-label">Full Address</label>
+                            <textarea id="shippingAddress" name="shippingAddress" class="form-textarea" 
+                                      rows="4" placeholder="Enter complete shipping address..."></textarea>
+                        </div>
                     </div>
-                    
+
+                    <!-- Payment Method -->
                     <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" name="phone">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="address">Shipping Address *</label>
-                        <textarea id="address" name="address" rows="3" required></textarea>
-                    </div>
-                    
-                    <h2>Payment Method</h2>
-                    <div class="form-group">
-                        <select name="payment_method" required>
-                            <option value="">Select Payment Method</option>
-                            <option value="credit_card">Credit Card</option>
-                            <option value="bank_transfer">Bank Transfer</option>
-                            <option value="cod">Cash on Delivery</option>
-                            <option value="e-wallet">E-Wallet</option>
+                        <label for="paymentMethod" class="form-label">Payment Method</label>
+                        <select id="paymentMethod" name="paymentMethod" class="form-select" required>
+                            <option value="">Select payment method</option>
+                            <option value="cash">Cash on Delivery</option>
+                            <option value="bank">Bank Transfer</option>
+                            <option value="card">Credit Card</option>
                         </select>
                     </div>
-                    
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Place Order</button>
-                        <a href="/cart" class="btn btn-secondary">Back to Cart</a>
-                    </div>
+
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-check"></i> Place Order
+                    </button>
                 </form>
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default address selection
+            const defaultAddress = document.querySelector('.address-option.selected input');
+            if (defaultAddress) {
+                selectAddress(defaultAddress.value, defaultAddress.closest('.address-option'));
+            }
+
+            // Form submission
+            document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                processCheckout();
+            });
+        });
+
+        function selectAddress(addressId, element) {
+            // Update radio button
+            document.querySelectorAll('.address-option input').forEach(radio => {
+                radio.checked = radio.value === addressId;
+            });
+            
+            // Update visual selection
+            document.querySelectorAll('.address-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            
+            // Show/hide new address section
+            const newAddressSection = document.getElementById('newAddressSection');
+            if (addressId === 'new') {
+                newAddressSection.style.display = 'block';
+                document.getElementById('shippingAddress').required = true;
+            } else {
+                newAddressSection.style.display = 'none';
+                document.getElementById('shippingAddress').required = false;
+            }
+        }
+
+        async function processCheckout() {
+            const formData = new FormData(document.getElementById('checkoutForm'));
+            const data = {
+                addressId: formData.get('addressId'),
+                shippingAddress: formData.get('shippingAddress'),
+                paymentMethod: formData.get('paymentMethod')
+            };
+
+            // Validation
+            if (!data.paymentMethod) {
+                showNotification('error', 'Validation Error', 'Please select payment method');
+                return;
+            }
+
+            if (data.addressId === 'new' && !data.shippingAddress) {
+                showNotification('error', 'Validation Error', 'Please enter shipping address');
+                return;
+            }
+
+            try {
+                // ✅ PERBAIKAN: Gunakan endpoint /cart/checkout bukan /checkout/process
+                const response = await fetch('/cart/checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('success', 'Order Placed!', 'Your order has been successfully placed');
+                    setTimeout(() => {
+                        // ✅ PERBAIKAN: Gunakan redirectUrl dari response
+                        window.location.href = result.redirectUrl || `/cart/checkout/success?order_id=${result.orderId}&total=${result.orderTotal}`;
+                    }, 1500);
+                } else {
+                    showNotification('error', 'Checkout Failed', result.message);
+                }
+            } catch (error) {
+                showNotification('error', 'Checkout Error', 'An error occurred during checkout');
+            }
+        }
+    </script>
 </body>
 </html>

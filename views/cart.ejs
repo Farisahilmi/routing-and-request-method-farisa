@@ -490,7 +490,7 @@
         </div>
     </div>
 
-    <!-- Checkout Modal -->
+    <!-- Checkout Modal - UPDATED dengan Address Selection -->
     <div id="checkoutModal" class="checkout-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -504,18 +504,31 @@
             </div>
             
             <form id="checkoutForm">
+                <!-- Address Selection -->
                 <div class="form-group">
-                    <label for="shippingAddress" class="form-label">
-                        <i class="fas fa-map-marker-alt"></i> Shipping Address
+                    <label class="form-label">
+                        <i class="fas fa-map-marker-alt"></i> Select Shipping Address
                     </label>
-                    <textarea 
-                        id="shippingAddress" 
-                        name="shippingAddress" 
-                        class="form-textarea" 
-                        rows="4" 
-                        placeholder="Enter your complete shipping address (street, city, postal code, country)..."
-                        required
-                    ></textarea>
+                    
+                    <div id="addressOptions">
+                        <div style="text-align: center; padding: 20px; color: #666;">
+                            <i class="fas fa-spinner fa-spin"></i> Loading addresses...
+                        </div>
+                    </div>
+                    
+                    <!-- New Address Section -->
+                    <div id="newAddressSection" style="display: none; margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 6px;">
+                        <h4 style="margin: 0 0 10px 0; color: #2c5aa0;">
+                            <i class="fas fa-plus"></i> Enter New Address
+                        </h4>
+                        <textarea 
+                            id="shippingAddress" 
+                            name="shippingAddress" 
+                            class="form-textarea" 
+                            rows="3" 
+                            placeholder="Enter complete shipping address (street, city, postal code, country)..."
+                        ></textarea>
+                    </div>
                 </div>
                 
                 <div class="form-group">
@@ -704,14 +717,180 @@
         <% } %>
     </div>
 
+    <style>
+        /* Address Selection Styles */
+        .address-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .address-option:hover {
+            border-color: #2c5aa0;
+        }
+        
+        .address-option.selected {
+            border-color: #2c5aa0;
+            background: #f8f9ff;
+        }
+        
+        .address-radio {
+            margin-top: 3px;
+        }
+        
+        .address-details h4 {
+            margin: 0 0 5px 0;
+            color: #2c5aa0;
+            font-size: 0.95rem;
+        }
+        
+        .address-details p {
+            margin: 2px 0;
+            color: #666;
+            font-size: 0.85rem;
+        }
+        
+        .default-badge {
+            background: #28a745;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-left: 6px;
+        }
+    </style>
+
     <script>
         // Modal functions
         function openCheckoutModal() {
             document.getElementById('checkoutModal').style.display = 'flex';
+            loadAddresses(); // Load addresses ketika modal dibuka
         }
 
         function closeCheckoutModal() {
             document.getElementById('checkoutModal').style.display = 'none';
+        }
+
+        // Load addresses untuk modal checkout
+        async function loadAddresses() {
+            try {
+                const response = await fetch('/addresses');
+                const text = await response.text();
+                
+                // Parse HTML untuk extract addresses
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, 'text/html');
+                const addressCards = doc.querySelectorAll('.address-card');
+                
+                const addressOptions = document.getElementById('addressOptions');
+                
+                if (addressCards.length > 0) {
+                    let html = '';
+                    
+                    addressCards.forEach(card => {
+                        const addressId = card.querySelector('.delete-address-btn')?.getAttribute('data-address-id');
+                        const label = card.querySelector('.address-label')?.textContent?.trim();
+                        const fullName = card.querySelector('.address-details p:nth-child(1) strong')?.textContent;
+                        const phoneElement = card.querySelector('.address-details p:nth-child(2)');
+                        const phone = phoneElement ? phoneElement.textContent.replace(fullName, '').replace('•', '').trim() : '';
+                        const street = card.querySelector('.address-details p:nth-child(3)')?.textContent;
+                        const city = card.querySelector('.address-details p:nth-child(4)')?.textContent;
+                        const isDefault = card.classList.contains('default');
+                        
+                        if (addressId && label) {
+                            html += `
+                                <div class="address-option ${isDefault ? 'selected' : ''}" onclick="selectAddressInModal('${addressId}', this)">
+                                    <input type="radio" name="addressId" value="${addressId}" class="address-radio" ${isDefault ? 'checked' : ''}>
+                                    <div class="address-details">
+                                        <h4>
+                                            ${label}
+                                            ${isDefault ? '<span class="default-badge">Default</span>' : ''}
+                                        </h4>
+                                        <p><strong>${fullName}</strong> • ${phone}</p>
+                                        <p>${street}</p>
+                                        <p>${city}</p>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                    
+                    // Tambah option untuk new address
+                    html += `
+                        <div class="address-option" onclick="selectAddressInModal('new', this)">
+                            <input type="radio" name="addressId" value="new" class="address-radio">
+                            <div class="address-details">
+                                <h4>➕ Use New Address</h4>
+                                <p>Enter a new shipping address</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    addressOptions.innerHTML = html;
+                    
+                    // Set default selection
+                    const defaultOption = addressOptions.querySelector('.address-option.selected');
+                    if (defaultOption) {
+                        selectAddressInModal(defaultOption.querySelector('input').value, defaultOption);
+                    }
+                } else {
+                    addressOptions.innerHTML = `
+                        <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                            <p style="margin-bottom: 15px;">No addresses saved yet</p>
+                            <a href="/addresses/add" class="btn-secondary" style="display: inline-block; padding: 8px 16px; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-size: 0.85rem;">
+                                <i class="fas fa-plus"></i> Add Your First Address
+                            </a>
+                        </div>
+                        <input type="hidden" name="addressId" value="new">
+                    `;
+                    document.getElementById('newAddressSection').style.display = 'block';
+                    document.getElementById('shippingAddress').required = true;
+                }
+            } catch (error) {
+                console.error('Error loading addresses:', error);
+                document.getElementById('addressOptions').innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: #dc3545;">
+                        <i class="fas fa-exclamation-triangle"></i> Error loading addresses
+                    </div>
+                    <input type="hidden" name="addressId" value="new">
+                `;
+                document.getElementById('newAddressSection').style.display = 'block';
+                document.getElementById('shippingAddress').required = true;
+            }
+        }
+
+        // Select address di modal
+        function selectAddressInModal(addressId, element) {
+            // Update radio button
+            document.querySelectorAll('#addressOptions .address-option input').forEach(radio => {
+                radio.checked = radio.value === addressId;
+            });
+            
+            // Update visual selection
+            document.querySelectorAll('#addressOptions .address-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            if (element) {
+                element.classList.add('selected');
+            }
+            
+            // Show/hide new address section
+            const newAddressSection = document.getElementById('newAddressSection');
+            if (addressId === 'new') {
+                newAddressSection.style.display = 'block';
+                document.getElementById('shippingAddress').required = true;
+            } else {
+                newAddressSection.style.display = 'none';
+                document.getElementById('shippingAddress').required = false;
+            }
         }
 
         // Event listeners untuk tombol quantity
@@ -828,16 +1007,27 @@
         }
 
         async function processCheckout() {
-            const shippingAddress = document.getElementById('shippingAddress').value;
-            const paymentMethod = document.getElementById('paymentMethod').value;
-            
-            if (!shippingAddress.trim()) {
-                showNotification('error', 'Checkout Failed', 'Please enter shipping address');
-                return;
-            }
+            const formData = new FormData(document.getElementById('checkoutForm'));
+            const addressId = formData.get('addressId');
+            const shippingAddress = formData.get('shippingAddress');
+            const paymentMethod = formData.get('paymentMethod');
             
             if (!paymentMethod) {
                 showNotification('error', 'Checkout Failed', 'Please select payment method');
+                return;
+            }
+
+            let finalShippingAddress = '';
+
+            // Handle address selection
+            if (addressId && addressId !== 'new') {
+                // Use existing address - akan dihandle oleh backend
+                finalShippingAddress = addressId; // Kirim addressId ke backend
+            } else if (shippingAddress) {
+                // Use new manual address
+                finalShippingAddress = shippingAddress;
+            } else {
+                showNotification('error', 'Checkout Failed', 'Please select or enter shipping address');
                 return;
             }
 
@@ -852,6 +1042,7 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
+                        addressId: addressId,
                         shippingAddress: shippingAddress,
                         paymentMethod: paymentMethod
                     })
@@ -864,7 +1055,7 @@
                     updateCartCount();
                     
                     setTimeout(() => {
-                        window.location.href = `/cart/checkout/success?order_id=${result.orderId}&total=${result.orderTotal}`;
+                        window.location.href = result.redirectUrl || `/cart/checkout/success?order_id=${result.orderId}&total=${result.orderTotal}`;
                     }, 1500);
                 } else {
                     document.getElementById('loadingOverlay').style.display = 'none';

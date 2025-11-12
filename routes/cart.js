@@ -187,7 +187,7 @@ router.delete('/remove/:id', function(req, res, next) {
   }
 });
 
-// POST Checkout - FIXED ORDER ID GENERATION & CACHE CLEAR
+// POST Checkout - UPDATED untuk handle address selection
 router.post('/checkout', function(req, res, next) {
   try {
     // ✅ CEK USER LOGIN
@@ -195,7 +195,7 @@ router.post('/checkout', function(req, res, next) {
       return res.json({ success: false, message: 'Please login to checkout' });
     }
 
-    const { shippingAddress, paymentMethod } = req.body;
+    const { addressId, shippingAddress, paymentMethod } = req.body; // ✅ PERBAIKAN: tambah addressId
     const cartItems = readJSONFile('cart.json');
     const products = readJSONFile('products.json');
     const orders = readJSONFile('orders.json');
@@ -206,7 +206,26 @@ router.post('/checkout', function(req, res, next) {
       return res.json({ success: false, message: 'Cart is empty' });
     }
 
-    if (!shippingAddress) {
+    let finalShippingAddress = '';
+
+    // ✅ PERBAIKAN: Handle address selection
+    if (addressId && addressId !== 'new') {
+      // Gunakan existing address
+      const addresses = readJSONFile('addresses.json');
+      const selectedAddress = addresses.find(addr => 
+        addr.id === parseInt(addressId) && addr.userId === req.session.user.id
+      );
+      
+      if (!selectedAddress) {
+        return res.json({ success: false, message: 'Selected address not found' });
+      }
+
+      // Format alamat untuk ditampilkan
+      finalShippingAddress = `${selectedAddress.label}\n${selectedAddress.fullName}\n${selectedAddress.phone}\n${selectedAddress.street}\n${selectedAddress.city}${selectedAddress.state ? ', ' + selectedAddress.state : ''} ${selectedAddress.postalCode}\n${selectedAddress.country}`;
+    } else if (shippingAddress) {
+      // Gunakan alamat manual baru
+      finalShippingAddress = shippingAddress;
+    } else {
       return res.json({ success: false, message: 'Shipping address is required' });
     }
 
@@ -258,7 +277,6 @@ router.post('/checkout', function(req, res, next) {
     }
 
     console.log(`🆕 Generated Order ID: ${newOrderId}`);
-    console.log(`📊 Current orders in system: ${orders.length}`);
 
     // Create new order
     const newOrder = {
@@ -267,7 +285,7 @@ router.post('/checkout', function(req, res, next) {
       items: orderItems,
       totalAmount: parseFloat(totalAmount.toFixed(2)),
       status: "pending",
-      shippingAddress: shippingAddress,
+      shippingAddress: finalShippingAddress, // ✅ Gunakan alamat yang sudah diformat
       paymentMethod: paymentMethod || 'cash',
       createdAt: new Date().toISOString()
     };
@@ -293,7 +311,6 @@ router.post('/checkout', function(req, res, next) {
     writeJSONFile('cart.json', []);
 
     console.log(`✅ Checkout successful! Order #${newOrder.id} created for user ${req.session.user.username}`);
-    console.log(`🔄 Cache cleared for orders and products`);
 
     // ✅ PERBAIKAN: Redirect langsung ke success page dengan parameter
     res.json({ 
@@ -308,8 +325,7 @@ router.post('/checkout', function(req, res, next) {
     res.json({ success: false, message: 'Error during checkout process' });
   }
 });
-
-// GET Checkout Page
+// GET Checkout Page - UPDATED dengan addresses
 router.get('/checkout', function(req, res, next) {
   try {
     // ✅ CEK USER LOGIN
@@ -323,6 +339,11 @@ router.get('/checkout', function(req, res, next) {
     if (cartItems.length === 0) {
       return res.redirect('/cart?message=Your cart is empty');
     }
+
+    // ✅ PERBAIKAN: Fetch addresses untuk user
+    const addresses = readJSONFile('addresses.json');
+    const userAddresses = addresses.filter(addr => addr.userId === req.session.user.id);
+    const defaultAddress = userAddresses.find(addr => addr.isDefault) || userAddresses[0];
 
     // Enrich cart items with product details
     const enrichedCart = cartItems.map(item => {
@@ -345,6 +366,8 @@ router.get('/checkout', function(req, res, next) {
       title: 'Checkout',
       cartItems: enrichedCart,
       totalAmount: totalAmount,
+      addresses: userAddresses,
+      defaultAddress: defaultAddress,
       user: req.session.user
     });
   } catch (error) {
@@ -352,7 +375,6 @@ router.get('/checkout', function(req, res, next) {
     res.redirect('/cart?message=Error loading checkout page');
   }
 });
-
 // GET Checkout Success Page - PERBAIKAN
 router.get('/checkout/success', function(req, res, next) {
   const { order_id, total } = req.query;

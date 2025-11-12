@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "userId": "1",
+    "label": "rumah",
+    "fullName": "farisahilmi",
+    "phone": "085642044608",
+    "street": "indonesia/jawa barat/kota.sukabumi/kec.gegerbitung/des.cijurey/kp.pasir hideung",
+    "city": "sukabumi",
+    "state": "indonesia",
+    "postalCode": "43197",
+    "country": "Indonesia",
+    "isDefault": true,
+    "createdAt": "2025-11-12T08:42:52.536Z"
+  },
+  {
+    "id": 2,
+    "userId": "2",
+    "label": "kantor",
+    "fullName": "aden icikiwir",
+    "phone": "085642044608",
+    "street": "jalan pramuka no 104",
+    "city": "sukabumi",
+    "state": "indonesia",
+    "postalCode": "43197",
+    "country": "Indonesia",
+    "isDefault": true,
+    "createdAt": "2025-11-12T09:06:01.161Z"
+  }
+]

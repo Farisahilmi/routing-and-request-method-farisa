@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .page-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        .page-title {
+            color: #2c5aa0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .back-link {
+            color: #2c5aa0;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .address-form {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .required::after {
+            content: " *";
+            color: #dc3545;
+        }
+        
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #2c5aa0;
+            box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+        }
+        
+        .form-help {
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: block;
+            line-height: 1.4;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .checkbox-input {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .checkbox-label {
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eaeaea;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+        
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            justify-content: center;
+        }
+        
+        .btn-cancel:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 15px;
+            }
+            
+            .address-form {
+                padding: 20px;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn-submit, .btn-cancel {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('nav') %>
+    <%- include('notification') %>
+    
+    <div class="form-container">
+        <a href="/addresses" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Back to Addresses
+        </a>
+        
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-<%= address ? 'edit' : 'plus' %>"></i>
+                <%= address ? 'Edit Address' : 'Add New Address' %>
+            </h1>
+        </div>
+
+        <form id="addressForm" class="address-form">
+            <div class="form-group">
+                <label for="label" class="form-label required">
+                    <i class="fas fa-tag"></i> Address Label
+                </label>
+                <input type="text" id="label" name="label" class="form-input" 
+                       placeholder="e.g., Home, Office, Apartment" 
+                       value="<%= address ? address.label : '' %>" required>
+                <span class="form-help">Give this address a name to easily identify it</span>
+            </div>
+
+            <div class="form-group">
+                <label for="fullName" class="form-label required">
+                    <i class="fas fa-user"></i> Full Name
+                </label>
+                <input type="text" id="fullName" name="fullName" class="form-input" 
+                       placeholder="Recipient's full name"
+                       value="<%= address ? address.fullName : '' %>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone" class="form-label required">
+                    <i class="fas fa-phone"></i> Phone Number
+                </label>
+                <input type="tel" id="phone" name="phone" class="form-input" 
+                       placeholder="Phone number for delivery"
+                       value="<%= address ? address.phone : '' %>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="street" class="form-label required">
+                    <i class="fas fa-road"></i> Street Address
+                </label>
+                <input type="text" id="street" name="street" class="form-input" 
+                       placeholder="Street name, building, house number"
+                       value="<%= address ? address.street : '' %>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="city" class="form-label required">
+                    <i class="fas fa-city"></i> City
+                </label>
+                <input type="text" id="city" name="city" class="form-input" 
+                       placeholder="City"
+                       value="<%= address ? address.city : '' %>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="state" class="form-label">
+                    <i class="fas fa-map"></i> State/Province
+                </label>
+                <input type="text" id="state" name="state" class="form-input" 
+                       placeholder="State or province (optional)"
+                       value="<%= address ? address.state : '' %>">
+            </div>
+
+            <div class="form-group">
+                <label for="postalCode" class="form-label required">
+                    <i class="fas fa-mail-bulk"></i> Postal Code
+                </label>
+                <input type="text" id="postalCode" name="postalCode" class="form-input" 
+                       placeholder="Postal or ZIP code"
+                       value="<%= address ? address.postalCode : '' %>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="country" class="form-label required">
+                    <i class="fas fa-flag"></i> Country
+                </label>
+                <select id="country" name="country" class="form-select" required>
+                    <option value="">Select Country</option>
+                    <option value="Indonesia" <%= address && address.country === 'Indonesia' ? 'selected' : '' %>>Indonesia</option>
+                    <option value="Malaysia" <%= address && address.country === 'Malaysia' ? 'selected' : '' %>>Malaysia</option>
+                    <option value="Singapore" <%= address && address.country === 'Singapore' ? 'selected' : '' %>>Singapore</option>
+                    <option value="Thailand" <%= address && address.country === 'Thailand' ? 'selected' : '' %>>Thailand</option>
+                    <option value="Vietnam" <%= address && address.country === 'Vietnam' ? 'selected' : '' %>>Vietnam</option>
+                    <option value="Philippines" <%= address && address.country === 'Philippines' ? 'selected' : '' %>>Philippines</option>
+                    <option value="Other" <%= address && address.country === 'Other' ? 'selected' : '' %>>Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="isDefault" name="isDefault" class="checkbox-input" 
+                           <%= address && address.isDefault ? 'checked' : '' %>>
+                    <label for="isDefault" class="checkbox-label">
+                        Set as default shipping address
+                    </label>
+                </div>
+                <span class="form-help">This address will be automatically selected during checkout</span>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-<%= address ? 'save' : 'plus' %>"></i>
+                    <%= address ? 'Update Address' : 'Add Address' %>
+                </button>
+                <a href="/addresses" class="btn-cancel">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </a>
+            </div>
+            <!-- Di dalam form, tambahkan hidden inputs sebelum closing </form> -->
+            <input type="hidden" id="isEditMode" value="<%= address ? 'true' : 'false' %>">
+            <% if (address) { %>
+                <input type="hidden" id="addressId" value="<%= address.id %>">
+            <% } else { %>
+                <input type="hidden" id="addressId" value="">
+            <% } %>
+        </form>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('addressForm');
+        
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Form submitted'); // Debug log
+            
+            const formData = new FormData(form);
+            const data = {
+                label: formData.get('label'),
+                fullName: formData.get('fullName'),
+                phone: formData.get('phone'),
+                street: formData.get('street'),
+                city: formData.get('city'),
+                state: formData.get('state'),
+                postalCode: formData.get('postalCode'),
+                country: formData.get('country'),
+                isDefault: formData.get('isDefault') === 'on'
+            };
+            
+            console.log('Form data:', data); // Debug log
+            
+            // Validasi
+            if (!data.label || !data.fullName || !data.phone || !data.street || !data.city || !data.postalCode || !data.country) {
+                showNotification('error', 'Validation Error', 'Please fill all required fields');
+                return;
+            }
+            
+            // Tentukan mode berdasarkan hidden input
+            const isEditMode = document.getElementById('isEditMode').value === 'true';
+            console.log('Is Edit Mode:', isEditMode); // Debug log
+            
+            if (isEditMode) {
+                updateAddress(data);
+            } else {
+                addAddress(data);
+            }
+        });
+    });
+
+    async function addAddress(data) {
+        try {
+            console.log('Adding address:', data); // Debug log
+            const response = await fetch('/addresses/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            console.log('Add address response:', result); // Debug log
+            
+            if (result.success) {
+                showNotification('success', 'Success!', 'Address added successfully');
+                setTimeout(() => {
+                    window.location.href = '/addresses';
+                }, 1500);
+            } else {
+                showNotification('error', 'Failed', result.message);
+            }
+        } catch (error) {
+            console.error('Error adding address:', error);
+            showNotification('error', 'Error', 'Error adding address: ' + error.message);
+        }
+    }
+
+    async function updateAddress(data) {
+        try {
+            const addressId = document.getElementById('addressId').value;
+            console.log('Updating address ID:', addressId, data); // Debug log
+            
+            const response = await fetch('/addresses/edit/' + addressId, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            console.log('Update address response:', result); // Debug log
+            
+            if (result.success) {
+                showNotification('success', 'Success!', 'Address updated successfully');
+                setTimeout(() => {
+                    window.location.href = '/addresses';
+                }, 1500);
+            } else {
+                showNotification('error', 'Failed', result.message);
+            }
+        } catch (error) {
+            console.error('Error updating address:', error);
+            showNotification('error', 'Error', 'Error updating address: ' + error.message);
+        }
+    }
+</script>
+</body>
+</html>

@@ -14,6 +14,7 @@ var cartRouter = require('./routes/cart');
 var adminRouter = require('./routes/admin');
 var checkoutRouter = require('./routes/checkout');
 var authRouter = require('./routes/auth');
+var addressesRouter = require('./routes/addresses')
 
 // Simple translations
 const translations = {
@@ -152,6 +153,7 @@ app.use('/cart', cartRouter);
 app.use('/admin', adminRouter);
 app.use('/checkout', checkoutRouter);
 app.use('/', authRouter);
+app.use('/addresses', addressesRouter);
 
 // Redirect routes untuk URL pendek
 app.get('/register', function(req, res) {

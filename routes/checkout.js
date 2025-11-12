@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
-const { readJSONFile, writeJSONFile } = require('../helpers/database');
+const { readJSONFile, writeJSONFile, clearCache } = require('../helpers/database');
 
-// GET checkout page
+// GET checkout page - UPDATED dengan addresses
 router.get('/', function(req, res, next) {
   if (!req.session.user) {
     return res.redirect('/users/login?message=Please login to checkout');
@@ -14,6 +14,11 @@ router.get('/', function(req, res, next) {
     return res.redirect('/cart?message=Your cart is empty');
   }
 
+  // ✅ PERBAIKAN: Fetch addresses dari database
+  const addresses = readJSONFile('addresses.json');
+  const userAddresses = addresses.filter(addr => addr.userId === req.session.user.id);
+  const defaultAddress = userAddresses.find(addr => addr.isDefault) || userAddresses[0];
+
   // Calculate total
   const totalAmount = cartItems.reduce((total, item) => {
     return total + (item.price * item.quantity);
@@ -23,11 +28,13 @@ router.get('/', function(req, res, next) {
     title: 'Checkout',
     cartItems: cartItems,
     totalAmount: totalAmount,
+    addresses: userAddresses,
+    defaultAddress: defaultAddress,
     user: req.session.user
   });
 });
 
-// POST checkout process
+// POST checkout process - UPDATED untuk handle address selection
 router.post('/process', function(req, res, next) {
   if (!req.session.user) {
     return res.status(401).json({
@@ -36,7 +43,7 @@ router.post('/process', function(req, res, next) {
     });
   }
 
-  const { shippingAddress, paymentMethod } = req.body;
+  const { addressId, shippingAddress, paymentMethod } = req.body;
   const cartItems = req.session.cart || [];
   
   if (cartItems.length === 0) {
@@ -46,7 +53,29 @@ router.post('/process', function(req, res, next) {
     });
   }
 
-  if (!shippingAddress) {
+  let finalShippingAddress = '';
+
+  // ✅ PERBAIKAN: Handle address selection
+  if (addressId && addressId !== 'new') {
+    // Gunakan existing address
+    const addresses = readJSONFile('addresses.json');
+    const selectedAddress = addresses.find(addr => 
+      addr.id === parseInt(addressId) && addr.userId === req.session.user.id
+    );
+    
+    if (!selectedAddress) {
+      return res.status(400).json({
+        success: false,
+        message: 'Selected address not found'
+      });
+    }
+
+    // Format alamat untuk ditampilkan
+    finalShippingAddress = `${selectedAddress.label}\n${selectedAddress.fullName}\n${selectedAddress.phone}\n${selectedAddress.street}\n${selectedAddress.city}${selectedAddress.state ? ', ' + selectedAddress.state : ''} ${selectedAddress.postalCode}\n${selectedAddress.country}`;
+  } else if (shippingAddress) {
+    // Gunakan alamat manual baru
+    finalShippingAddress = shippingAddress;
+  } else {
     return res.status(400).json({
       success: false,
       message: 'Shipping address is required'
@@ -68,7 +97,7 @@ router.post('/process', function(req, res, next) {
 
   const newOrder = {
     id: orderId,
-    userId: req.session.user.id, // PASTIKAN ini user yang login
+    userId: req.session.user.id,
     items: cartItems.map(item => ({
       productId: item.id,
       name: item.name,
@@ -77,7 +106,7 @@ router.post('/process', function(req, res, next) {
       image: item.image
     })),
     totalAmount: totalAmount,
-    shippingAddress: shippingAddress,
+    shippingAddress: finalShippingAddress,
     paymentMethod: paymentMethod || 'cash',
     status: 'pending',
     createdAt: new Date().toISOString()
@@ -87,7 +116,8 @@ router.post('/process', function(req, res, next) {
   ordersArray.push(newOrder);
   
   if (writeJSONFile('orders.json', ordersArray)) {
-    // Clear cart after successful order
+    // Clear cache dan cart
+    clearCache('orders.json');
     req.session.cart = [];
     
     res.json({
