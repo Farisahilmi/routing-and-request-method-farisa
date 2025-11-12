@@ -31,11 +31,13 @@ const requireAuth = (req, res, next) => {
   if (req.session && req.session.user) {
     return next();
   }
-  
-  // Jika request JSON (API), return error JSON
-  if (req.headers['content-type'] === 'application/json' || 
-      req.xhr || 
-      req.path.startsWith('/api')) {
+
+  const isJsonRequest = (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) ||
+                        (req.headers['accept'] && req.headers['accept'].includes('application/json')) ||
+                        req.xhr ||
+                        req.path.startsWith('/api');
+
+  if (isJsonRequest) {
     return res.status(401).json({ 
       success: false, 
       message: 'Authentication required' 
@@ -50,11 +52,13 @@ const requireAdmin = (req, res, next) => {
   if (req.session && req.session.user && req.session.user.role === 'admin') {
     return next();
   }
-  
-  // Jika request JSON (API), return error JSON
-  if (req.headers['content-type'] === 'application/json' || 
-      req.xhr || 
-      req.path.startsWith('/api')) {
+
+  const isJsonRequest = (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) ||
+                        (req.headers['accept'] && req.headers['accept'].includes('application/json')) ||
+                        req.xhr ||
+                        req.path.startsWith('/api');
+
+  if (isJsonRequest) {
     return res.status(403).json({ 
       success: false, 
       message: 'Admin access required' 

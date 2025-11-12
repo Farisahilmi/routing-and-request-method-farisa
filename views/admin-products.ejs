@@ -263,53 +263,6 @@
             gap: 15px;
             align-items: center;
         }
-
-        /* Settings Bar */
-        .settings-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        .currency-switcher, .language-switcher {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        
-        .currency-btn {
-            padding: 8px 16px;
-            border: 2px solid #e9ecef;
-            border-radius: 6px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            text-decoration: none;
-            color: #333;
-            display: inline-block;
-        }
-        
-        .currency-btn.active {
-            background: #2c5aa0;
-            color: white;
-            border-color: #2c5aa0;
-        }
-        
-        .currency-btn:hover:not(.active) {
-            border-color: #2c5aa0;
-            text-decoration: none;
-            color: #333;
-        }
-
         /* Empty State */
         .empty-state {
             text-align: center;
@@ -389,17 +342,6 @@
                 justify-content: center;
             }
             
-            .settings-bar {
-                flex-direction: column;
-                gap: 15px;
-                align-items: stretch;
-            }
-            
-            .currency-switcher, .language-switcher {
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            
             .form-actions {
                 flex-direction: column;
             }
@@ -427,15 +369,6 @@
                 padding: 12px 15px;
             }
             
-            .currency-switcher, .language-switcher {
-                flex-direction: column;
-                gap: 8px;
-            }
-            
-            .currency-btn {
-                width: 100%;
-                text-align: center;
-            }
         }
 
         /* Add Product Form */
@@ -551,36 +484,6 @@
             </div>
         </div>
 
-        <!-- Currency & Language Switcher -->
-        <div class="settings-bar">
-            <div class="currency-switcher">
-                <span style="font-weight: 600; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-money-bill-wave"></i> Currency:
-                </span>
-                <a href="/admin/products?currency=IDR&lang=<%= language %>" 
-                   class="currency-btn <%= currency === 'IDR' ? 'active' : '' %>">
-                    IDR (Rp)
-                </a>
-                <a href="/admin/products?currency=USD&lang=<%= language %>" 
-                   class="currency-btn <%= currency === 'USD' ? 'active' : '' %>">
-                    USD ($)
-                </a>
-            </div>
-            <div class="language-switcher">
-                <span style="font-weight: 600; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-language"></i> Language:
-                </span>
-                <a href="/admin/products?currency=<%= currency %>&lang=en" 
-                   class="currency-btn <%= language === 'en' ? 'active' : '' %>">
-                    English
-                </a>
-                <a href="/admin/products?currency=<%= currency %>&lang=id" 
-                   class="currency-btn <%= language === 'id' ? 'active' : '' %>">
-                    Bahasa
-                </a>
-            </div>
-        </div>
-
         <div class="admin-actions">
             <button class="btn-admin-action" id="showAddProductBtn">
                 <i class="fas fa-plus"></i> Add New Product
@@ -592,7 +495,7 @@
 
         <!-- Add Product Form (Hidden by Default) -->
         <div id="addProductForm" class="add-product-form">
-            <h3 style="margin: 0 0 20px 0; color: #2c5aa0; display: flex; align-items: center; gap: 10px;">
+            <h3 id="productFormTitle" style="margin: 0 0 20px 0; color: #2c5aa0; display: flex; align-items: center; gap: 10px;">
                 <i class="fas fa-plus-circle"></i> Add New Product
             </h3>
             <form id="productForm">
@@ -640,7 +543,7 @@
                     <input type="text" id="productImage" class="form-control" placeholder="/images/default.jpg">
                 </div>
                 <div style="display: flex; gap: 10px;">
-                    <button type="submit" class="btn-admin-action">
+                    <button type="submit" class="btn-admin-action" id="productFormSubmit">
                         <i class="fas fa-save"></i> Add Product
                     </button>
                     <button type="button" class="btn-admin-action btn-cancel" id="cancelAddProductBtn">
@@ -784,33 +687,36 @@
 
     <%- include('notification') %>
 
+    <script id="products-data" type="application/json"><%- JSON.stringify(products || []) %></script>
     <script>
-        // Event Listeners untuk tombol
+        const productsDataElement = document.getElementById('products-data');
+        const productsData = productsDataElement ? JSON.parse(productsDataElement.textContent) : [];
+        const productFormContainer = document.getElementById('addProductForm');
+        const productForm = document.getElementById('productForm');
+        const productFormTitle = document.getElementById('productFormTitle');
+        const productFormSubmit = document.getElementById('productFormSubmit');
+        const cancelProductFormBtn = document.getElementById('cancelAddProductBtn');
+
+        let formMode = 'add';
+        let editingProductId = null;
+
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Admin Products Page Loaded');
             
-            // Show Add Product Form
-            document.getElementById('showAddProductBtn')?.addEventListener('click', showAddProductForm);
-            document.getElementById('showAddProductEmptyBtn')?.addEventListener('click', showAddProductForm);
+            document.getElementById('showAddProductBtn')?.addEventListener('click', () => openProductForm('add'));
+            document.getElementById('showAddProductEmptyBtn')?.addEventListener('click', () => openProductForm('add'));
             
-            // Hide Add Product Form
-            document.getElementById('cancelAddProductBtn')?.addEventListener('click', hideAddProductForm);
-            
-            // Form Submission
-            document.getElementById('productForm')?.addEventListener('submit', addProduct);
-            
-            // Export Products
+            cancelProductFormBtn?.addEventListener('click', hideProductForm);
+            productForm?.addEventListener('submit', submitProductForm);
             document.getElementById('exportProductsBtn')?.addEventListener('click', exportProducts);
             
-            // Edit Buttons
             document.querySelectorAll('.edit-product-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const productId = this.getAttribute('data-product-id');
-                    editProduct(productId);
+                    openProductForm('edit', productId);
                 });
             });
             
-            // Delete Buttons
             document.querySelectorAll('.delete-product-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const productId = this.getAttribute('data-product-id');
@@ -818,9 +724,7 @@
                 });
             });
 
-            // Add focus effects to form inputs
             const formInputs = document.querySelectorAll('#productForm input, #productForm textarea');
-            
             formInputs.forEach(input => {
                 input.addEventListener('focus', function() {
                     this.style.borderColor = '#2c5aa0';
@@ -833,79 +737,110 @@
                 });
             });
 
-            // Fix untuk currency buttons yang stuck
-            document.querySelectorAll('.currency-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    console.log('Currency button clicked:', this.href);
-                    // Biarkan link bekerja normal
-                });
-            });
         });
 
-        function showAddProductForm() {
-            document.getElementById('addProductForm').style.display = 'block';
-            // Scroll ke form
-            document.getElementById('addProductForm').scrollIntoView({ 
-                behavior: 'smooth' 
-            });
+        function openProductForm(mode = 'add', productId = null) {
+            formMode = mode;
+            editingProductId = mode === 'edit' ? productId : null;
+
+            if (mode === 'add') {
+                productFormTitle.innerHTML = '<i class="fas fa-plus-circle"></i> Add New Product';
+                productFormSubmit.innerHTML = '<i class="fas fa-save"></i> Add Product';
+                productForm.reset();
+            } else {
+                const product = productsData.find(p => p.id === Number(productId) || p.id === productId);
+                if (!product) {
+                    showNotification('error', 'Produk Tidak Ditemukan', 'Tidak dapat menemukan data produk untuk diedit.');
+                    return;
+                }
+                productFormTitle.innerHTML = '<i class="fas fa-edit"></i> Edit Product';
+                productFormSubmit.innerHTML = '<i class="fas fa-save"></i> Update Product';
+                fillProductForm(product);
+            }
+
+            productFormContainer.style.display = 'block';
+            productFormContainer.scrollIntoView({ behavior: 'smooth' });
         }
-        
-        function hideAddProductForm() {
-            document.getElementById('addProductForm').style.display = 'none';
-            document.getElementById('productForm').reset();
+
+        function hideProductForm() {
+            productForm.reset();
+            productFormContainer.style.display = 'none';
+            formMode = 'add';
+            editingProductId = null;
+            productFormTitle.innerHTML = '<i class="fas fa-plus-circle"></i> Add New Product';
+            productFormSubmit.innerHTML = '<i class="fas fa-save"></i> Add Product';
         }
-        
-        async function addProduct(event) {
+
+        function fillProductForm(product) {
+            document.getElementById('productName').value = product.name || '';
+            document.getElementById('productDescription').value = product.description || '';
+            document.getElementById('productPrice').value = product.price || 0;
+            document.getElementById('productCategory').value = product.category || '';
+            document.getElementById('productStock').value = product.stock || 0;
+            document.getElementById('productImage').value = product.image && product.image !== '/images/default.jpg'
+                ? product.image
+                : '';
+        }
+
+        async function submitProductForm(event) {
             event.preventDefault();
-            
+
             const productData = {
-                name: document.getElementById('productName').value,
-                description: document.getElementById('productDescription').value,
+                name: document.getElementById('productName').value.trim(),
+                description: document.getElementById('productDescription').value.trim(),
                 price: parseFloat(document.getElementById('productPrice').value),
-                category: document.getElementById('productCategory').value,
-                stock: parseInt(document.getElementById('productStock').value),
-                image: document.getElementById('productImage').value || '/images/default.jpg'
+                category: document.getElementById('productCategory').value.trim(),
+                stock: parseInt(document.getElementById('productStock').value, 10),
+                image: document.getElementById('productImage').value.trim() || '/images/default.jpg'
             };
-            
-            // Validasi input
-            if (!productData.name || !productData.description || !productData.price || !productData.category || isNaN(productData.stock)) {
-                showNotification('error', 'Validation Error', 'Please fill all required fields correctly');
+
+            if (!productData.name || !productData.description || Number.isNaN(productData.price) || !productData.category || Number.isNaN(productData.stock)) {
+                showNotification('error', 'Validation Error', 'Please fill all required fields correctly.');
                 return;
             }
-            
+
             if (productData.price < 0 || productData.stock < 0) {
-                showNotification('error', 'Validation Error', 'Price and stock cannot be negative');
+                showNotification('error', 'Validation Error', 'Price and stock cannot be negative.');
                 return;
             }
-            
+
             try {
-                const response = await fetch('/admin/products', {
-                    method: 'POST',
+                const endpoint = formMode === 'edit' && editingProductId
+                    ? `/admin/products/${editingProductId}`
+                    : '/admin/products';
+                const method = formMode === 'edit' ? 'PUT' : 'POST';
+
+                const response = await fetch(endpoint, {
+                    method,
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(productData)
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (result.success) {
-                    showNotification('success', 'Success!', 'Product added successfully!');
+                    const successMessage = formMode === 'edit' ? 'Product updated successfully!' : 'Product added successfully!';
+                    showNotification('success', 'Success!', successMessage);
                     setTimeout(() => {
                         location.reload();
                     }, 1500);
                 } else {
-                    showNotification('error', 'Failed', 'Failed to add product: ' + result.message);
+                    const errorMessage = formMode === 'edit'
+                        ? 'Failed to update product: '
+                        : 'Failed to add product: ';
+                    showNotification('error', 'Failed', errorMessage + (result.message || 'Unknown error.'));
                 }
             } catch (error) {
-                console.error('Error adding product:', error);
-                showNotification('error', 'Error', 'Error adding product: ' + error.message);
+                console.error('Product form error:', error);
+                const errorContext = formMode === 'edit' ? 'updating' : 'adding';
+                showNotification('error', 'Error', `Error ${errorContext} product: ${error.message}`);
             }
         }
-        
+
         function editProduct(productId) {
-            showNotification('info', 'Coming Soon', 'Edit feature will be available soon!');
-            // window.location.href = '/admin/products/edit/' + productId;
+            openProductForm('edit', productId);
         }
         
         async function deleteProduct(productId) {
@@ -939,13 +874,6 @@
         
         function exportProducts() {
             showNotification('info', 'Coming Soon', 'Export feature will be available soon!');
-        }
-
-        // Currency switcher function
-        function switchCurrency(currency) {
-            const currentUrl = new URL(window.location.href);
-            currentUrl.searchParams.set('currency', currency);
-            window.location.href = currentUrl.toString();
         }
     </script>
 </body>

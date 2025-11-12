@@ -56,7 +56,3 @@ GET /api/users/:id - Get single user
 POST /api/users - Create new user
 PUT /api/users/:id - Update user
 DELETE /api/users/:id - Delete user
-
-pr order views detail error
-order tambahin hapus log
-tambahin data api nya juga 

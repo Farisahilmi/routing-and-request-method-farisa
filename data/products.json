@@ -5,8 +5,9 @@
     "description": "High-performance gaming laptop dengan graphics terbaru",
     "price": 1299.99,
     "category": "Electronics",
-    "stock": 9,
-    "image": "/images/laptop.jpg"
+    "stock": 11,
+    "image": "/images/default.jpg",
+    "updatedAt": "2025-11-12T10:23:34.436Z"
   },
   {
     "id": 2,
@@ -23,7 +24,7 @@
     "description": "Noise-cancelling headphones dengan battery 30 jam",
     "price": 199.99,
     "category": "Electronics",
-    "stock": 9,
+    "stock": 8,
     "image": "/images/headphones.jpg"
   },
   {
@@ -50,7 +51,8 @@
     "description": "Mouse gaming dengan RGB lighting",
     "price": 79.99,
     "category": "Electronics",
-    "stock": 9,
-    "image": "/images/mouse.jpg"
+    "stock": 10,
+    "image": "/images/mouse.jpg",
+    "updatedAt": "2025-11-12T10:40:40.175Z"
   }
 ]

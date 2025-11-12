@@ -103,8 +103,8 @@ router.get('/', requireAdmin, function(req, res, next) {
     customerUsers: users.filter(u => u.role === 'customer').length
   };
   
-  const currency = req.query.currency || res.locals.currency || 'IDR';
-  const lang = req.query.lang || 'en';
+  const currency = res.locals.currency || 'IDR';
+  const lang = res.locals.language || 'en';
   const t = translations[lang] || translations['en'];
   
   res.render('admin-dashboard', { 
@@ -121,8 +121,8 @@ router.get('/', requireAdmin, function(req, res, next) {
 router.get('/products', requireAdmin, function(req, res, next) {
   const products = readJSONFile('products.json');
   
-  const currency = req.query.currency || res.locals.currency || 'IDR';
-  const lang = req.query.lang || 'en';
+  const currency = res.locals.currency || 'IDR';
+  const lang = res.locals.language || 'en';
   const t = translations[lang] || translations['en'];
   
   res.render('admin-products', { 
@@ -171,6 +171,62 @@ router.post('/products', requireAdmin, function(req, res, next) {
   }
 });
 
+// PUT Update Existing Product
+router.put('/products/:id', requireAdmin, function(req, res, next) {
+  const productId = parseInt(req.params.id);
+  const { name, description, price, category, stock, image } = req.body;
+
+  if (Number.isNaN(productId)) {
+    return res.json({
+      success: false,
+      message: 'Invalid product ID'
+    });
+  }
+
+  const products = readJSONFile('products.json');
+  const productIndex = products.findIndex(p => p.id === productId);
+
+  if (productIndex === -1) {
+    return res.json({
+      success: false,
+      message: 'Product not found'
+    });
+  }
+
+  if (!name || !description || typeof price === 'undefined' || !category || typeof stock === 'undefined') {
+    return res.json({
+      success: false,
+      message: 'All required fields must be provided'
+    });
+  }
+
+  const updatedProduct = {
+    ...products[productIndex],
+    name: name,
+    description: description,
+    price: parseFloat(price),
+    category: category,
+    stock: parseInt(stock),
+    image: image || products[productIndex].image || '/images/default.jpg',
+    updatedAt: new Date().toISOString()
+  };
+
+  products[productIndex] = updatedProduct;
+
+  if (writeJSONFile('products.json', products)) {
+    res.json({
+      success: true,
+      message: 'Product updated successfully',
+      product: updatedProduct
+    });
+  } else {
+    res.json({
+      success: false,
+      message: 'Failed to update product'
+    });
+  }
+});
+
 // DELETE Product
 router.delete('/products/:id', requireAdmin, function(req, res, next) {
   const productId = parseInt(req.params.id);
@@ -212,8 +268,8 @@ router.get('/users', requireAdmin, function(req, res, next) {
     customers: users.filter(u => u.role === 'customer').length
   };
   
-  const currency = req.query.currency || res.locals.currency || 'IDR';
-  const lang = req.query.lang || 'en';
+  const currency = res.locals.currency || 'IDR';
+  const lang = res.locals.language || 'en';
   const t = translations[lang] || translations['en'];
   
   res.render('admin-users', { 
@@ -351,8 +407,8 @@ router.get('/orders', requireAdmin, function(req, res, next) {
     };
   });
   
-  const currency = req.query.currency || res.locals.currency || 'IDR';
-  const lang = req.query.lang || 'en';
+  const currency = res.locals.currency || 'IDR';
+  const lang = res.locals.language || 'en';
   const t = translations[lang] || translations['en'];
   
   res.render('admin-orders', { 

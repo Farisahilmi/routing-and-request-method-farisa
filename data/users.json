@@ -5,7 +5,10 @@
     "email": "admin@store.com",
     "password": "$2b$12$zi7kLlUNIvyICTHlgb7XLex72wM8tvnX4DZxUTpR/Cl112FPTZ2Uq",
     "role": "admin",
-    "createdAt": "2024-01-01T00:00:00.000Z"
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "language": "en",
+    "currency": "USD",
+    "updatedAt": "2025-11-12T10:39:26.648Z"
   },
   {
     "id": "2",

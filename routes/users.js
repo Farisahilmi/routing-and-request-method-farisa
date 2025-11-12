@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const bcrypt = require('bcrypt');
 const { readJSONFile, writeJSONFile } = require('../helpers/database');
+const { requireAuth } = require('../middleware/auth');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -91,7 +92,9 @@ router.post('/register', async function(req, res, next) {
       email,
       password: hashedPassword,
       role: 'customer',
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      language: 'en',
+      currency: 'IDR'
     };
 
     usersArray.push(newUser);
@@ -167,7 +170,9 @@ router.post('/login', async function(req, res, next) {
       id: user.id,
       username: user.username,
       email: user.email,
-      role: user.role
+      role: user.role,
+      language: user.language || 'en',
+      currency: user.currency || 'IDR'
     };
 
     res.redirect('/?message=Login successful');
@@ -245,6 +250,69 @@ router.get('/update/:id', function(req, res, next) {
 });
 
 // UPDATE user using PUT method
+router.put('/preferences', requireAuth, function(req, res, next) {
+  const { language, currency } = req.body || {};
+
+  const validLanguages = ['en', 'id'];
+  const validCurrencies = ['IDR', 'USD'];
+
+  const selectedLanguage = (language || '').toLowerCase();
+  const selectedCurrency = (currency || '').toUpperCase();
+
+  if (!validLanguages.includes(selectedLanguage)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid language selected.'
+    });
+  }
+
+  if (!validCurrencies.includes(selectedCurrency)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid currency selected.'
+    });
+  }
+
+  const usersArray = readJSONFile('users.json');
+  const userIndex = usersArray.findIndex(u => u.id === req.session.user.id);
+
+  if (userIndex === -1) {
+    return res.status(404).json({
+      success: false,
+      message: 'User not found.'
+    });
+  }
+
+  usersArray[userIndex] = {
+    ...usersArray[userIndex],
+    language: selectedLanguage,
+    currency: selectedCurrency,
+    updatedAt: new Date().toISOString()
+  };
+
+  if (!writeJSONFile('users.json', usersArray)) {
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to update preferences.'
+    });
+  }
+
+  req.session.user = {
+    ...req.session.user,
+    language: selectedLanguage,
+    currency: selectedCurrency
+  };
+
+  res.json({
+    success: true,
+    message: 'Preferences updated successfully.',
+    preferences: {
+      language: selectedLanguage,
+      currency: selectedCurrency
+    }
+  });
+});
+
 router.put('/:id', async function(req, res, next) {
   const { id } = req.params;
   const { username, email, password } = req.body;
@@ -272,6 +340,14 @@ router.put('/:id', async function(req, res, next) {
       password: hashedPassword,
       updatedAt: new Date().toISOString()
     };
+
+    if (req.session.user && req.session.user.id === id) {
+      req.session.user = {
+        ...req.session.user,
+        username,
+        email
+      };
+    }
     
     if (writeJSONFile('users.json', usersArray)) {
       res.json({ 
@@ -327,7 +403,9 @@ router.post('/', async function(req, res, next) {
       email,
       password: hashedPassword,
       role,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      language: 'en',
+      currency: 'IDR'
     };
 
     usersArray.push(newUser);

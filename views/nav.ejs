@@ -55,7 +55,7 @@
                         </button>
                         
                         <!-- Dropdown Menu -->
-                        <div class="dropdown-menu" style="position: absolute; top: 100%; right: 0; background: white; color: #333; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); min-width: 200px; display: none; z-index: 1000; margin-top: 5px;">
+                        <div class="dropdown-menu" style="position: absolute; top: 100%; right: 0; background: white; color: #333; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); min-width: 240px; display: none; z-index: 1000; margin-top: 5px;">
                             <div style="padding: 12px 15px; border-bottom: 1px solid #eee; color: #666; font-size: 0.9rem; background: #f8f9fa;">
                                 <i class="fas fa-user-circle"></i> 
                                 <strong><%= user.username %></strong>
@@ -63,6 +63,15 @@
                                     <i class="fas fa-envelope"></i> <%= user.email %>
                                 </div>
                             </div>
+                            <% const currentLanguage = (typeof language !== 'undefined' && language) ? language : 'en'; %>
+                            <% const currentCurrency = (typeof currency !== 'undefined' && currency) ? currency : 'IDR'; %>
+                            <% const prefTitle = currentLanguage === 'id' ? 'Preferensi Akun' : 'Account Preferences'; %>
+                            <% const langLabel = currentLanguage === 'id' ? 'Bahasa' : 'Language'; %>
+                            <% const currencyLabel = currentLanguage === 'id' ? 'Mata Uang' : 'Currency'; %>
+                            <% const saveLabel = currentLanguage === 'id' ? 'Simpan' : 'Save'; %>
+                            <% const savingLabel = currentLanguage === 'id' ? 'Menyimpan...' : 'Saving...'; %>
+                            <% const savedMessage = currentLanguage === 'id' ? 'Preferensi diperbarui!' : 'Preferences updated!'; %>
+                            <% const saveErrorMessage = currentLanguage === 'id' ? 'Gagal memperbarui preferensi' : 'Failed to update preferences'; %>
                             
                             <% if (user.role === 'admin') { %>
                                 <a href="/admin" style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; color: #333; text-decoration: none; transition: background 0.3s ease; border-bottom: 1px solid #f0f0f0;">
@@ -80,6 +89,28 @@
                                 <i class="fas fa-map-marker-alt" style="color: #28a745;"></i> 
                                 <span>My Addresses</span>
                             </a>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-section-title">
+                                <i class="fas fa-sliders-h"></i> <%= prefTitle %>
+                            </div>
+                            <% const successTitle = currentLanguage === 'id' ? 'Berhasil' : 'Success'; %>
+                            <% const errorTitle = currentLanguage === 'id' ? 'Gagal' : 'Error'; %>
+                            <form id="userPreferencesForm" class="preferences-form" data-saving-label="<%= savingLabel %>" data-success-label="<%= savedMessage %>" data-error-label="<%= saveErrorMessage %>" data-success-title="<%= successTitle %>" data-error-title="<%= errorTitle %>">
+                                <label class="preferences-label" for="preferenceLanguage"><%= langLabel %></label>
+                                <select id="preferenceLanguage" name="language" class="preferences-select">
+                                    <option value="en" <%= currentLanguage === 'en' ? 'selected' : '' %>>English</option>
+                                    <option value="id" <%= currentLanguage === 'id' ? 'selected' : '' %>>Bahasa Indonesia</option>
+                                </select>
+                                
+                                <label class="preferences-label" for="preferenceCurrency"><%= currencyLabel %></label>
+                                <select id="preferenceCurrency" name="currency" class="preferences-select">
+                                    <option value="IDR" <%= currentCurrency === 'IDR' ? 'selected' : '' %>>IDR (Rp)</option>
+                                    <option value="USD" <%= currentCurrency === 'USD' ? 'selected' : '' %>>USD ($)</option>
+                                </select>
+                                
+                                <button type="submit" class="preferences-submit"><i class="fas fa-save"></i> <span><%= saveLabel %></span></button>
+                            </form>
+                            <div class="dropdown-divider"></div>
                             <a href="/users/logout" style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; color: #dc3545; text-decoration: none; transition: background 0.3s ease;">
                                 <i class="fas fa-sign-out-alt"></i> 
                                 <span>Sign Out</span>
@@ -107,6 +138,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const userDropdown = document.querySelector('.user-dropdown');
         const dropdownMenu = document.querySelector('.dropdown-menu');
+        const preferencesForm = document.getElementById('userPreferencesForm');
         
         if (userDropdown && dropdownMenu) {
             const userMenuBtn = userDropdown.querySelector('.user-menu-btn');
@@ -121,6 +153,60 @@
             document.addEventListener('click', function(event) {
                 if (!userDropdown.contains(event.target)) {
                     dropdownMenu.style.display = 'none';
+                }
+            });
+        }
+
+        if (preferencesForm) {
+            preferencesForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                const language = preferencesForm.language.value;
+                const currency = preferencesForm.currency.value;
+                const submitButton = preferencesForm.querySelector('.preferences-submit');
+                const labelSpan = submitButton.querySelector('span');
+                const originalLabel = labelSpan.textContent;
+                const savingLabel = preferencesForm.dataset.savingLabel || 'Saving...';
+                const successLabel = preferencesForm.dataset.successLabel || 'Preferences updated!';
+                const errorLabel = preferencesForm.dataset.errorLabel || 'Failed to update preferences';
+                const successTitle = preferencesForm.dataset.successTitle || 'Success';
+                const errorTitle = preferencesForm.dataset.errorTitle || 'Error';
+
+                submitButton.disabled = true;
+                submitButton.classList.add('is-saving');
+                labelSpan.textContent = savingLabel;
+
+                try {
+                    const response = await fetch('/users/preferences', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ language, currency })
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        if (typeof showNotification === 'function') {
+                            showNotification('success', successTitle, successLabel);
+                        }
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 800);
+                    } else {
+                        if (typeof showNotification === 'function') {
+                            showNotification('error', errorTitle, result.message || errorLabel);
+                        }
+                    }
+                } catch (error) {
+                    if (typeof showNotification === 'function') {
+                        showNotification('error', errorTitle, errorLabel);
+                    }
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.classList.remove('is-saving');
+                    labelSpan.textContent = originalLabel;
                 }
             });
         }
@@ -213,6 +299,79 @@
     /* Dropdown hover effects */
     .dropdown-menu a:hover {
         background: #f8f9fa !important;
+    }
+
+    .dropdown-divider {
+        height: 1px;
+        background: #f0f0f0;
+    }
+
+    .dropdown-section-title {
+        padding: 10px 15px 5px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #2c5aa0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .preferences-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px 15px 15px;
+    }
+
+    .preferences-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+    }
+
+    .preferences-select {
+        border: 1px solid #d6d9e0;
+        border-radius: 6px;
+        padding: 8px;
+        font-size: 0.85rem;
+        color: #2c5aa0;
+        font-weight: 600;
+        background: #f9fbff;
+        transition: border 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .preferences-select:focus {
+        outline: none;
+        border-color: #2c5aa0;
+        box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.15);
+    }
+
+    .preferences-submit {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #2c5aa0, #3a7bd5);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .preferences-submit:hover:not(.is-saving) {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(44, 90, 160, 0.25);
+    }
+
+    .preferences-submit.is-saving {
+        opacity: 0.7;
+        cursor: wait;
     }
     
     /* Auth buttons hover effects */

@@ -11,58 +11,6 @@
             padding: 20px;
         }
 
-        .settings-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            border: 1px solid #eaeaea;
-        }
-
-        .currency-switcher, .language-switcher {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .switcher-label {
-            font-weight: 600;
-            color: #2c5aa0;
-            font-size: 14px;
-        }
-
-        .currency-btn, .language-btn {
-            padding: 10px 20px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            font-size: 14px;
-            text-decoration: none;
-            color: #333;
-        }
-
-        .currency-btn.active, .language-btn.active {
-            background: #2c5aa0;
-            color: white;
-            border-color: #2c5aa0;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(44, 90, 160, 0.3);
-        }
-
-        .currency-btn:hover, .language-btn:hover {
-            border-color: #2c5aa0;
-            transform: translateY(-1px);
-            text-decoration: none;
-            color: #333;
-        }
-
         .page-title {
             color: #2c5aa0;
             margin-bottom: 30px;
@@ -280,24 +228,6 @@
                 padding: 15px;
             }
 
-            .settings-bar {
-                flex-direction: column;
-                gap: 20px;
-                align-items: stretch;
-                padding: 15px;
-            }
-
-            .currency-switcher, .language-switcher {
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-
-            .switcher-label {
-                width: 100%;
-                text-align: center;
-                margin-bottom: 10px;
-            }
-
             .products-grid {
                 grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
                 gap: 15px;
@@ -324,16 +254,6 @@
                 padding: 10px;
             }
 
-            .currency-switcher, .language-switcher {
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            .currency-btn, .language-btn {
-                width: 100%;
-                text-align: center;
-            }
-
             .products-grid {
                 grid-template-columns: 1fr;
                 gap: 15px;
@@ -354,33 +274,6 @@
     <%- include('notification') %>
     
     <div class="products-container">
-        <!-- Settings Bar -->
-        <div class="settings-bar">
-            <div class="currency-switcher">
-                <span class="switcher-label">
-                    <i class="fas fa-money-bill-wave"></i> Currency:
-                </span>
-                <button class="currency-btn <%= currency === 'IDR' ? 'active' : '' %>" onclick="switchCurrency('IDR')">
-                    IDR (Rp)
-                </button>
-                <button class="currency-btn <%= currency === 'USD' ? 'active' : '' %>" onclick="switchCurrency('USD')">
-                    USD ($)
-                </button>
-            </div>
-            
-            <div class="language-switcher">
-                <span class="switcher-label">
-                    <i class="fas fa-globe"></i> Language:
-                </span>
-                <button class="language-btn <%= language === 'en' ? 'active' : '' %>" onclick="switchLanguage('en')">
-                    English
-                </button>
-                <button class="language-btn <%= language === 'id' ? 'active' : '' %>" onclick="switchLanguage('id')">
-                    Indonesia
-                </button>
-            </div>
-        </div>
-
         <h1 class="page-title">
             <i class="fas fa-boxes"></i> <%= title %>
         </h1>
@@ -518,17 +411,6 @@
             }
         }
 
-        // Currency Switcher
-        function switchCurrency(newCurrency) {
-            const currentLang = '<%= language %>';
-            window.location.href = `/products?currency=${newCurrency}&lang=${currentLang}`;
-        }
-
-        // Language Switcher  
-        function switchLanguage(newLanguage) {
-            const currentCurrency = '<%= currency %>';
-            window.location.href = `/products?lang=${newLanguage}&currency=${currentCurrency}`;
-        }
     </script>
 </body>
 </html>

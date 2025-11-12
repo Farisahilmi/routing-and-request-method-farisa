@@ -116,20 +116,15 @@ app.use(session({
 
 // Global middleware
 app.use(function(req, res, next) {
-  // Currency handling
-  if (req.query.currency) {
-    res.locals.currency = req.query.currency;
-  } else {
-    res.locals.currency = 'IDR';
-  }
-  
-  // Language handling  
-  const lang = req.query.lang || 'en';
-  res.locals.language = lang;
-  res.locals.t = translations[lang] || translations['en'];
-  
-  // User session handling
-  res.locals.user = req.session.user || null;
+  const sessionUser = req.session.user || null;
+
+  const language = sessionUser && sessionUser.language ? sessionUser.language : 'en';
+  const currency = sessionUser && sessionUser.currency ? sessionUser.currency : 'IDR';
+
+  res.locals.language = language;
+  res.locals.currency = currency;
+  res.locals.t = translations[language] || translations['en'];
+  res.locals.user = sessionUser;
   
   // Security headers
   res.setHeader('X-Content-Type-Options', 'nosniff');

@@ -19,6 +19,34 @@
             padding-bottom: 20px;
             border-bottom: 2px solid #eaeaea;
         }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .api-link {
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: 2px solid #28a745;
+            font-size: 14px;
+        }
+
+        .api-link:hover {
+            background: #1e7e34;
+            border-color: #1e7e34;
+            transform: translateY(-2px);
+            color: white;
+        }
         
         .orders-title {
             color: #2c5aa0;
@@ -213,6 +241,162 @@
         
         .order-items {
             margin-bottom: 20px;
+        }
+
+        .order-tracking {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f9fbff;
+            border-radius: 12px;
+            border: 1px solid #e0e8ff;
+        }
+
+        .tracking-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #2c5aa0;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .tracking-timeline {
+            position: relative;
+            padding-left: 20px;
+            border-left: 2px dashed #b7caf5;
+            display: grid;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 12px;
+            position: relative;
+        }
+
+        .timeline-marker {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #2c5aa0;
+            border: 4px solid white;
+            box-shadow: 0 0 0 2px rgba(44, 90, 160, 0.2);
+            position: absolute;
+            left: -29px;
+            top: 4px;
+        }
+
+        .timeline-content {
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #dee5ff;
+            padding: 12px 15px;
+            box-shadow: 0 3px 12px rgba(44, 90, 160, 0.08);
+            width: 100%;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+
+        .timeline-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #2c5aa0;
+        }
+
+        .timeline-time {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .timeline-note {
+            font-size: 0.95rem;
+            color: #495057;
+            line-height: 1.5;
+            margin-bottom: 4px;
+        }
+
+        .timeline-actor {
+            font-size: 0.8rem;
+            color: #8795af;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .order-tracking-empty {
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px dashed #b7caf5;
+            background: rgba(44, 90, 160, 0.04);
+            color: #5c6f99;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tracking-admin-form {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #cbd9ff;
+            background: #eef4ff;
+            display: grid;
+            gap: 12px;
+        }
+
+        .tracking-admin-form h4 {
+            margin: 0;
+            color: #2c5aa0;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tracking-form-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tracking-form-row select,
+        .tracking-form-row textarea {
+            border-radius: 6px;
+            border: 1px solid #c0d2f5;
+            padding: 10px;
+            font-size: 0.95rem;
+            color: #2c5aa0;
+        }
+
+        .tracking-form-row select {
+            min-width: 160px;
+            font-weight: 600;
+        }
+
+        .tracking-note {
+            flex: 1;
+            min-height: 80px;
+            resize: vertical;
+            background: white;
+            color: #495057;
+        }
+
+        .tracking-submit {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .tracking-submit .btn {
+            min-width: 160px;
         }
         
         .items-title {
@@ -474,6 +658,11 @@
                 gap: 15px;
                 align-items: flex-start;
             }
+
+            .header-actions {
+                width: 100%;
+                flex-direction: column;
+            }
             
             .order-header {
                 flex-direction: column;
@@ -509,6 +698,19 @@
                 width: 100%;
             }
 
+            .tracking-admin-form {
+                width: 100%;
+            }
+
+            .tracking-form-row {
+                flex-direction: column;
+            }
+
+            .tracking-form-row select,
+            .tracking-form-row textarea {
+                width: 100%;
+            }
+
             .admin-status-select {
                 width: 100%;
             }
@@ -530,10 +732,16 @@
                 <i class="fas fa-clipboard-list"></i>
                 <%= isAdmin ? 'All Orders' : 'My Orders' %>
             </h1>
-            <a href="/products" class="back-to-shop">
-                <i class="fas fa-shopping-bag"></i>
-                Continue Shopping
-            </a>
+            <div class="header-actions">
+                <a href="/products" class="back-to-shop">
+                    <i class="fas fa-shopping-bag"></i>
+                    Continue Shopping
+                </a>
+                <a href="/orders/api/json" class="api-link" target="_blank" rel="noopener">
+                    <i class="fas fa-code"></i>
+                    Lihat API Orders
+                </a>
+            </div>
         </div>
 
         <% if (orders && orders.length > 0) { %>
@@ -706,6 +914,87 @@
                                     <% } %>
                                 </div>
                             </div>
+
+                            <!-- Order Tracking -->
+                            <div class="order-tracking">
+                                <div class="tracking-title">
+                                    <i class="fas fa-route"></i>
+                                    Tracking Pengiriman
+                                </div>
+                                <% 
+                                    const trackingEvents = (order.tracking || []).slice().sort((a, b) => {
+                                        const timeA = new Date(a.timestamp || a.time || 0).getTime();
+                                        const timeB = new Date(b.timestamp || b.time || 0).getTime();
+                                        return timeA - timeB;
+                                    });
+                                %>
+                                <% if (trackingEvents.length > 0) { %>
+                                    <div class="tracking-timeline">
+                                        <% trackingEvents.forEach(function(event) { %>
+                                            <div class="timeline-item">
+                                                <span class="timeline-marker status-<%= event.status %>"></span>
+                                                <div class="timeline-content">
+                                                    <div class="timeline-header">
+                                                        <div class="timeline-status">
+                                                            <i class="fas fa-flag-checkered"></i>
+                                                            <%= statusLabels && statusLabels[event.status] ? statusLabels[event.status] : (event.label || event.status) %>
+                                                        </div>
+                                                        <div class="timeline-time">
+                                                            <%= event.timestamp 
+                                                                ? new Date(event.timestamp).toLocaleString('id-ID', { 
+                                                                    year: 'numeric', 
+                                                                    month: 'short', 
+                                                                    day: 'numeric',
+                                                                    hour: '2-digit',
+                                                                    minute: '2-digit'
+                                                                }) 
+                                                                : '-' %>
+                                                        </div>
+                                                    </div>
+                                                    <% if (event.note) { %>
+                                                        <div class="timeline-note"><%= event.note %></div>
+                                                    <% } %>
+                                                    <div class="timeline-actor">
+                                                        <i class="fas fa-user"></i>
+                                                        <%= (event.actor || 'system').charAt(0).toUpperCase() + (event.actor || 'system').slice(1) %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+                                <% } else { %>
+                                    <div class="order-tracking-empty">
+                                        <i class="fas fa-info-circle"></i>
+                                        Belum ada pembaruan tracking untuk pesanan ini.
+                                    </div>
+                                <% } %>
+
+                                <% if (isAdmin) { %>
+                                    <div class="tracking-admin-form">
+                                        <h4>
+                                            <i class="fas fa-plus-circle"></i>
+                                            Tambah Pembaruan Tracking
+                                        </h4>
+                                        <div class="tracking-form-row">
+                                            <select class="tracking-status-select" data-order-id="<%= order.id %>">
+                                                <option value="">Pertahankan status saat ini</option>
+                                                <% statusOptions.forEach(function(option) { %>
+                                                    <option value="<%= option %>">
+                                                        <%= statusLabels && statusLabels[option] ? statusLabels[option] : option.charAt(0).toUpperCase() + option.slice(1) %>
+                                                    </option>
+                                                <% }) %>
+                                            </select>
+                                            <textarea class="tracking-note" placeholder="Catatan pembaruan (opsional)" data-order-id="<%= order.id %>"></textarea>
+                                        </div>
+                                        <div class="tracking-submit">
+                                            <button class="btn btn-primary btn-sm add-tracking-update-btn" data-order-id="<%= order.id %>">
+                                                <i class="fas fa-paper-plane"></i>
+                                                Simpan Pembaruan
+                                            </button>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            </div>
                         </div>
 
                         <!-- Order Footer -->
@@ -829,15 +1118,21 @@
         async function sendStatusUpdate(orderId, status, {
             successTitle = 'Status Updated',
             successMessage = '',
-            errorTitle = 'Update Failed'
+            errorTitle = 'Update Failed',
+            note = ''
         } = {}) {
             try {
+                const payload = { status };
+                if (note && note.trim().length > 0) {
+                    payload.note = note.trim();
+                }
+
                 const response = await fetch('/orders/' + orderId, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ status })
+                    body: JSON.stringify(payload)
                 });
 
                 const result = await response.json();
@@ -860,7 +1155,8 @@
             await sendStatusUpdate(orderId, 'cancelled', {
                 successTitle: 'Order Cancelled',
                 successMessage: 'Your order has been cancelled successfully.',
-                errorTitle: 'Cancellation Failed'
+                errorTitle: 'Cancellation Failed',
+                note: 'Order dibatalkan oleh customer.'
             });
         }
 
@@ -869,7 +1165,8 @@
             await sendStatusUpdate(orderId, 'completed', {
                 successTitle: 'Order Received',
                 successMessage: 'Thank you! We\'ve marked this order as completed.',
-                errorTitle: 'Update Failed'
+                errorTitle: 'Update Failed',
+                note: 'Customer mengonfirmasi pesanan sudah diterima.'
             });
         }
 
@@ -881,8 +1178,44 @@
             await sendStatusUpdate(orderId, status, {
                 successTitle: 'Status Updated',
                 successMessage: 'Order #' + orderId + ' marked as ' + getStatusLabel(status) + '.',
-                errorTitle: 'Update Failed'
+                errorTitle: 'Update Failed',
+                note: 'Admin memperbarui status menjadi ' + getStatusLabel(status) + '.'
             });
+        }
+
+        async function addTrackingUpdate(orderId, status, note) {
+            try {
+                const payload = {};
+
+                if (status && status.trim().length > 0) {
+                    payload.status = status.trim();
+                }
+
+                if (note && note.trim().length > 0) {
+                    payload.note = note.trim();
+                }
+
+                const response = await fetch('/orders/' + orderId + '/tracking', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showNotification('success', 'Tracking Ditambahkan', 'Pembaruan tracking berhasil disimpan.');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1200);
+                } else {
+                    showNotification('error', 'Gagal Menyimpan', result.message || 'Tidak dapat menyimpan pembaruan tracking.');
+                }
+            } catch (error) {
+                showNotification('error', 'Error', 'Terjadi kesalahan: ' + error.message);
+            }
         }
 
         // Delete Order Function
@@ -957,6 +1290,24 @@
                         select.value = status;
                     }
                     adminUpdateOrderStatus(orderId, status);
+                });
+            });
+
+            document.querySelectorAll('.add-tracking-update-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const orderId = this.getAttribute('data-order-id');
+                    const container = this.closest('.tracking-admin-form');
+                    const statusSelect = container ? container.querySelector('.tracking-status-select') : null;
+                    const noteField = container ? container.querySelector('.tracking-note') : null;
+                    const statusValue = statusSelect ? statusSelect.value : '';
+                    const noteValue = noteField ? noteField.value : '';
+
+                    if (!statusValue && (!noteValue || noteValue.trim().length === 0)) {
+                        showNotification('error', 'Form Belum Lengkap', 'Pilih status baru atau isi catatan pembaruan terlebih dahulu.');
+                        return;
+                    }
+
+                    addTrackingUpdate(orderId, statusValue, noteValue);
                 });
             });
 

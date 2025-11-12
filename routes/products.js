@@ -41,12 +41,10 @@ function readJSONFile(filename) {
 router.get('/', function(req, res, next) {
   const products = readJSONFile('products.json');
   
-  // Get language from query or default to 'en'
-  const lang = req.query.lang || 'en';
+  const lang = res.locals.language || 'en';
   const t = translations[lang] || translations['en'];
   
-  // Get currency from query or default to 'IDR'
-  const currency = req.query.currency || 'IDR';
+  const currency = res.locals.currency || 'IDR';
   
   res.render('products', { 
     title: 'All Products', 
@@ -69,12 +67,10 @@ router.get('/:id', function(req, res, next) {
     });
   }
   
-  // Get language from query or default to 'en'
-  const lang = req.query.lang || 'en';
+  const lang = res.locals.language || 'en';
   const t = translations[lang] || translations['en'];
   
-  // Get currency from query or default to 'IDR'
-  const currency = req.query.currency || 'IDR';
+  const currency = res.locals.currency || 'IDR';
   
   res.render('product-detail', { 
     title: product.name, 
