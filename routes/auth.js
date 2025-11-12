@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 const bcrypt = require('bcrypt');
 const { readJSONFile, writeJSONFile } = require('../helpers/database');
+const { validateEmail, validatePasswordStrength, sanitizeString } = require('../helpers/validator');
+const logger = require('../helpers/logger');
 
 // GET register page
 router.get('/register', function(req, res, next) {
@@ -18,7 +20,9 @@ router.get('/register', function(req, res, next) {
 router.post('/register', async function(req, res, next) {
   const { username, email, password, confirmPassword } = req.body;
 
+  // ✅ VALIDATION: Check required fields
   if (!username || !email || !password || !confirmPassword) {
+    logger.warn('Registration: Missing required fields');
     return res.render('register', {
       title: 'Register',
       error: 'All fields are required!',
@@ -28,7 +32,34 @@ router.post('/register', async function(req, res, next) {
     });
   }
 
+  // ✅ VALIDATION: Email format
+  if (!validateEmail(email)) {
+    logger.warn(`Registration: Invalid email format - ${email}`);
+    return res.render('register', {
+      title: 'Register',
+      error: 'Invalid email format!',
+      username: username || '',
+      email: email || '',
+      user: null
+    });
+  }
+
+  // ✅ VALIDATION: Password strength
+  const passwordValidation = validatePasswordStrength(password);
+  if (!passwordValidation.isValid) {
+    logger.warn(`Registration: Weak password - ${passwordValidation.errors.join(', ')}`);
+    return res.render('register', {
+      title: 'Register',
+      error: passwordValidation.errors[0] || 'Invalid password format!',
+      username: username || '',
+      email: email || '',
+      user: null
+    });
+  }
+
+  // ✅ VALIDATION: Passwords match
   if (password !== confirmPassword) {
+    logger.warn('Registration: Passwords do not match');
     return res.render('register', {
       title: 'Register',
       error: 'Passwords do not match!',
@@ -42,6 +73,7 @@ router.post('/register', async function(req, res, next) {
 
   const existingUser = usersArray.find(user => user.email === email);
   if (existingUser) {
+    logger.warn(`Registration: Email already exists - ${email}`);
     return res.render('register', {
       title: 'Register',
       error: 'Email already exists!',
@@ -60,8 +92,8 @@ router.post('/register', async function(req, res, next) {
 
     const newUser = {
       id,
-      username,
-      email,
+      username: sanitizeString(username),
+      email: email.toLowerCase(),
       password: hashedPassword,
       role: 'customer',
       createdAt: new Date().toISOString()
@@ -70,8 +102,10 @@ router.post('/register', async function(req, res, next) {
     usersArray.push(newUser);
 
     if (writeJSONFile('users.json', usersArray)) {
+      logger.success(`User registered`, { userId: id, email });
       res.redirect('/users/login?message=Registration successful');
     } else {
+      logger.error('Failed to write users.json during registration');
       res.render('register', {
         title: 'Register',
         error: 'Failed to create account. Please try again.',
@@ -81,7 +115,7 @@ router.post('/register', async function(req, res, next) {
       });
     }
   } catch (error) {
-    console.error('Error creating user:', error);
+    logger.error('Error creating user', error);
     res.render('register', {
       title: 'Register',
       error: 'Error creating account. Please try again.',
@@ -106,7 +140,9 @@ router.get('/login', function(req, res, next) {
 router.post('/login', async function(req, res, next) {
   const { email, password } = req.body;
 
+  // ✅ VALIDATION: Check required fields
   if (!email || !password) {
+    logger.warn('Login: Missing email or password');
     return res.render('login', {
       title: 'Login',
       error: 'Email and password are required!',
@@ -114,10 +150,21 @@ router.post('/login', async function(req, res, next) {
     });
   }
 
+  // ✅ VALIDATION: Email format
+  if (!validateEmail(email)) {
+    logger.warn(`Login: Invalid email format - ${email}`);
+    return res.render('login', {
+      title: 'Login',
+      error: 'Invalid email format!',
+      user: null
+    });
+  }
+
   const usersArray = readJSONFile('users.json');
-  const user = usersArray.find(user => user.email === email);
+  const user = usersArray.find(user => user.email === email.toLowerCase());
 
   if (!user) {
+    logger.warn(`Login: User not found - ${email}`);
     return res.render('login', {
       title: 'Login',
       error: 'Invalid email or password!',
@@ -129,6 +176,7 @@ router.post('/login', async function(req, res, next) {
     const passwordMatch = await bcrypt.compare(password, user.password);
     
     if (!passwordMatch) {
+      logger.warn(`Login: Invalid password for user - ${email}`);
       return res.render('login', {
         title: 'Login',
         error: 'Invalid email or password!',
@@ -143,10 +191,11 @@ router.post('/login', async function(req, res, next) {
       role: user.role
     };
 
+    logger.success(`User logged in`, { userId: user.id, email });
     res.redirect('/?message=Login successful');
 
   } catch (error) {
-    console.error('Login error:', error);
+    logger.error('Login error', error);
     res.render('login', {
       title: 'Login',
       error: 'Login failed. Please try again.',
@@ -157,9 +206,12 @@ router.post('/login', async function(req, res, next) {
 
 // GET logout
 router.get('/logout', function(req, res, next) {
+  const userId = req.session.user?.id;
   req.session.destroy(function(err) {
     if (err) {
-      console.error('Logout error:', err);
+      logger.error('Logout error', err);
+    } else {
+      logger.success(`User logged out`, { userId });
     }
     res.redirect('/');
   });

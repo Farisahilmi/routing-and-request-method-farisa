@@ -51,7 +51,7 @@
     "description": "Mouse gaming dengan RGB lighting",
     "price": 79.99,
     "category": "Electronics",
-    "stock": 10,
+    "stock": 9,
     "image": "/images/mouse.jpg",
     "updatedAt": "2025-11-12T10:40:40.175Z"
   }

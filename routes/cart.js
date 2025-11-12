@@ -3,8 +3,9 @@ var router = express.Router();
 const fs = require('fs');
 const path = require('path');
 
-// Import database helper untuk clear cache
+// Import database helper dan logger untuk error tracking
 const { readJSONFile, writeJSONFile, clearCache } = require('../helpers/database');
+const logger = require('../helpers/logger');
 
 // GET Cart Count (for navbar)
 router.get('/count', function(req, res, next) {
@@ -20,13 +21,13 @@ router.get('/', function(req, res, next) {
     const cartItems = readJSONFile('cart.json');
     const products = readJSONFile('products.json');
     
-    console.log(`🛒 Loading cart with ${cartItems.length} items`);
+    logger.debug(`Loading cart with ${cartItems.length} items`);
 
     // Enrich cart items with product details
     const enrichedCart = cartItems.map(item => {
       const product = products.find(p => p.id === item.productId);
       if (!product) {
-        console.log(`❌ Product not found for cart item: ${item.productId}`);
+        logger.warn(`Product not found for cart item: ${item.productId}`);
       }
       return {
         ...item,
@@ -45,7 +46,7 @@ router.get('/', function(req, res, next) {
       return sum + (item.product.price * item.quantity);
     }, 0);
 
-    console.log(`💰 Cart total: $${total}`);
+    logger.info(`Cart total: $${total}`);
 
     res.render('cart', { 
       title: 'Shopping Cart',
@@ -54,7 +55,7 @@ router.get('/', function(req, res, next) {
       user: req.session.user || null
     });
   } catch (error) {
-    console.error('❌ Error loading cart page:', error);
+    logger.error('Error loading cart page', error);
     res.render('cart', { 
       title: 'Shopping Cart',
       cartItems: [],
@@ -69,7 +70,7 @@ router.post('/add', function(req, res, next) {
   try {
     const { productId, quantity = 1 } = req.body;
     
-    console.log(`🛒 Add to cart request:`, { productId, quantity });
+    logger.debug(`Add to cart request`, { productId, quantity });
 
     const cartItems = readJSONFile('cart.json');
     const products = readJSONFile('products.json');
@@ -106,6 +107,7 @@ router.post('/add', function(req, res, next) {
 
     if (writeJSONFile('cart.json', cartItems)) {
       const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+      logger.success(`Product added to cart`, { productId, totalItems });
       res.json({ 
         success: true, 
         message: 'Product added to cart',
@@ -115,7 +117,7 @@ router.post('/add', function(req, res, next) {
       res.json({ success: false, message: 'Failed to add to cart' });
     }
   } catch (error) {
-    console.error('❌ Error adding to cart:', error);
+    logger.error('Error adding to cart', error);
     res.json({ success: false, message: 'Error adding to cart' });
   }
 });
@@ -126,7 +128,7 @@ router.put('/update/:id', function(req, res, next) {
     const { id } = req.params;
     const { quantity } = req.body;
 
-    console.log(`✏️ Update cart item:`, { id, quantity });
+    logger.debug(`Update cart item`, { id, quantity });
 
     const cartItems = readJSONFile('cart.json');
     const item = cartItems.find(item => item.id === parseInt(id));
@@ -138,6 +140,7 @@ router.put('/update/:id', function(req, res, next) {
     if (quantity <= 0) {
       const updatedCart = cartItems.filter(item => item.id !== parseInt(id));
       writeJSONFile('cart.json', updatedCart);
+      logger.info(`Item removed from cart`, { id });
       return res.json({ 
         success: true, 
         message: 'Item removed from cart',
@@ -148,6 +151,7 @@ router.put('/update/:id', function(req, res, next) {
     item.quantity = parseInt(quantity);
     
     if (writeJSONFile('cart.json', cartItems)) {
+      logger.success(`Cart updated`, { id, newQuantity: quantity });
       res.json({ 
         success: true, 
         message: 'Cart updated',
@@ -157,7 +161,7 @@ router.put('/update/:id', function(req, res, next) {
       res.json({ success: false, message: 'Failed to update cart' });
     }
   } catch (error) {
-    console.error('❌ Error updating cart:', error);
+    logger.error('Error updating cart', error);
     res.json({ success: false, message: 'Error updating cart' });
   }
 });
@@ -167,12 +171,13 @@ router.delete('/remove/:id', function(req, res, next) {
   try {
     const { id } = req.params;
 
-    console.log(`🗑️ Remove cart item:`, { id });
+    logger.debug(`Remove cart item`, { id });
 
     const cartItems = readJSONFile('cart.json');
     const updatedCart = cartItems.filter(item => item.id !== parseInt(id));
     
     if (writeJSONFile('cart.json', updatedCart)) {
+      logger.success(`Item removed from cart`, { id });
       res.json({ 
         success: true, 
         message: 'Item removed from cart',
@@ -182,12 +187,12 @@ router.delete('/remove/:id', function(req, res, next) {
       res.json({ success: false, message: 'Failed to remove item' });
     }
   } catch (error) {
-    console.error('❌ Error removing from cart:', error);
+    logger.error('Error removing from cart', error);
     res.json({ success: false, message: 'Error removing item from cart' });
   }
 });
 
-// POST Checkout - UPDATED untuk handle address selection
+// POST Checkout - DENGAN STOCK ROLLBACK PROTECTION (2-Phase Commit)
 router.post('/checkout', function(req, res, next) {
   try {
     // ✅ CEK USER LOGIN
@@ -195,12 +200,12 @@ router.post('/checkout', function(req, res, next) {
       return res.json({ success: false, message: 'Please login to checkout' });
     }
 
-    const { addressId, shippingAddress, paymentMethod } = req.body; // ✅ PERBAIKAN: tambah addressId
+    const { addressId, shippingAddress, paymentMethod } = req.body;
     const cartItems = readJSONFile('cart.json');
     const products = readJSONFile('products.json');
     const orders = readJSONFile('orders.json');
     
-    console.log(`💰 Checkout process started with ${cartItems.length} items for user: ${req.session.user.username}`);
+    logger.httpRequest('POST /checkout', { userId: req.session.user.id, itemsCount: cartItems.length });
 
     if (cartItems.length === 0) {
       return res.json({ success: false, message: 'Cart is empty' });
@@ -210,7 +215,6 @@ router.post('/checkout', function(req, res, next) {
 
     // ✅ PERBAIKAN: Handle address selection
     if (addressId && addressId !== 'new') {
-      // Gunakan existing address
       const addresses = readJSONFile('addresses.json');
       const selectedAddress = addresses.find(addr => 
         addr.id === parseInt(addressId) && addr.userId === req.session.user.id
@@ -220,18 +224,17 @@ router.post('/checkout', function(req, res, next) {
         return res.json({ success: false, message: 'Selected address not found' });
       }
 
-      // Format alamat untuk ditampilkan
       finalShippingAddress = `${selectedAddress.label}\n${selectedAddress.fullName}\n${selectedAddress.phone}\n${selectedAddress.street}\n${selectedAddress.city}${selectedAddress.state ? ', ' + selectedAddress.state : ''} ${selectedAddress.postalCode}\n${selectedAddress.country}`;
     } else if (shippingAddress) {
-      // Gunakan alamat manual baru
       finalShippingAddress = shippingAddress;
     } else {
       return res.json({ success: false, message: 'Shipping address is required' });
     }
 
-    // Validate stock and calculate total
+    // ✅ PHASE 1: VALIDATION - Check all constraints BEFORE making changes
     let totalAmount = 0;
     const orderItems = [];
+    const originalStock = {}; // Store original stock for rollback
     
     for (const cartItem of cartItems) {
       const product = products.find(p => p.id === cartItem.productId);
@@ -246,6 +249,8 @@ router.post('/checkout', function(req, res, next) {
         });
       }
       
+      // Store original stock for potential rollback
+      originalStock[product.id] = product.stock;
       totalAmount += product.price * cartItem.quantity;
       orderItems.push({
         productId: cartItem.productId,
@@ -254,16 +259,12 @@ router.post('/checkout', function(req, res, next) {
         quantity: cartItem.quantity,
         image: product.image
       });
-      
-      // Update product stock
-      product.stock -= cartItem.quantity;
     }
 
-    // ✅ FIXED: SIMPLE ORDER ID GENERATION - Start from 1
+    // ✅ PHASE 2: PREPARE - Generate order ID and prepare order object
     let newOrderId = 1;
     
     if (orders.length > 0) {
-      // Find the highest existing order ID
       const existingIds = orders.map(order => {
         const id = parseInt(order.id);
         return isNaN(id) ? 0 : id;
@@ -276,52 +277,66 @@ router.post('/checkout', function(req, res, next) {
       }
     }
 
-    console.log(`🆕 Generated Order ID: ${newOrderId}`);
-
-    // Create new order
     const newOrder = {
       id: newOrderId,
       userId: req.session.user.id,
       items: orderItems,
       totalAmount: parseFloat(totalAmount.toFixed(2)),
       status: "pending",
-      shippingAddress: finalShippingAddress, // ✅ Gunakan alamat yang sudah diformat
+      shippingAddress: finalShippingAddress,
       paymentMethod: paymentMethod || 'cash',
       createdAt: new Date().toISOString()
     };
 
-    // Save order
-    orders.push(newOrder);
-    
-    // Update products stock
-    if (!writeJSONFile('products.json', products)) {
-      return res.json({ success: false, message: 'Failed to update product stock' });
-    }
-    
-    // Save orders
-    if (!writeJSONFile('orders.json', orders)) {
-      return res.json({ success: false, message: 'Failed to create order' });
-    }
-    
-    // ✅ PERBAIKAN PENTING: Clear cache untuk orders.json dan products.json
-    clearCache('orders.json');
-    clearCache('products.json');
-    
-    // Clear cart
-    writeJSONFile('cart.json', []);
+    // ✅ PHASE 3: COMMIT - Update stock and save order
+    try {
+      // Update product stock
+      for (const cartItem of cartItems) {
+        const product = products.find(p => p.id === cartItem.productId);
+        product.stock -= cartItem.quantity;
+      }
 
-    console.log(`✅ Checkout successful! Order #${newOrder.id} created for user ${req.session.user.username}`);
+      // Save updated products
+      if (!writeJSONFile('products.json', products)) {
+        throw new Error('Failed to update product stock');
+      }
+      
+      // Add order to orders array
+      orders.push(newOrder);
+      
+      // Save orders
+      if (!writeJSONFile('orders.json', orders)) {
+        // ROLLBACK: Restore original stock if order save fails
+        for (const [productId, originalQty] of Object.entries(originalStock)) {
+          const product = products.find(p => p.id === parseInt(productId));
+          if (product) product.stock = originalQty;
+        }
+        writeJSONFile('products.json', products);
+        throw new Error('Failed to create order - stock has been restored');
+      }
+      
+      // Clear cache
+      clearCache('orders.json');
+      clearCache('products.json');
+      
+      // Clear cart
+      writeJSONFile('cart.json', []);
 
-    // ✅ PERBAIKAN: Redirect langsung ke success page dengan parameter
-    res.json({ 
-      success: true, 
-      message: 'Checkout successful! Order has been placed.',
-      redirectUrl: `/cart/checkout/success?order_id=${newOrder.id}&total=${newOrder.totalAmount}`,
-      orderId: newOrder.id,
-      orderTotal: newOrder.totalAmount
-    });
+      logger.success(`Checkout successful! Order created`, { orderId: newOrder.id, userId: req.session.user.username });
+
+      res.json({ 
+        success: true, 
+        message: 'Checkout successful! Order has been placed.',
+        redirectUrl: `/cart/checkout/success?order_id=${newOrder.id}&total=${newOrder.totalAmount}`,
+        orderId: newOrder.id,
+        orderTotal: newOrder.totalAmount
+      });
+    } catch (commitError) {
+      logger.error('Checkout commit failed', new Error(commitError.message));
+      res.json({ success: false, message: commitError.message });
+    }
   } catch (error) {
-    console.error('❌ Checkout error:', error);
+    logger.error('Checkout error', error);
     res.json({ success: false, message: 'Error during checkout process' });
   }
 });
@@ -371,20 +386,32 @@ router.get('/checkout', function(req, res, next) {
       user: req.session.user
     });
   } catch (error) {
-    console.error('❌ Error loading checkout page:', error);
+    logger.error('Error loading checkout page', error);
     res.redirect('/cart?message=Error loading checkout page');
   }
 });
-// GET Checkout Success Page - PERBAIKAN
+// GET Checkout Success Page - DENGAN PERLINDUNGAN VALIDASI
 router.get('/checkout/success', function(req, res, next) {
   const { order_id, total } = req.query;
   
-  console.log(`🎉 Checkout success page for order:`, { order_id, total });
+  logger.info(`Checkout success page accessed`, { order_id, total });
 
   // ✅ PERBAIKAN: Pastikan order_id dan total ada
   if (!order_id || !total) {
-    console.log('❌ Missing order_id or total parameters');
+    logger.warn(`Missing order parameters in checkout success`);
     return res.redirect('/cart?message=Invalid order confirmation');
+  }
+
+  // ✅ Optional: Validate order exists (prevent order ID guessing)
+  try {
+    const orders = readJSONFile('orders.json');
+    const order = orders.find(o => o.id === parseInt(order_id));
+    if (!order) {
+      logger.warn(`Order not found for ID: ${order_id}`);
+      return res.redirect('/cart?message=Order not found');
+    }
+  } catch (error) {
+    logger.error('Error validating order in success page', error);
   }
 
   res.render('checkout-success', { 
@@ -400,12 +427,13 @@ router.delete('/clear', function(req, res, next) {
   try {
     writeJSONFile('cart.json', []);
     
+    logger.success('Cart cleared');
     res.json({
       success: true,
       message: 'Cart cleared successfully'
     });
   } catch (error) {
-    console.error('❌ Error clearing cart:', error);
+    logger.error('Error clearing cart', error);
     res.json({ success: false, message: 'Error clearing cart' });
   }
 });
@@ -424,7 +452,7 @@ router.post('/reset-orders', function(req, res, next) {
     if (writeJSONFile('orders.json', [])) {
       // Clear cache setelah reset orders
       clearCache('orders.json');
-      console.log('🔄 Orders reset successfully by admin');
+      logger.success('Orders reset by admin');
       res.json({ 
         success: true, 
         message: 'Orders reset successfully. Next order will start from ID 1.' 
@@ -433,7 +461,7 @@ router.post('/reset-orders', function(req, res, next) {
       res.json({ success: false, message: 'Failed to reset orders' });
     }
   } catch (error) {
-    console.error('❌ Reset orders error:', error);
+    logger.error('Reset orders error', error);
     res.json({ success: false, message: 'Error resetting orders' });
   }
 });

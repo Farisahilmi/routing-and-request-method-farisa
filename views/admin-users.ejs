@@ -244,6 +244,252 @@
             line-height: 1.6;
         }
 
+        /* API Testing Section */
+        .api-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 30px;
+            margin-top: 40px;
+            border-left: 6px solid #17a2b8;
+        }
+
+        .api-title {
+            color: #2c5aa0;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .api-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eaeaea;
+            flex-wrap: wrap;
+        }
+
+        .api-tab-btn {
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            color: #666;
+            cursor: pointer;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            margin-bottom: -2px;
+        }
+
+        .api-tab-btn.active {
+            color: #17a2b8;
+            border-bottom-color: #17a2b8;
+        }
+
+        .api-tab-btn:hover {
+            color: #2c5aa0;
+        }
+
+        .api-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .form-group-inline {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group-inline input,
+        .form-group-inline select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: monospace;
+        }
+
+        .form-group-inline label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #495057;
+            font-size: 13px;
+        }
+
+        .btn-api {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-api:hover {
+            background: #138496;
+            transform: translateY(-2px);
+        }
+
+        .btn-api-danger {
+            background: #dc3545;
+        }
+
+        .btn-api-danger:hover {
+            background: #c82333;
+        }
+
+        .api-response {
+            background: #2d2d2d;
+            color: #4ec9b0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin-top: 20px;
+            min-height: 100px;
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #444;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.5;
+        }
+
+        /* Syntax highlighting for JSON */
+        .json-key {
+            color: #9cdcfe;
+        }
+
+        .json-string {
+            color: #ce9178;
+        }
+
+        .json-number {
+            color: #b5cea8;
+        }
+
+        .json-boolean {
+            color: #569cd6;
+        }
+
+        .json-null {
+            color: #569cd6;
+        }
+
+        /* Response status indicators */
+        .response-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .response-status.success {
+            background: #51cf66;
+            color: #0b3d0b;
+        }
+
+        .response-status.error {
+            background: #ff6b6b;
+            color: #5a0000;
+        }
+
+        .response-status.loading {
+            background: #ffc107;
+            color: #664d00;
+        }
+
+        .copy-btn {
+            background: #4ec9b0;
+            color: #2d2d2d;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #51cf66;
+        }
+
+        .api-response.loading {
+            color: #ffc107;
+        }
+
+        .api-response.error {
+            color: #ff6b6b;
+        }
+
+        .api-response.success {
+            color: #51cf66;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .method-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+
+        .method-get {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .method-put {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .method-post {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .method-delete {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .api-endpoint {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 13px;
+            margin: 10px 0;
+            border-left: 4px solid #17a2b8;
+        }
+
         @media (max-width: 768px) {
             .admin-container {
                 padding: 15px;
@@ -442,11 +688,403 @@
                 <p class="empty-message"><%= t.no_users_message || 'There are no users in the system yet.' %></p>
             </div>
         <% } %>
+
+        <!-- API Testing Section -->
+        <div class="api-section">
+            <h2 class="api-title">
+                <i class="fas fa-code"></i> API Testing & Documentation
+            </h2>
+            <p style="color: #666; line-height: 1.6;">
+                Test the admin user management API directly from this dashboard. All endpoints require admin authentication.
+                <a href="/API_ADMIN_USERS.md" target="_blank" style="color: #17a2b8; text-decoration: none;">
+                    <i class="fas fa-book"></i> View Full Documentation
+                </a>
+            </p>
+
+            <!-- API Tabs -->
+            <div class="api-tabs">
+                <button class="api-tab-btn active" data-tab="get-all">
+                    <span class="method-badge method-get">GET</span> All Users
+                </button>
+                <button class="api-tab-btn" data-tab="get-one">
+                    <span class="method-badge method-get">GET</span> Single User
+                </button>
+                <button class="api-tab-btn" data-tab="put">
+                    <span class="method-badge method-put">PUT</span> Update User
+                </button>
+                <button class="api-tab-btn" data-tab="password">
+                    <span class="method-badge method-post">POST</span> Change Password
+                </button>
+                <button class="api-tab-btn" data-tab="delete">
+                    <span class="method-badge method-delete">DELETE</span> Delete User
+                </button>
+            </div>
+
+            <!-- GET ALL Users -->
+            <div id="get-all" class="tab-content active">
+                <h3>Get All Users</h3>
+                <div class="api-endpoint">
+                    <span class="method-badge method-get">GET</span> /api/users
+                </div>
+                <div class="api-form">
+                    <p style="margin: 0 0 15px 0; color: #666; font-size: 13px;">
+                        <i class="fas fa-info-circle"></i> Retrieve all users in the system. No parameters required.
+                    </p>
+                    <button class="btn-api" onclick="testGetAllUsers()">
+                        <i class="fas fa-play"></i> Execute GET Request
+                    </button>
+                </div>
+                <div class="api-response" id="response-get-all"></div>
+            </div>
+
+            <!-- GET Single User -->
+            <div id="get-one" class="tab-content">
+                <h3>Get Single User</h3>
+                <div class="api-endpoint">
+                    <span class="method-badge method-get">GET</span> /api/users/:id
+                </div>
+                <div class="api-form">
+                    <div class="form-group-inline">
+                        <div>
+                            <label>User ID</label>
+                            <input type="text" id="get-user-id" placeholder="e.g., 2" value="2">
+                        </div>
+                    </div>
+                    <button class="btn-api" onclick="testGetUser()">
+                        <i class="fas fa-play"></i> Execute GET Request
+                    </button>
+                </div>
+                <div class="api-response" id="response-get-one"></div>
+            </div>
+
+            <!-- PUT Update User -->
+            <div id="put" class="tab-content">
+                <h3>Update User</h3>
+                <div class="api-endpoint">
+                    <span class="method-badge method-put">PUT</span> /api/users/:id
+                </div>
+                <div class="api-form">
+                    <div class="form-group-inline">
+                        <div>
+                            <label>User ID</label>
+                            <input type="text" id="update-user-id" placeholder="e.g., 2" value="2">
+                        </div>
+                        <div>
+                            <label>Username</label>
+                            <input type="text" id="update-username" placeholder="New username">
+                        </div>
+                        <div>
+                            <label>Email</label>
+                            <input type="email" id="update-email" placeholder="new@email.com">
+                        </div>
+                        <div>
+                            <label>Role</label>
+                            <select id="update-role">
+                                <option value="">-- Select Role --</option>
+                                <option value="admin">Admin</option>
+                                <option value="customer">Customer</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn-api" onclick="testUpdateUser()">
+                        <i class="fas fa-play"></i> Execute PUT Request
+                    </button>
+                </div>
+                <div class="api-response" id="response-put"></div>
+            </div>
+
+            <!-- POST Change Password -->
+            <div id="password" class="tab-content">
+                <h3>Change User Password</h3>
+                <div class="api-endpoint">
+                    <span class="method-badge method-post">POST</span> /api/users/:id/change-password
+                </div>
+                <div class="api-form">
+                    <div class="form-group-inline">
+                        <div>
+                            <label>User ID</label>
+                            <input type="text" id="password-user-id" placeholder="e.g., 2" value="2">
+                        </div>
+                        <div>
+                            <label>New Password</label>
+                            <input type="password" id="password-new" placeholder="Enter new password">
+                        </div>
+                    </div>
+                    <button class="btn-api" onclick="testChangePassword()">
+                        <i class="fas fa-play"></i> Execute POST Request
+                    </button>
+                </div>
+                <div class="api-response" id="response-password"></div>
+            </div>
+
+            <!-- DELETE User -->
+            <div id="delete" class="tab-content">
+                <h3>Delete User</h3>
+                <div class="api-endpoint">
+                    <span class="method-badge method-delete">DELETE</span> /api/users/:id
+                </div>
+                <div class="api-form">
+                    <div class="form-group-inline">
+                        <div>
+                            <label>User ID</label>
+                            <input type="text" id="delete-user-id" placeholder="e.g., 3" value="3">
+                        </div>
+                    </div>
+                    <p style="color: #721c24; background: #f8d7da; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 13px;">
+                        <i class="fas fa-exclamation-triangle"></i> Warning: This action cannot be undone!
+                    </p>
+                    <button class="btn-api btn-api-danger" onclick="testDeleteUser()">
+                        <i class="fas fa-trash"></i> Execute DELETE Request
+                    </button>
+                </div>
+                <div class="api-response" id="response-delete"></div>
+            </div>
+        </div>
     </div>
 
     <%- include('notification') %>
 
     <script>
+        // Tab Navigation
+        document.querySelectorAll('.api-tab-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                
+                // Remove active class from all tabs and contents
+                document.querySelectorAll('.api-tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+
+        // Pretty Print JSON Function
+        function prettyPrintJSON(data, status = 'success') {
+            let output = '';
+            
+            // Add status badge
+            const statusClass = status === 'success' ? 'success' : status === 'error' ? 'error' : 'loading';
+            const statusText = status === 'success' ? '✓ SUCCESS' : status === 'error' ? '✗ ERROR' : '⏳ LOADING';
+            output += `<span class="response-status ${statusClass}">${statusText}</span>\n`;
+            
+            // Pretty print JSON
+            output += JSON.stringify(data, null, 2);
+            
+            return output;
+        }
+
+        // Highlight JSON with colors (simple version)
+        function highlightJSON(text) {
+            // This is a simple implementation - you could use a library for more advanced highlighting
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, 
+                    (match) => {
+                        let cls = 'json-number';
+                        if (/^"/.test(match)) {
+                            if (/:$/.test(match)) {
+                                cls = 'json-key';
+                            } else {
+                                cls = 'json-string';
+                            }
+                        } else if (/true|false/.test(match)) {
+                            cls = 'json-boolean';
+                        } else if (/null/.test(match)) {
+                            cls = 'json-null';
+                        }
+                        return `<span class="${cls}">${match}</span>`;
+                    });
+        }
+
+        // API Test Functions
+        async function testGetAllUsers() {
+            const responseDiv = document.getElementById('response-get-all');
+            responseDiv.className = 'api-response';
+            responseDiv.innerHTML = '<span class="response-status loading">⏳ LOADING</span>\nFetching users...';
+
+            try {
+                const response = await fetch('/api/users', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                const statusClass = response.ok ? 'api-response' : 'api-response error';
+                const prettyText = prettyPrintJSON(data, response.ok ? 'success' : 'error');
+                
+                responseDiv.className = statusClass;
+                responseDiv.innerHTML = highlightJSON(prettyText);
+            } catch (error) {
+                const prettyText = prettyPrintJSON({ error: error.message }, 'error');
+                responseDiv.className = 'api-response error';
+                responseDiv.innerHTML = highlightJSON(prettyText);
+            }
+        }
+
+        async function testGetUser() {
+            const userId = document.getElementById('get-user-id').value;
+            const responseDiv = document.getElementById('response-get-one');
+
+            if (!userId) {
+                responseDiv.className = 'api-response error';
+                responseDiv.innerHTML = highlightJSON(prettyPrintJSON({ error: 'User ID is required' }, 'error'));
+                return;
+            }
+
+            responseDiv.className = 'api-response';
+            responseDiv.innerHTML = '<span class="response-status loading">⏳ LOADING</span>\nFetching user...';
+
+            try {
+                const response = await fetch(`/api/users/${userId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                const statusClass = response.ok ? 'api-response' : 'api-response error';
+                const prettyText = prettyPrintJSON(data, response.ok ? 'success' : 'error');
+                
+                responseDiv.className = statusClass;
+                responseDiv.innerHTML = highlightJSON(prettyText);
+            } catch (error) {
+                const prettyText = prettyPrintJSON({ error: error.message }, 'error');
+                responseDiv.className = 'api-response error';
+                responseDiv.innerHTML = highlightJSON(prettyText);
+            }
+        }
+
+        async function testUpdateUser() {
+            const userId = document.getElementById('update-user-id').value;
+            const username = document.getElementById('update-username').value;
+            const email = document.getElementById('update-email').value;
+            const role = document.getElementById('update-role').value;
+            const responseDiv = document.getElementById('response-put');
+
+            if (!userId) {
+                responseDiv.className = 'api-response error';
+                responseDiv.innerHTML = highlightJSON(prettyPrintJSON({ error: 'User ID is required' }, 'error'));
+                return;
+            }
+
+            const payload = {};
+            if (username) payload.username = username;
+            if (email) payload.email = email;
+            if (role) payload.role = role;
+
+            if (Object.keys(payload).length === 0) {
+                responseDiv.className = 'api-response error';
+                responseDiv.innerHTML = highlightJSON(prettyPrintJSON({ error: 'At least one field must be filled' }, 'error'));
+                return;
+            }
+
+            responseDiv.className = 'api-response';
+            responseDiv.innerHTML = '<span class="response-status loading">⏳ LOADING</span>\nSending request...';
+
+            try {
+                const response = await fetch(`/api/users/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                const statusClass = response.ok ? 'api-response' : 'api-response error';
+                const prettyText = prettyPrintJSON(data, response.ok ? 'success' : 'error');
+                
+                responseDiv.className = statusClass;
+                responseDiv.innerHTML = highlightJSON(prettyText);
+            } catch (error) {
+                const prettyText = prettyPrintJSON({ error: error.message }, 'error');
+                responseDiv.className = 'api-response error';
+                responseDiv.innerHTML = highlightJSON(prettyText);
+            }
+        }
+
+        async function testChangePassword() {
+            const userId = document.getElementById('password-user-id').value;
+            const newPassword = document.getElementById('password-new').value;
+            const responseDiv = document.getElementById('response-password');
+
+            if (!userId || !newPassword) {
+                responseDiv.className = 'api-response error';
+                responseDiv.innerHTML = highlightJSON(prettyPrintJSON({ error: 'User ID and new password are required' }, 'error'));
+                return;
+            }
+
+            responseDiv.className = 'api-response';
+            responseDiv.innerHTML = '<span class="response-status loading">⏳ LOADING</span>\nProcessing password change...';
+
+            try {
+                const response = await fetch(`/api/users/${userId}/change-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ newPassword })
+                });
+
+                const data = await response.json();
+                const statusClass = response.ok ? 'api-response' : 'api-response error';
+                const prettyText = prettyPrintJSON(data, response.ok ? 'success' : 'error');
+                
+                responseDiv.className = statusClass;
+                responseDiv.innerHTML = highlightJSON(prettyText);
+            } catch (error) {
+                const prettyText = prettyPrintJSON({ error: error.message }, 'error');
+                responseDiv.className = 'api-response error';
+                responseDiv.innerHTML = highlightJSON(prettyText);
+            }
+        }
+
+        async function testDeleteUser() {
+            const userId = document.getElementById('delete-user-id').value;
+            const responseDiv = document.getElementById('response-delete');
+
+            if (!userId) {
+                responseDiv.className = 'api-response error';
+                responseDiv.innerHTML = highlightJSON(prettyPrintJSON({ error: 'User ID is required' }, 'error'));
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete user with ID ${userId}? This action cannot be undone!`)) {
+                responseDiv.className = 'api-response';
+                responseDiv.textContent = 'Delete operation cancelled';
+                return;
+            }
+
+            responseDiv.className = 'api-response';
+            responseDiv.innerHTML = '<span class="response-status loading">⏳ LOADING</span>\nDeleting user...';
+
+            try {
+                const response = await fetch(`/api/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                const statusClass = response.ok ? 'api-response' : 'api-response error';
+                const prettyText = prettyPrintJSON(data, response.ok ? 'success' : 'error');
+                
+                responseDiv.className = statusClass;
+                responseDiv.innerHTML = highlightJSON(prettyText);
+            } catch (error) {
+                const prettyText = prettyPrintJSON({ error: error.message }, 'error');
+                responseDiv.className = 'api-response error';
+                responseDiv.innerHTML = highlightJSON(prettyText);
+            }
+        }
         document.addEventListener('DOMContentLoaded', function() {
             // Promote user to admin
             document.querySelectorAll('.promote-user-btn').forEach(button => {

@@ -3,7 +3,7 @@
     "id": "1",
     "username": "Admin User",
     "email": "admin@store.com",
-    "password": "admin1234",
+    "password": "$2b$10$2y5QkLTDf6Kyl9kLbLvEseMmNf5AnYDqjss.nA2GxDtaa9KV7JzZ6",
     "role": "admin",
     "createdAt": "2024-01-01T00:00:00.000Z",
     "language": "en",
@@ -25,5 +25,16 @@
     "password": "$2b$10$J3HxTTE3Qkqhn5db9JEl4OnXreW/M5kM1MCe.bqqCAlV1nI1zJ.6m",
     "role": "customer",
     "createdAt": "2025-11-12T06:57:49.716Z"
+  },
+  {
+    "id": "4",
+    "username": "riko",
+    "email": "riko@gmail.com",
+    "password": "$2b$10$CX2UalYS77.awpGMXDImOeBN5sLD8h3snc0efNztjnPHc46EC/2.S",
+    "role": "customer",
+    "createdAt": "2025-11-12T11:55:12.126Z",
+    "language": "en",
+    "currency": "USD",
+    "updatedAt": "2025-11-12T11:55:35.274Z"
   }
 ]

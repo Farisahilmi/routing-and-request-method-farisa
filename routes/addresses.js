@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 const { readJSONFile, writeJSONFile, clearCache } = require('../helpers/database');
 const { requireAuth } = require('../middleware/auth');
+const { validateAddress, validatePhone, sanitizeString } = require('../helpers/validator');
+const logger = require('../helpers/logger');
 
 // GET All addresses for current user
 router.get('/', requireAuth, function(req, res, next) {
@@ -9,13 +11,15 @@ router.get('/', requireAuth, function(req, res, next) {
     const addresses = readJSONFile('addresses.json');
     const userAddresses = addresses.filter(addr => addr.userId === req.session.user.id);
     
+    logger.info(`Addresses loaded`, { userId: req.session.user.id, count: userAddresses.length });
+    
     res.render('addresses', {
       title: 'My Addresses - Simple Store',
       addresses: userAddresses,
       user: req.session.user
     });
   } catch (error) {
-    console.error('❌ Error loading addresses:', error);
+    logger.error('Error loading addresses', error);
     res.render('addresses', {
       title: 'My Addresses - Simple Store',
       addresses: [],
@@ -40,11 +44,31 @@ router.post('/add', requireAuth, function(req, res, next) {
     
     const addresses = readJSONFile('addresses.json');
     
-    // Validasi required fields
+    // ✅ VALIDATION: Check required fields
     if (!label || !fullName || !phone || !street || !city || !postalCode || !country) {
+      logger.warn('Address: Missing required fields');
       return res.json({ 
         success: false, 
         message: 'Please fill all required fields' 
+      });
+    }
+
+    // ✅ VALIDATION: Phone number format
+    if (!validatePhone(phone)) {
+      logger.warn(`Address: Invalid phone format - ${phone}`);
+      return res.json({ 
+        success: false, 
+        message: 'Invalid phone number format' 
+      });
+    }
+
+    // ✅ VALIDATION: Address fields
+    const addressError = validateAddress({ label, fullName, street, city, postalCode, country });
+    if (addressError) {
+      logger.warn(`Address: Validation error - ${addressError}`);
+      return res.json({ 
+        success: false, 
+        message: addressError
       });
     }
 
@@ -63,14 +87,14 @@ router.post('/add', requireAuth, function(req, res, next) {
     const newAddress = {
       id: newId,
       userId: req.session.user.id,
-      label: label,
-      fullName: fullName,
+      label: sanitizeString(label),
+      fullName: sanitizeString(fullName),
       phone: phone,
-      street: street,
-      city: city,
-      state: state || '',
-      postalCode: postalCode,
-      country: country,
+      street: sanitizeString(street),
+      city: sanitizeString(city),
+      state: sanitizeString(state || ''),
+      postalCode: sanitizeString(postalCode),
+      country: sanitizeString(country),
       isDefault: isDefault === 'true' || isDefault === true,
       createdAt: new Date().toISOString()
     };
@@ -79,16 +103,18 @@ router.post('/add', requireAuth, function(req, res, next) {
     
     if (writeJSONFile('addresses.json', addresses)) {
       clearCache('addresses.json');
+      logger.success(`Address added`, { userId: req.session.user.id, addressId: newId });
       res.json({ 
         success: true, 
         message: 'Address added successfully',
         address: newAddress
       });
     } else {
+      logger.error('Failed to write addresses.json');
       res.json({ success: false, message: 'Failed to add address' });
     }
   } catch (error) {
-    console.error('❌ Error adding address:', error);
+    logger.error('Error adding address', error);
     res.json({ success: false, message: 'Error adding address' });
   }
 });
@@ -104,6 +130,7 @@ router.get('/edit/:id', requireAuth, function(req, res, next) {
     );
     
     if (!address) {
+      logger.warn(`Address: Not found for edit - ${addressId}`);
       return res.status(404).render('error', {
         message: 'Address not found',
         user: req.session.user
@@ -116,7 +143,7 @@ router.get('/edit/:id', requireAuth, function(req, res, next) {
       user: req.session.user
     });
   } catch (error) {
-    console.error('❌ Error loading address for edit:', error);
+    logger.error('Error loading address for edit', error);
     res.status(500).render('error', {
       message: 'Error loading address',
       user: req.session.user
@@ -136,14 +163,35 @@ router.put('/edit/:id', requireAuth, function(req, res, next) {
     );
     
     if (addressIndex === -1) {
+      logger.warn(`Address: Address not found - ${addressId}`);
       return res.json({ success: false, message: 'Address not found' });
     }
 
-    // Validasi required fields
+    // ✅ VALIDATION: Check required fields
     if (!label || !fullName || !phone || !street || !city || !postalCode || !country) {
+      logger.warn('Address: Missing required fields for update');
       return res.json({ 
         success: false, 
         message: 'Please fill all required fields' 
+      });
+    }
+
+    // ✅ VALIDATION: Phone number format
+    if (!validatePhone(phone)) {
+      logger.warn(`Address: Invalid phone format - ${phone}`);
+      return res.json({ 
+        success: false, 
+        message: 'Invalid phone number format' 
+      });
+    }
+
+    // ✅ VALIDATION: Address fields
+    const addressError = validateAddress({ label, fullName, street, city, postalCode, country });
+    if (addressError) {
+      logger.warn(`Address: Validation error - ${addressError}`);
+      return res.json({ 
+        success: false, 
+        message: addressError
       });
     }
 
@@ -158,30 +206,32 @@ router.put('/edit/:id', requireAuth, function(req, res, next) {
 
     addresses[addressIndex] = {
       ...addresses[addressIndex],
-      label: label,
-      fullName: fullName,
+      label: sanitizeString(label),
+      fullName: sanitizeString(fullName),
       phone: phone,
-      street: street,
-      city: city,
-      state: state || '',
-      postalCode: postalCode,
-      country: country,
+      street: sanitizeString(street),
+      city: sanitizeString(city),
+      state: sanitizeString(state || ''),
+      postalCode: sanitizeString(postalCode),
+      country: sanitizeString(country),
       isDefault: isDefault === 'true' || isDefault === true,
       updatedAt: new Date().toISOString()
     };
 
     if (writeJSONFile('addresses.json', addresses)) {
       clearCache('addresses.json');
+      logger.success(`Address updated`, { userId: req.session.user.id, addressId });
       res.json({ 
         success: true, 
         message: 'Address updated successfully',
         address: addresses[addressIndex]
       });
     } else {
+      logger.error('Failed to write addresses.json');
       res.json({ success: false, message: 'Failed to update address' });
     }
   } catch (error) {
-    console.error('❌ Error updating address:', error);
+    logger.error('Error updating address', error);
     res.json({ success: false, message: 'Error updating address' });
   }
 });
@@ -197,6 +247,7 @@ router.delete('/delete/:id', requireAuth, function(req, res, next) {
     );
     
     if (addressIndex === -1) {
+      logger.warn(`Address: Delete failed - address not found - ${addressId}`);
       return res.json({ success: false, message: 'Address not found' });
     }
 
@@ -204,16 +255,18 @@ router.delete('/delete/:id', requireAuth, function(req, res, next) {
     
     if (writeJSONFile('addresses.json', addresses)) {
       clearCache('addresses.json');
+      logger.success(`Address deleted`, { userId: req.session.user.id, addressId });
       res.json({ 
         success: true, 
         message: 'Address deleted successfully',
         deletedAddress: deletedAddress
       });
     } else {
+      logger.error('Failed to write addresses.json');
       res.json({ success: false, message: 'Failed to delete address' });
     }
   } catch (error) {
-    console.error('❌ Error deleting address:', error);
+    logger.error('Error deleting address', error);
     res.json({ success: false, message: 'Error deleting address' });
   }
 });
@@ -233,15 +286,17 @@ router.put('/set-default/:id', requireAuth, function(req, res, next) {
 
     if (writeJSONFile('addresses.json', addresses)) {
       clearCache('addresses.json');
+      logger.success(`Default address set`, { userId: req.session.user.id, addressId });
       res.json({ 
         success: true, 
         message: 'Default address updated successfully'
       });
     } else {
+      logger.error('Failed to write addresses.json');
       res.json({ success: false, message: 'Failed to set default address' });
     }
   } catch (error) {
-    console.error('❌ Error setting default address:', error);
+    logger.error('Error setting default address', error);
     res.json({ success: false, message: 'Error setting default address' });
   }
 });

@@ -26,10 +26,18 @@ function readJSONFile(filename) {
 router.get('/', function(req, res, next) {
   try {
     const products = readJSONFile('products.json');
-    console.log('Products API - Found', products.length, 'products');
+    
+    if (!Array.isArray(products)) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'Invalid product data'
+      });
+    }
+    
     res.json({
       status: 'success',
       message: 'Products retrieved successfully',
+      count: products.length,
       data: products
     });
   } catch (error) {
@@ -45,8 +53,15 @@ router.get('/', function(req, res, next) {
 router.get('/:id', function(req, res, next) {
   try {
     const { id } = req.params;
-    console.log('Single Product API - ID:', id);
     const products = readJSONFile('products.json');
+    
+    if (!Array.isArray(products)) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'Invalid product data'
+      });
+    }
+    
     const product = products.find(p => p.id === parseInt(id));
     
     if (!product) {
