@@ -5,25 +5,32 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        body {
+            background: #ffffff;
+            color: #0a2540;
+        }
+        
         .contact-container {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px 20px;
         }
         
         .page-header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 60px;
         }
         
         .page-header h1 {
-            color: #2c5aa0;
-            font-size: 2.5rem;
-            margin-bottom: 15px;
+            color: #0a2540;
+            font-size: 3rem;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 15px;
+            font-weight: 700;
+            letter-spacing: -0.03em;
         }
         
         .contact-grid {
@@ -33,17 +40,19 @@
         }
         
         .contact-info {
-            background: white;
+            background: #ffffff;
             padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid #e6ebf1;
         }
         
         .contact-form {
-            background: white;
+            background: #ffffff;
             padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid #e6ebf1;
         }
         
         .info-item {
@@ -55,22 +64,23 @@
         
         .info-icon {
             font-size: 1.5rem;
-            background: #f8f9fa;
+            background: #f6f9fc;
             padding: 12px;
-            border-radius: 10px;
+            border-radius: 8px;
             min-width: 50px;
             text-align: center;
-            color: #2c5aa0;
+            color: #635BFF;
         }
         
         .info-content h3 {
             margin: 0 0 5px 0;
-            color: #2c5aa0;
+            color: #0a2540;
+            font-weight: 600;
         }
         
         .info-content p {
             margin: 0;
-            color: #666;
+            color: #8898aa;
             line-height: 1.5;
         }
         
@@ -82,20 +92,23 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #495057;
+            color: #0a2540;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 14px;
         }
         
         .form-input, .form-textarea {
             width: 100%;
             padding: 12px 15px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s ease;
+            border: 1px solid #e6ebf1;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: all 0.2s ease;
             box-sizing: border-box;
+            background: #ffffff;
+            color: #0a2540;
         }
         
         .form-textarea {
@@ -105,30 +118,32 @@
         
         .form-input:focus, .form-textarea:focus {
             outline: none;
-            border-color: #2c5aa0;
-            box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+            border-color: #635BFF;
+            box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.1);
         }
         
         .btn-submit {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
+            background: #635BFF;
+            color: #ffffff;
             border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            font-size: 16px;
+            padding: 14px 30px;
+            border-radius: 6px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            box-shadow: 0 1px 3px rgba(99, 91, 255, 0.2);
         }
         
         .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(99, 91, 255, 0.3);
+            background: #5851ea;
         }
     </style>
 </head>
@@ -141,7 +156,7 @@
                 <i class="fas fa-phone"></i>
                 Contact Us
             </h1>
-            <p style="color: #666; font-size: 1.2rem; max-width: 600px; margin: 0 auto;">
+            <p style="color: #8898aa; font-size: 1.2rem; max-width: 600px; margin: 0 auto;">
                 We'd love to hear from you! Get in touch with any questions or feedback.
             </p>
         </div>
@@ -149,8 +164,8 @@
         <div class="contact-grid">
             <!-- Contact Information -->
             <div class="contact-info">
-                <h2 style="color: #2c5aa0; margin-bottom: 30px;">
-                    <i class="fas fa-envelope-open-text"></i> Get in Touch
+                <h2 style="color: #0a2540; margin-bottom: 30px; font-weight: 700; font-size: 1.75rem;">
+                    <i class="fas fa-envelope-open-text" style="color: #635BFF;"></i> Get in Touch
                 </h2>
                 
                 <div class="info-item">
@@ -196,8 +211,8 @@
 
             <!-- Contact Form -->
             <div class="contact-form">
-                <h2 style="color: #2c5aa0; margin-bottom: 30px;">
-                    <i class="fas fa-paper-plane"></i> Send Message
+                <h2 style="color: #0a2540; margin-bottom: 30px; font-weight: 700; font-size: 1.75rem;">
+                    <i class="fas fa-paper-plane" style="color: #635BFF;"></i> Send Message
                 </h2>
                 
                 <form action="/contact" method="post">

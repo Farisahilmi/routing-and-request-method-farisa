@@ -42,7 +42,7 @@
     "description": "Smartwatch dengan health monitoring",
     "price": 299.99,
     "category": "Electronics",
-    "stock": 8,
+    "stock": 7,
     "image": "/images/watch.jpg"
   },
   {

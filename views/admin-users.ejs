@@ -518,11 +518,29 @@
                 gap: 5px;
             }
             
-            .btn-sm {
-                width: 100%;
-                justify-content: center;
-            }
+        .btn-sm {
+            width: 100%;
+            justify-content: center;
         }
+    }
+
+    .btn-admin-action {
+        color: white;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+    }
+
+    .btn-admin-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
     </style>
 </head>
 <body>
@@ -574,6 +592,7 @@
         </div>
 
         <% if (users && users.length > 0) { %>
+            <% const currentUser = typeof user !== 'undefined' ? user : null; %>
             <div class="users-table-container">
                 <div class="table-header">
                     <h2 class="table-title">
@@ -620,56 +639,56 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% users.forEach(function(user) { %>
+                        <% users.forEach(function(userItem) { %>
                             <tr>
                                 <td>
                                     <div class="user-id">
-                                        <i class="fas fa-hashtag"></i> <%= user.id %>
+                                        <i class="fas fa-hashtag"></i> <%= userItem.id %>
                                     </div>
                                 </td>
                                 <td style="font-weight: 500;">
-                                    <%= user.username %>
-                                    <% if (user.id === user.id) { %>
+                                    <%= userItem.username %>
+                                    <% if (currentUser && currentUser.id && currentUser.id.toString() === userItem.id.toString()) { %>
                                         <div style="font-size: 11px; color: #28a745; margin-top: 2px;">
                                             <i class="fas fa-star"></i> Current User
                                         </div>
                                     <% } %>
                                 </td>
-                                <td class="user-email"><%= user.email %></td>
+                                <td class="user-email"><%= userItem.email %></td>
                                 <td>
-                                    <span class="role-badge <%= user.role === 'admin' ? 'role-admin' : 'role-customer' %>">
-                                        <% if (user.role === 'admin') { %>
+                                    <span class="role-badge <%= userItem.role === 'admin' ? 'role-admin' : 'role-customer' %>">
+                                        <% if (userItem.role === 'admin') { %>
                                             <i class="fas fa-crown"></i>
                                         <% } else { %>
                                             <i class="fas fa-user"></i>
                                         <% } %>
-                                        <%= user.role %>
+                                        <%= userItem.role %>
                                     </span>
                                 </td>
                                 <td>
-                                    <%= new Date(user.createdAt).toLocaleDateString() %>
+                                    <%= new Date(userItem.createdAt).toLocaleDateString() %>
                                 </td>
                                 <td>
                                     <div class="action-buttons">
-                                        <% if (user.role === 'customer') { %>
+                                        <% if (userItem.role === 'customer') { %>
                                             <button class="btn-sm btn-promote promote-user-btn" 
-                                                    data-user-id="<%= user.id %>"
-                                                    data-user-name="<%= user.username %>">
+                                                    data-user-id="<%= userItem.id %>"
+                                                    data-user-name="<%= userItem.username %>">
                                                 <i class="fas fa-crown"></i> <%= t.promote_to_admin || 'Promote to Admin' %>
                                             </button>
                                         <% } else { %>
                                             <button class="btn-sm btn-demote demote-user-btn" 
-                                                    data-user-id="<%= user.id %>"
-                                                    data-user-name="<%= user.username %>"
+                                                    data-user-id="<%= userItem.id %>"
+                                                    data-user-name="<%= userItem.username %>"
                                                     <%= userStats.admins <= 1 ? 'disabled' : '' %>>
                                                 <i class="fas fa-user"></i> <%= t.demote_to_customer || 'Demote to Customer' %>
                                             </button>
                                         <% } %>
                                         
                                         <button class="btn-sm btn-delete delete-user-btn" 
-                                                data-user-id="<%= user.id %>"
-                                                data-user-name="<%= user.username %>"
-                                                <%= user.id === user.id || (user.role === 'admin' && userStats.admins <= 1) ? 'disabled' : '' %>>
+                                                data-user-id="<%= userItem.id %>"
+                                                data-user-name="<%= userItem.username %>"
+                                                <%= (currentUser && currentUser.id && currentUser.id.toString() === userItem.id.toString()) || (userItem.role === 'admin' && userStats.admins <= 1) ? 'disabled' : '' %>>
                                             <i class="fas fa-trash"></i> <%= t.delete_user || 'Delete' %>
                                         </button>
                                     </div>

@@ -5,47 +5,55 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        body {
+            background: #ffffff;
+            color: #0a2540;
+        }
+        
         .cart-container {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px 20px;
         }
         
         .cart-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             padding-bottom: 20px;
-            border-bottom: 2px solid #eaeaea;
+            border-bottom: 1px solid #e6ebf1;
         }
         
         .cart-title {
-            color: #2c5aa0;
+            color: #0a2540;
             font-size: 2.5rem;
             margin: 0;
             display: flex;
             align-items: center;
             gap: 15px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
         
         .continue-shopping {
-            color: #2c5aa0;
+            color: #635BFF;
             text-decoration: none;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 8px;
             padding: 10px 20px;
-            border: 2px solid #2c5aa0;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+            border: 1px solid #e6ebf1;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            background: #ffffff;
         }
         
         .continue-shopping:hover {
-            background: #2c5aa0;
-            color: white;
-            transform: translateY(-2px);
+            background: #f6f9fc;
+            border-color: #cbd5e0;
+            transform: translateY(-1px);
         }
         
         .cart-items {
@@ -55,29 +63,30 @@
         .cart-item {
             display: flex;
             align-items: center;
-            padding: 25px;
-            border: 1px solid #eaeaea;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            background: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            transition: transform 0.3s ease;
+            padding: 24px;
+            border: 1px solid #e6ebf1;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transition: all 0.2s ease;
         }
         
         .cart-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            border-color: #cbd5e0;
         }
         
         .cart-item-image {
             width: 100px;
             height: 100px;
-            background: #f8f9fa;
+            background: #f6f9fc;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 25px;
+            margin-right: 24px;
             flex-shrink: 0;
         }
         
@@ -86,17 +95,17 @@
         }
         
         .cart-item-name {
-            font-weight: bold;
-            font-size: 1.3rem;
+            font-weight: 600;
+            font-size: 1.25rem;
             margin-bottom: 8px;
-            color: #333;
+            color: #0a2540;
         }
         
         .cart-item-price {
-            color: #2c5aa0;
-            font-weight: bold;
-            font-size: 1.2rem;
-            margin-bottom: 15px;
+            color: #0a2540;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 16px;
         }
         
         .quantity-controls {
@@ -109,83 +118,90 @@
         .quantity-btn {
             width: 40px;
             height: 40px;
-            border: 2px solid #e9ecef;
-            background: white;
+            border: 1px solid #e6ebf1;
+            background: #ffffff;
             border-radius: 6px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
-            font-weight: bold;
-            transition: all 0.3s ease;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            color: #0a2540;
         }
         
         .quantity-btn:hover {
-            background: #2c5aa0;
-            color: white;
-            border-color: #2c5aa0;
+            background: #f6f9fc;
+            border-color: #cbd5e0;
+            color: #635BFF;
         }
         
         .quantity-input {
             width: 70px;
             text-align: center;
-            border: 2px solid #e9ecef;
+            border: 1px solid #e6ebf1;
             border-radius: 6px;
             padding: 10px;
             font-size: 1.1rem;
-            font-weight: bold;
+            font-weight: 600;
+            background: #ffffff;
+            color: #0a2540;
         }
         
         .quantity-input:focus {
             outline: none;
-            border-color: #2c5aa0;
+            border-color: #635BFF;
+            box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.1);
         }
         
         .item-total {
-            font-weight: bold;
+            font-weight: 700;
             margin-right: 20px;
             font-size: 1.3rem;
-            color: #28a745;
+            color: #0a2540;
             min-width: 100px;
             text-align: right;
         }
         
         .remove-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 12px 20px;
+            background: #f6f9fc;
+            color: #DF1C41;
+            border: 1px solid #e6ebf1;
+            padding: 10px 20px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 14px;
         }
         
         .remove-btn:hover {
-            background: #c82333;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+            background: #FFF5F5;
+            border-color: #FED7D7;
+            transform: translateY(-1px);
+            color: #DF1C41;
         }
         
         .cart-summary {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            border: 1px solid #eaeaea;
+            background: #ffffff;
+            padding: 32px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid #e6ebf1;
         }
         
         .summary-title {
-            color: #2c5aa0;
+            color: #0a2540;
             font-size: 1.5rem;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             display: flex;
             align-items: center;
             gap: 10px;
+            font-weight: 700;
         }
         
         .summary-row {
@@ -193,73 +209,81 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 0;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid #e6ebf1;
+            color: #8898aa;
         }
         
         .summary-row:last-child {
             border-bottom: none;
             font-size: 1.4rem;
-            font-weight: bold;
-            color: #2c5aa0;
+            font-weight: 700;
+            color: #0a2540;
         }
         
         .total-amount {
             font-size: 2rem;
-            font-weight: bold;
-            color: #28a745;
+            font-weight: 700;
+            color: #0a2540;
             text-align: right;
             margin: 20px 0;
         }
         
         .checkout-btn {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
+            background: #635BFF;
+            color: #ffffff;
             border: none;
-            padding: 18px 30px;
-            border-radius: 8px;
-            font-size: 1.2rem;
-            font-weight: bold;
+            padding: 16px 30px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
             width: 100%;
-            margin-top: 15px;
-            transition: all 0.3s ease;
+            margin-top: 20px;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
+            box-shadow: 0 1px 3px rgba(99, 91, 255, 0.2);
         }
         
         .checkout-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 91, 255, 0.3);
+            background: #5851ea;
         }
         
         .checkout-btn:disabled {
-            background: #6c757d;
+            background: #f6f9fc;
+            color: #8898aa;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
+            opacity: 0.6;
         }
         
         .empty-cart {
             text-align: center;
             padding: 80px 40px;
-            color: #666;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            color: #8898aa;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid #e6ebf1;
         }
         
         .empty-icon {
             font-size: 4rem;
             margin-bottom: 20px;
-            color: #ccc;
+            opacity: 0.4;
+            color: #cbd5e0;
         }
         
         .empty-title {
             font-size: 1.8rem;
             margin-bottom: 15px;
-            color: #2c5aa0;
+            color: #0a2540;
+            font-weight: 700;
         }
         
         .empty-message {
@@ -269,22 +293,24 @@
         }
         
         .browse-btn {
-            background: linear-gradient(135deg, #2c5aa0, #3a7bd5);
-            color: white;
-            padding: 15px 30px;
-            border-radius: 8px;
+            background: #635BFF;
+            color: #ffffff;
+            padding: 14px 28px;
+            border-radius: 6px;
             text-decoration: none;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            font-size: 1.1rem;
+            font-size: 15px;
+            box-shadow: 0 1px 3px rgba(99, 91, 255, 0.2);
         }
         
         .browse-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(44, 90, 160, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 91, 255, 0.3);
+            background: #5851ea;
         }
         
         .cart-stats {
@@ -295,14 +321,16 @@
         }
         
         .stat-item {
-            background: white;
+            background: #ffffff;
             padding: 15px 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
             display: flex;
             align-items: center;
             gap: 10px;
             font-weight: 500;
+            color: #0a2540;
+            border: 1px solid #e6ebf1;
         }
         
         .loading-overlay {
@@ -312,25 +340,27 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(10, 37, 64, 0.8);
             z-index: 9999;
             justify-content: center;
             align-items: center;
         }
         
         .loading-spinner {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border: 1px solid #e6ebf1;
+            color: #0a2540;
         }
         
         .spinner {
             width: 40px;
             height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #2c5aa0;
+            border: 4px solid #f6f9fc;
+            border-top: 4px solid #635BFF;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 15px;
@@ -349,39 +379,41 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(10, 37, 64, 0.8);
             z-index: 10000;
             justify-content: center;
             align-items: center;
         }
 
         .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            background: #ffffff;
+            padding: 32px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             width: 90%;
             max-width: 500px;
             max-height: 90vh;
             overflow-y: auto;
+            border: 1px solid #e6ebf1;
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #eaeaea;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e6ebf1;
         }
 
         .modal-title {
-            color: #2c5aa0;
+            color: #0a2540;
             font-size: 1.5rem;
             margin: 0;
             display: flex;
             align-items: center;
             gap: 10px;
+            font-weight: 700;
         }
 
         .close-modal {
@@ -389,12 +421,12 @@
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
-            color: #666;
+            color: #8898aa;
             padding: 5px;
         }
 
         .close-modal:hover {
-            color: #dc3545;
+            color: #0a2540;
         }
 
         .form-group {
@@ -405,20 +437,23 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #495057;
+            color: #0a2540;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 14px;
         }
 
         .form-input, .form-select, .form-textarea {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e9ecef;
+            border: 1px solid #e6ebf1;
             border-radius: 6px;
-            font-size: 16px;
-            transition: all 0.3s ease;
+            font-size: 15px;
+            transition: all 0.2s ease;
             box-sizing: border-box;
+            background: #ffffff;
+            color: #0a2540;
         }
 
         .form-textarea {
@@ -428,8 +463,8 @@
 
         .form-input:focus, .form-select:focus, .form-textarea:focus {
             outline: none;
-            border-color: #2c5aa0;
-            box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+            border-color: #635BFF;
+            box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.1);
         }
 
         .modal-actions {
@@ -439,40 +474,43 @@
         }
 
         .btn-cancel {
-            background: #6c757d;
-            color: white;
-            border: none;
+            background: #f6f9fc;
+            color: #0a2540;
+            border: 1px solid #e6ebf1;
             padding: 12px 20px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
             flex: 1;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         .btn-cancel:hover {
-            background: #5a6268;
+            background: #e6ebf1;
+            border-color: #cbd5e0;
         }
 
         .btn-confirm {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
+            background: #635BFF;
+            color: #ffffff;
             border: none;
             padding: 12px 20px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
             flex: 2;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            box-shadow: 0 1px 3px rgba(99, 91, 255, 0.2);
         }
 
         .btn-confirm:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(99, 91, 255, 0.3);
+            background: #5851ea;
         }
     </style>
 </head>
@@ -484,7 +522,7 @@
     <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-spinner">
             <div class="spinner"></div>
-            <p style="margin: 0; color: #2c5aa0; font-weight: 600;">
+            <p style="margin: 0; color: #0a2540; font-weight: 600;">
                 <i class="fas fa-spinner"></i> Processing Checkout...
             </p>
         </div>
@@ -511,15 +549,15 @@
                     </label>
                     
                     <div id="addressOptions">
-                        <div style="text-align: center; padding: 20px; color: #666;">
+                        <div style="text-align: center; padding: 20px; color: #8898aa;">
                             <i class="fas fa-spinner fa-spin"></i> Loading addresses...
                         </div>
                     </div>
                     
                     <!-- New Address Section -->
-                    <div id="newAddressSection" style="display: none; margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 6px;">
-                        <h4 style="margin: 0 0 10px 0; color: #2c5aa0;">
-                            <i class="fas fa-plus"></i> Enter New Address
+                    <div id="newAddressSection" style="display: none; margin-top: 15px; padding: 15px; background: #f6f9fc; border-radius: 6px; border: 1px solid #e6ebf1;">
+                        <h4 style="margin: 0 0 10px 0; color: #0a2540; font-weight: 600;">
+                            <i class="fas fa-plus" style="color: #635BFF;"></i> Enter New Address
                         </h4>
                         <textarea 
                             id="shippingAddress" 
@@ -544,25 +582,25 @@
                 </div>
                 
                 <div class="order-summary">
-                    <h3 style="color: #2c5aa0; margin-bottom: 15px;">
-                        <i class="fas fa-receipt"></i> Order Summary
+                    <h3 style="color: #0a2540; margin-bottom: 15px; font-weight: 700;">
+                        <i class="fas fa-receipt" style="color: #635BFF;"></i> Order Summary
                     </h3>
-                    <div style="background: #f8f9fa; padding: 15px; border-radius: 6px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <div style="background: #f6f9fc; padding: 16px; border-radius: 6px; border: 1px solid #e6ebf1;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: #8898aa;">
                             <span>Subtotal:</span>
                             <span>$<%= total.toFixed(2) %></span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: #8898aa;">
                             <span>Shipping:</span>
-                            <span style="color: #28a745;">FREE</span>
+                            <span style="color: #00D97E; font-weight: 600;">FREE</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: #8898aa;">
                             <span>Tax (10%):</span>
                             <span>$<%= (total * 0.1).toFixed(2) %></span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; border-top: 1px solid #ddd; padding-top: 8px;">
+                        <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; border-top: 1px solid #e6ebf1; padding-top: 8px; color: #0a2540;">
                             <span>Total:</span>
-                            <span style="color: #28a745;">$<%= (total * 1.1).toFixed(2) %></span>
+                            <span style="color: #0a2540;">$<%= (total * 1.1).toFixed(2) %></span>
                         </div>
                     </div>
                 </div>
@@ -613,7 +651,7 @@
                                 <img src="<%= item.product.image %>" alt="<%= item.product.name %>" 
                                      style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
                             <% } else { %>
-                                <div style="text-align: center; color: #666;">
+                                <div style="text-align: center; color: #cbd5e0;">
                                     <i class="fas fa-box fa-2x"></i>
                                 </div>
                             <% } %>
@@ -634,7 +672,7 @@
                                 <button class="quantity-btn plus-btn" data-item-id="<%= item.id %>">
                                     <i class="fas fa-plus"></i>
                                 </button>
-                                <span style="color: #666; font-size: 0.9rem; margin-left: 10px;">
+                                <span style="color: #8898aa; font-size: 0.9rem; margin-left: 10px;">
                                     <i class="fas fa-warehouse"></i> Stock: <%= item.product.stock %>
                                 </span>
                             </div>
@@ -666,7 +704,7 @@
                 
                 <div class="summary-row">
                     <span>Shipping:</span>
-                    <span style="color: #28a745;">
+                    <span style="color: #00D97E; font-weight: 600;">
                         <i class="fas fa-truck"></i> FREE
                     </span>
                 </div>
@@ -678,7 +716,7 @@
                 
                 <div class="summary-row">
                     <span>Total:</span>
-                    <span style="font-weight: bold;">
+                    <span style="font-weight: 700;">
                         <i class="fas fa-dollar-sign"></i><%= (total * 1.1).toFixed(2) %>
                     </span>
                 </div>
@@ -693,7 +731,7 @@
                 </button>
                 
                 <div style="text-align: center; margin-top: 15px;">
-                    <p style="color: #666; font-size: 0.9rem;">
+                    <p style="color: #8898aa; font-size: 0.9rem;">
                         <i class="fas fa-lock"></i> Your payment information is secure and encrypted
                     </p>
                 </div>
@@ -725,19 +763,21 @@
             gap: 12px;
             margin-bottom: 12px;
             padding: 12px;
-            border: 2px solid #e9ecef;
+            border: 1px solid #e6ebf1;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            background: #ffffff;
         }
         
         .address-option:hover {
-            border-color: #2c5aa0;
+            border-color: #cbd5e0;
+            background: #f6f9fc;
         }
         
         .address-option.selected {
-            border-color: #2c5aa0;
-            background: #f8f9ff;
+            border-color: #635BFF;
+            background: #f6f9fc;
         }
         
         .address-radio {
@@ -746,21 +786,22 @@
         
         .address-details h4 {
             margin: 0 0 5px 0;
-            color: #2c5aa0;
+            color: #0a2540;
             font-size: 0.95rem;
+            font-weight: 600;
         }
         
         .address-details p {
             margin: 2px 0;
-            color: #666;
+            color: #8898aa;
             font-size: 0.85rem;
         }
         
         .default-badge {
-            background: #28a745;
-            color: white;
+            background: #635BFF;
+            color: #ffffff;
             padding: 2px 6px;
-            border-radius: 8px;
+            border-radius: 4px;
             font-size: 0.65rem;
             font-weight: 600;
             display: inline-block;
@@ -843,9 +884,9 @@
                     }
                 } else {
                     addressOptions.innerHTML = `
-                        <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px;">
-                            <p style="margin-bottom: 15px;">No addresses saved yet</p>
-                            <a href="/addresses/add" class="btn-secondary" style="display: inline-block; padding: 8px 16px; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-size: 0.85rem;">
+                        <div style="text-align: center; padding: 20px; background: #f6f9fc; border-radius: 8px; border: 1px solid #e6ebf1;">
+                            <p style="margin-bottom: 15px; color: #8898aa;">No addresses saved yet</p>
+                            <a href="/addresses/add" class="btn-secondary" style="display: inline-block; padding: 8px 16px; background: #635BFF; color: #ffffff; text-decoration: none; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">
                                 <i class="fas fa-plus"></i> Add Your First Address
                             </a>
                         </div>
@@ -857,7 +898,7 @@
             } catch (error) {
                 console.error('Error loading addresses:', error);
                 document.getElementById('addressOptions').innerHTML = `
-                    <div style="text-align: center; padding: 20px; color: #dc3545;">
+                    <div style="text-align: center; padding: 20px; color: #DF1C41;">
                         <i class="fas fa-exclamation-triangle"></i> Error loading addresses
                     </div>
                     <input type="hidden" name="addressId" value="new">

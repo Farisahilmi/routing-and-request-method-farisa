@@ -5,65 +5,78 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        body {
+            background: #ffffff;
+            color: #0a2540;
+        }
+        
         .about-container {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px 20px;
         }
         
         .hero-section {
             text-align: center;
-            margin-bottom: 60px;
+            margin-bottom: 80px;
         }
         
         .hero-section h1 {
-            color: #2c5aa0;
-            font-size: 3rem;
-            margin-bottom: 20px;
+            color: #0a2540;
+            font-size: 3.5rem;
+            margin-bottom: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 15px;
+            font-weight: 700;
+            letter-spacing: -0.03em;
         }
         
         .mission-section {
-            background: white;
-            padding: 50px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            margin-bottom: 40px;
+            background: #f6f9fc;
+            padding: 60px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            margin-bottom: 60px;
             text-align: center;
+            border: 1px solid #e6ebf1;
         }
         
         .values-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin: 40px 0;
+            gap: 24px;
+            margin: 60px 0;
         }
         
         .value-card {
             text-align: center;
-            padding: 30px 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            transition: transform 0.3s ease;
+            padding: 32px 24px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transition: all 0.2s ease;
+            border: 1px solid #e6ebf1;
         }
         
         .value-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
+            border-color: #cbd5e0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
         }
         
         .value-icon {
-            font-size: 3rem;
+            font-size: 2.5rem;
             margin-bottom: 20px;
-            color: #2c5aa0;
+            color: #635BFF;
         }
         
         .value-card h3 {
-            color: #2c5aa0;
-            margin-bottom: 15px;
+            color: #0a2540;
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 1.25rem;
         }
         
         .team-section {
@@ -79,24 +92,24 @@
             <h1>
                 <i class="fas fa-info-circle"></i> About Simple Store
             </h1>
-            <p style="font-size: 1.2rem; color: #666; max-width: 700px; margin: 0 auto; line-height: 1.6;">
+            <p style="font-size: 1.25rem; color: #8898aa; max-width: 700px; margin: 0 auto; line-height: 1.6;">
                 We're passionate about bringing you the best products at affordable prices. 
                 Our mission is to make online shopping simple, secure, and enjoyable for everyone.
             </p>
         </div>
 
         <div class="mission-section">
-            <h2 style="color: #2c5aa0; margin-bottom: 20px;">
-                <i class="fas fa-bullseye"></i> Our Mission
+            <h2 style="color: #0a2540; margin-bottom: 20px; font-weight: 700; font-size: 2rem;">
+                <i class="fas fa-bullseye" style="color: #635BFF;"></i> Our Mission
             </h2>
-            <p style="font-size: 1.1rem; color: #666; line-height: 1.7; max-width: 800px; margin: 0 auto;">
+            <p style="font-size: 1.1rem; color: #8898aa; line-height: 1.7; max-width: 800px; margin: 0 auto;">
                 To create a seamless shopping experience that connects customers with quality products while 
                 maintaining the highest standards of customer service, security, and reliability.
             </p>
         </div>
 
-        <h2 style="text-align: center; color: #2c5aa0; margin-bottom: 30px;">
-            <i class="fas fa-star"></i> Our Values
+        <h2 style="text-align: center; color: #0a2540; margin-bottom: 40px; font-weight: 700; font-size: 2rem; letter-spacing: -0.02em;">
+            <i class="fas fa-star" style="color: #635BFF;"></i> Our Values
         </h2>
         <div class="values-grid">
             <div class="value-card">
@@ -104,28 +117,28 @@
                     <i class="fas fa-gem"></i>
                 </div>
                 <h3>Quality</h3>
-                <p style="color: #666;">We carefully curate every product to ensure the highest quality standards.</p>
+                <p style="color: #8898aa;">We carefully curate every product to ensure the highest quality standards.</p>
             </div>
             <div class="value-card">
                 <div class="value-icon">
                     <i class="fas fa-handshake"></i>
                 </div>
                 <h3>Trust</h3>
-                <p style="color: #666;">Building long-term relationships with our customers through transparency.</p>
+                <p style="color: #8898aa;">Building long-term relationships with our customers through transparency.</p>
             </div>
             <div class="value-card">
                 <div class="value-icon">
                     <i class="fas fa-bolt"></i>
                 </div>
                 <h3>Innovation</h3>
-                <p style="color: #666;">Continuously improving our platform to enhance your shopping experience.</p>
+                <p style="color: #8898aa;">Continuously improving our platform to enhance your shopping experience.</p>
             </div>
             <div class="value-card">
                 <div class="value-icon">
                     <i class="fas fa-heart"></i>
                 </div>
                 <h3>Care</h3>
-                <p style="color: #666;">We genuinely care about our customers and their satisfaction.</p>
+                <p style="color: #8898aa;">We genuinely care about our customers and their satisfaction.</p>
             </div>
         </div>
     </div>

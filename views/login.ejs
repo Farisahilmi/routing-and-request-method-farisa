@@ -5,28 +5,36 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        body {
+            background: #ffffff;
+            color: #0a2540;
+        }
+        
         .auth-container {
             max-width: 400px;
-            margin: 50px auto;
+            margin: 80px auto;
             padding: 20px;
         }
         
         .auth-card {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            border: 1px solid #eaeaea;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid #e6ebf1;
         }
         
         .auth-title {
             text-align: center;
-            color: #2c5aa0;
-            margin-bottom: 25px;
+            color: #0a2540;
+            margin-bottom: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
         
         .form-group {
@@ -37,70 +45,78 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #495057;
+            color: #0a2540;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 14px;
         }
         
         .form-input {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e9ecef;
+            border: 1px solid #e6ebf1;
             border-radius: 6px;
-            font-size: 16px;
-            transition: all 0.3s ease;
+            font-size: 15px;
+            transition: all 0.2s ease;
             box-sizing: border-box;
+            background: #ffffff;
+            color: #0a2540;
         }
         
         .form-input:focus {
             outline: none;
-            border-color: #2c5aa0;
-            box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+            border-color: #635BFF;
+            box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.1);
         }
         
         .btn-auth {
             width: 100%;
-            padding: 12px;
-            background: #2c5aa0;
-            color: white;
+            padding: 14px;
+            background: #635BFF;
+            color: #ffffff;
             border: none;
             border-radius: 6px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            box-shadow: 0 1px 3px rgba(99, 91, 255, 0.2);
         }
         
         .btn-auth:hover {
-            background: #1e4a8a;
-            transform: translateY(-2px);
+            background: #5851ea;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(99, 91, 255, 0.3);
         }
         
         .auth-link {
             text-align: center;
-            margin-top: 20px;
-            color: #666;
+            margin-top: 24px;
+            color: #8898aa;
+            font-size: 14px;
         }
         
         .auth-link a {
-            color: #2c5aa0;
+            color: #635BFF;
             text-decoration: none;
             font-weight: 500;
         }
         
         .auth-link a:hover {
             text-decoration: underline;
+            color: #5851ea;
         }
         
         .error-message {
-            background: #f8d7da;
-            color: #721c24;
+            background: #FFF5F5;
+            color: #DF1C41;
             padding: 12px;
+            border: 1px solid #FED7D7;
             border-radius: 6px;
             margin-bottom: 20px;
             border: 1px solid #f5c6cb;
