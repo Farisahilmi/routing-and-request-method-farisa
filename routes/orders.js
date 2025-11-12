@@ -38,7 +38,7 @@ router.get('/', function(req, res, next) {
   });
 });
 
-// GET order details
+// GET order details - FIX ERROR RENDERING
 router.get('/:id', function(req, res, next) {
   if (!req.session.user) {
     return res.redirect('/users/login?message=Please login to view order details');
@@ -56,6 +56,7 @@ router.get('/:id', function(req, res, next) {
     return res.status(404).render('error', {
       title: 'Order Not Found',
       message: 'Order not found',
+      error: { status: 404 }, // ✅ TAMBAH INI
       user: req.session.user
     });
   }
@@ -68,6 +69,7 @@ router.get('/:id', function(req, res, next) {
     return res.status(403).render('error', {
       title: 'Access Denied',
       message: 'Access denied. You can only view your own orders.',
+      error: { status: 403 }, // ✅ TAMBAH INI
       user: req.session.user
     });
   }

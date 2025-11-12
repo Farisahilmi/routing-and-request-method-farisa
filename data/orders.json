@@ -1,20 +1,21 @@
 [
   {
     "id": 2,
-    "userId": "2",
+    "userId": "1",
     "items": [
       {
-        "productId": 3,
-        "name": "Wireless Headphones",
-        "price": 199.99,
+        "productId": 1,
+        "name": "Laptop Gaming RTX 4080",
+        "price": 1299.99,
         "quantity": 1,
-        "image": "/images/headphones.jpg"
+        "image": "/images/laptop.jpg"
       }
     ],
-    "totalAmount": 199.99,
-    "status": "pending",
-    "shippingAddress": "dimana saja ",
-    "paymentMethod": "bank",
-    "createdAt": "2025-11-12T07:01:18.904Z"
+    "totalAmount": 1299.99,
+    "status": "cancelled",
+    "shippingAddress": "dsffada",
+    "paymentMethod": "cash",
+    "createdAt": "2025-11-12T08:20:18.070Z",
+    "updatedAt": "2025-11-12T08:20:33.435Z"
   }
 ]

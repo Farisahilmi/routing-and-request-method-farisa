@@ -3,6 +3,7 @@
 <head>
     <title>Error - Simple Store</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .error-container {
             max-width: 600px;
@@ -85,7 +86,7 @@
     <%- include('nav') %>
     <div class="error-container">
         <div class="error-icon">
-            <% if (error && error.status === 404) { %>
+            <% if (typeof error !== 'undefined' && error.status === 404) { %>
                 🔍
             <% } else { %>
                 😵
@@ -93,7 +94,7 @@
         </div>
         
         <h1 class="error-title">
-            <% if (error && error.status === 404) { %>
+            <% if (typeof error !== 'undefined' && error.status === 404) { %>
                 Page Not Found
             <% } else { %>
                 Oops! Something Went Wrong
@@ -101,7 +102,7 @@
         </h1>
         
         <p class="error-message">
-            <%= message || 'An unexpected error occurred' %>
+            <%= typeof message !== 'undefined' ? message : 'An unexpected error occurred' %>
         </p>
         
         <div class="error-actions">
@@ -119,7 +120,7 @@
             </button>
         </div>
         
-        <% if (error && error.stack) { %>
+        <% if (typeof error !== 'undefined' && error.stack) { %>
             <div class="error-details">
                 <h3 style="margin: 0 0 10px 0; color: #dc3545;">Error Details:</h3>
                 <pre><%= error.stack %></pre>

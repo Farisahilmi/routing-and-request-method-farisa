@@ -3,37 +3,8 @@ var router = express.Router();
 const fs = require('fs');
 const path = require('path');
 
-function readJSONFile(filename) {
-  const filePath = path.join(__dirname, '../data', filename);
-  
-  if (!fs.existsSync(filePath)) {
-    return [];
-  }
-  
-  try {
-    const data = fs.readFileSync(filePath, 'utf8').trim();
-    if (!data) {
-      return [];
-    }
-    return JSON.parse(data);
-  } catch (error) {
-    console.error(`❌ Error reading ${filename}:`, error.message);
-    return [];
-  }
-}
-
-function writeJSONFile(filename, data) {
-  const filePath = path.join(__dirname, '../data', filename);
-  
-  try {
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-    console.log(`✅ ${filename} saved successfully`);
-    return true;
-  } catch (error) {
-    console.error(`❌ Error writing ${filename}:`, error.message);
-    return false;
-  }
-}
+// Import database helper untuk clear cache
+const { readJSONFile, writeJSONFile, clearCache } = require('../helpers/database');
 
 // GET Cart Count (for navbar)
 router.get('/count', function(req, res, next) {
@@ -216,7 +187,7 @@ router.delete('/remove/:id', function(req, res, next) {
   }
 });
 
-// POST Checkout - FIXED ORDER ID GENERATION
+// POST Checkout - FIXED ORDER ID GENERATION & CACHE CLEAR
 router.post('/checkout', function(req, res, next) {
   try {
     // ✅ CEK USER LOGIN
@@ -314,14 +285,21 @@ router.post('/checkout', function(req, res, next) {
       return res.json({ success: false, message: 'Failed to create order' });
     }
     
+    // ✅ PERBAIKAN PENTING: Clear cache untuk orders.json dan products.json
+    clearCache('orders.json');
+    clearCache('products.json');
+    
     // Clear cart
     writeJSONFile('cart.json', []);
 
     console.log(`✅ Checkout successful! Order #${newOrder.id} created for user ${req.session.user.username}`);
+    console.log(`🔄 Cache cleared for orders and products`);
 
+    // ✅ PERBAIKAN: Redirect langsung ke success page dengan parameter
     res.json({ 
       success: true, 
       message: 'Checkout successful! Order has been placed.',
+      redirectUrl: `/cart/checkout/success?order_id=${newOrder.id}&total=${newOrder.totalAmount}`,
       orderId: newOrder.id,
       orderTotal: newOrder.totalAmount
     });
@@ -375,16 +353,22 @@ router.get('/checkout', function(req, res, next) {
   }
 });
 
-// GET Checkout Success Page
+// GET Checkout Success Page - PERBAIKAN
 router.get('/checkout/success', function(req, res, next) {
   const { order_id, total } = req.query;
   
   console.log(`🎉 Checkout success page for order:`, { order_id, total });
 
+  // ✅ PERBAIKAN: Pastikan order_id dan total ada
+  if (!order_id || !total) {
+    console.log('❌ Missing order_id or total parameters');
+    return res.redirect('/cart?message=Invalid order confirmation');
+  }
+
   res.render('checkout-success', { 
     title: 'Order Confirmed - Simple Store',
-    orderId: order_id || 'N/A',
-    orderTotal: total || '0.00',
+    orderId: order_id,
+    orderTotal: total,
     user: req.session.user || null
   });
 });
@@ -416,6 +400,8 @@ router.post('/reset-orders', function(req, res, next) {
   try {
     // Reset orders to empty array
     if (writeJSONFile('orders.json', [])) {
+      // Clear cache setelah reset orders
+      clearCache('orders.json');
       console.log('🔄 Orders reset successfully by admin');
       res.json({ 
         success: true, 
