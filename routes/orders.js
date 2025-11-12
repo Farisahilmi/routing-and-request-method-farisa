@@ -10,11 +10,14 @@ router.get('/', function(req, res, next) {
 
   const ordersArray = readJSONFile('orders.json');
   const usersArray = readJSONFile('users.json');
+  const isAdmin = req.session.user.role === 'admin';
   
-  const userOrders = ordersArray.filter(order => order.userId == req.session.user.id);
+  const relevantOrders = isAdmin
+    ? ordersArray
+    : ordersArray.filter(order => order.userId == req.session.user.id);
   
-  const ordersWithUserData = userOrders.map(order => {
-    const user = usersArray.find(u => u.id == order.userId);
+  const ordersWithUserData = relevantOrders.map(order => {
+    const user = usersArray.find(u => u.id == order.userId || u.id?.toString() === order.userId?.toString());
     const orderItems = order.items || order.products || [];
     
     return {
@@ -27,14 +30,22 @@ router.get('/', function(req, res, next) {
       } : {
         username: req.session.user.username,
         email: req.session.user.email
-      }
+      },
+      userSummary: user ? {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role
+      } : null
     };
   });
 
   res.render('orders', {
     title: 'My Orders',
     orders: ordersWithUserData,
-    user: req.session.user
+    user: req.session.user,
+    isAdmin,
+    statusOptions: ['pending', 'processing', 'shipped', 'delivered', 'completed', 'cancelled']
   });
 });
 
@@ -190,14 +201,18 @@ router.put('/:id', function(req, res, next) {
     });
   }
 
-  if (ordersArray[orderIndex].userId != req.session.user.id && req.session.user.role !== 'admin') {
+  const order = ordersArray[orderIndex];
+  const isAdmin = req.session.user.role === 'admin';
+  const isOrderOwner = order.userId == req.session.user.id || order.userId?.toString() === req.session.user.id?.toString();
+
+  if (!isOrderOwner && !isAdmin) {
     return res.status(403).json({
       success: false,
       message: "Access denied. You can only update your own orders."
     });
   }
 
-  const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+  const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'completed', 'cancelled'];
   if (!validStatuses.includes(status)) {
     return res.status(400).json({
       success: false,
@@ -205,11 +220,42 @@ router.put('/:id', function(req, res, next) {
     });
   }
 
-  ordersArray[orderIndex] = {
-    ...ordersArray[orderIndex],
+  if (!isAdmin) {
+    const customerAllowedStatuses = ['cancelled', 'completed'];
+    if (!customerAllowedStatuses.includes(status)) {
+      return res.status(403).json({
+        success: false,
+        message: "Customers can only mark orders as completed or cancelled."
+      });
+    }
+
+    // Additional guards for customer actions
+    if (status === 'cancelled' && !['pending', 'processing'].includes(order.status)) {
+      return res.status(400).json({
+        success: false,
+        message: "You can only cancel orders that are pending or processing."
+      });
+    }
+
+    if (status === 'completed' && order.status === 'cancelled') {
+      return res.status(400).json({
+        success: false,
+        message: "Cancelled orders cannot be marked as completed."
+      });
+    }
+  }
+
+  const updatedOrder = {
+    ...order,
     status: status,
     updatedAt: new Date().toISOString()
   };
+
+  if (status === 'completed') {
+    updatedOrder.completedAt = new Date().toISOString();
+  }
+
+  ordersArray[orderIndex] = updatedOrder;
 
   if (writeJSONFile('orders.json', ordersArray)) {
     res.json({

@@ -5,7 +5,7 @@
     "description": "High-performance gaming laptop dengan graphics terbaru",
     "price": 1299.99,
     "category": "Electronics",
-    "stock": 10,
+    "stock": 9,
     "image": "/images/laptop.jpg"
   },
   {
@@ -14,7 +14,7 @@
     "description": "Latest smartphone dengan kamera 108MP",
     "price": 699.99,
     "category": "Electronics",
-    "stock": 10,
+    "stock": 9,
     "image": "/images/phone.jpg"
   },
   {
@@ -23,7 +23,7 @@
     "description": "Noise-cancelling headphones dengan battery 30 jam",
     "price": 199.99,
     "category": "Electronics",
-    "stock": 10,
+    "stock": 9,
     "image": "/images/headphones.jpg"
   },
   {
@@ -32,7 +32,7 @@
     "description": "Sepatu lari dengan cushioning terbaik",
     "price": 89.99,
     "category": "Fashion",
-    "stock": 10,
+    "stock": 9,
     "image": "/images/shoes.jpg"
   },
   {
@@ -41,7 +41,7 @@
     "description": "Smartwatch dengan health monitoring",
     "price": 299.99,
     "category": "Electronics",
-    "stock": 9,
+    "stock": 8,
     "image": "/images/watch.jpg"
   },
   {

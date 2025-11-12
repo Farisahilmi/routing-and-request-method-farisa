@@ -203,6 +203,13 @@
         .meta-value {
             color: #2c5aa0;
         }
+
+        .meta-subtext {
+            display: block;
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 2px;
+        }
         
         .order-items {
             margin-bottom: 20px;
@@ -393,6 +400,61 @@
             flex-wrap: wrap;
         }
 
+        .admin-status-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 12px;
+            background: #eef4ff;
+            border: 1px solid #d6e4ff;
+            border-radius: 8px;
+            min-width: 220px;
+        }
+
+        .admin-status-controls h4 {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #2c5aa0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .admin-status-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .admin-status-select {
+            flex: 1;
+            min-width: 140px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid #c0d2f5;
+            background: white;
+            font-weight: 600;
+            color: #2c5aa0;
+        }
+
+        .admin-quick-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+            border: 2px solid #17a2b8;
+        }
+
+        .btn-info:hover {
+            background: #117a8b;
+            transform: translateY(-2px);
+        }
+
         .btn-sm {
             padding: 8px 12px;
             font-size: 12px;
@@ -438,6 +500,19 @@
                 width: 100%;
             }
 
+            .admin-status-controls {
+                width: 100%;
+            }
+
+            .admin-status-row,
+            .admin-quick-actions {
+                width: 100%;
+            }
+
+            .admin-status-select {
+                width: 100%;
+            }
+
             .btn-sm {
                 width: 100%;
                 justify-content: center;
@@ -453,7 +528,7 @@
         <div class="orders-header">
             <h1 class="orders-title">
                 <i class="fas fa-clipboard-list"></i>
-                My Orders
+                <%= isAdmin ? 'All Orders' : 'My Orders' %>
             </h1>
             <a href="/products" class="back-to-shop">
                 <i class="fas fa-shopping-bag"></i>
@@ -506,10 +581,12 @@
                         <!-- Order Header -->
                         <div class="order-header">
                             <div class="order-info">
-                                <div class="order-id" style="display: none;">
-                                    <i class="fas fa-hashtag"></i>
-                                    Order #<%= order.id %>
-                                </div>
+                                <% if (isAdmin) { %>
+                                    <div class="order-id">
+                                        <i class="fas fa-hashtag"></i>
+                                        Order #<%= order.id %>
+                                    </div>
+                                <% } %>
                                 <div class="order-date">
                                     <i class="fas fa-calendar"></i>
                                     <%= new Date(order.createdAt).toLocaleDateString('en-US', { 
@@ -536,7 +613,14 @@
                                     <div>
                                         <span class="meta-label">Customer:</span>
                                         <span class="meta-value">
-                                            <%= order.user ? order.user.username : (user ? user.username : 'Unknown User') %>
+                                            <% if (isAdmin) { %>
+                                                <%= order.userSummary ? order.userSummary.username : 'Unknown User' %>
+                                                <% if (order.userSummary && order.userSummary.email) { %>
+                                                    <span class="meta-subtext"><%= order.userSummary.email %></span>
+                                                <% } %>
+                                            <% } else { %>
+                                                <%= order.user ? order.user.username : (user ? user.username : 'Unknown User') %>
+                                            <% } %>
                                         </span>
                                     </div>
                                 </div>
@@ -582,7 +666,11 @@
                                 <div class="item-list">
                                     <% 
                                         // ✅ FIXED: Handle both items and products structure
-                                        const orderItems = order.items || order.products || []; 
+                                        const orderItems = order.items || order.products || [];
+                                        const statusLower = (order.status || '').toLowerCase();
+                                        const canMarkReceived = ['processing', 'shipped', 'delivered'].includes(statusLower);
+                                        const isCompletedStatus = statusLower === 'completed';
+                                        const isCancelledStatus = statusLower === 'cancelled';
                                     %>
                                     <% if (orderItems.length > 0) { %>
                                         <% orderItems.forEach(function(item, index) { %>
@@ -627,11 +715,60 @@
                                 Total: $<%= order.totalAmount ? order.totalAmount.toFixed(2) : '0.00' %>
                             </div>
                             <div class="order-actions">
+                                <% if (isAdmin) { %>
+                                    <div class="admin-status-controls">
+                                        <h4>
+                                            <i class="fas fa-user-shield"></i>
+                                            Admin Controls
+                                        </h4>
+                                        <div class="admin-status-row">
+                                            <select class="admin-status-select" data-order-id="<%= order.id %>">
+                                                <% statusOptions.forEach(function(option) { %>
+                                                    <option value="<%= option %>" <%= option === order.status ? 'selected' : '' %>>
+                                                        <%= option.charAt(0).toUpperCase() + option.slice(1) %>
+                                                    </option>
+                                                <% }) %>
+                                            </select>
+                                            <button class="btn btn-primary btn-sm apply-status-btn" data-order-id="<%= order.id %>">
+                                                <i class="fas fa-save"></i>
+                                                Update
+                                            </button>
+                                        </div>
+                                        <div class="admin-quick-actions">
+                                            <button class="btn btn-outline btn-sm admin-quick-btn" 
+                                                    data-order-id="<%= order.id %>" 
+                                                    data-status="completed">
+                                                <i class="fas fa-check"></i>
+                                                Mark Completed
+                                            </button>
+                                            <button class="btn btn-outline btn-sm admin-quick-btn" 
+                                                    data-order-id="<%= order.id %>" 
+                                                    data-status="pending">
+                                                <i class="fas fa-redo"></i>
+                                                Set Pending
+                                            </button>
+                                            <button class="btn btn-danger btn-sm admin-quick-btn" 
+                                                    data-order-id="<%= order.id %>" 
+                                                    data-status="cancelled">
+                                                <i class="fas fa-ban"></i>
+                                                Cancel Order
+                                            </button>
+                                        </div>
+                                    </div>
+                                <% } %>
                                 <div class="action-buttons">
                                     <a href="/orders/<%= order.id %>" class="btn btn-primary btn-sm">
                                         <i class="fas fa-eye"></i>
                                         View Details
                                     </a>
+
+                                    <% if (!isAdmin && canMarkReceived && !isCompletedStatus && !isCancelledStatus) { %>
+                                        <button class="btn btn-info btn-sm receive-order-btn"
+                                                data-order-id="<%= order.id %>">
+                                            <i class="fas fa-box-open"></i>
+                                            Mark as Received
+                                        </button>
+                                    <% } %>
                                     
                                     <!-- Cancel Order Button (for pending/processing orders) -->
                                     <% if (order.status === 'pending' || order.status === 'processing') { %>
@@ -675,34 +812,77 @@
     </div>
 
     <script>
-        // Cancel Order Function
-        async function cancelOrder(orderId) {
-            if (!confirm('Are you sure you want to cancel this order?')) return;
-            
+        const statusLabelMap = {
+            pending: 'Pending',
+            processing: 'Processing',
+            shipped: 'Shipped',
+            delivered: 'Delivered',
+            completed: 'Completed',
+            cancelled: 'Cancelled'
+        };
+
+        function getStatusLabel(status) {
+            if (!status || typeof status !== 'string') return '';
+            return statusLabelMap[status] || status.charAt(0).toUpperCase() + status.slice(1);
+        }
+
+        async function sendStatusUpdate(orderId, status, {
+            successTitle = 'Status Updated',
+            successMessage = '',
+            errorTitle = 'Update Failed'
+        } = {}) {
             try {
                 const response = await fetch('/orders/' + orderId, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        status: 'cancelled'
-                    })
+                    body: JSON.stringify({ status })
                 });
-                
+
                 const result = await response.json();
-                
-                if (result.success) {
-                    showNotification('success', 'Order Cancelled', 'Your order has been cancelled successfully');
+
+                if (response.ok && result.success) {
+                    showNotification('success', successTitle, successMessage || result.message || 'Order updated successfully');
                     setTimeout(() => {
                         location.reload();
-                    }, 1500);
+                    }, 1200);
                 } else {
-                    showNotification('error', 'Cancellation Failed', result.message);
+                    showNotification('error', errorTitle, result.message || 'Failed to update order');
                 }
             } catch (error) {
-                showNotification('error', 'Error', 'Error cancelling order: ' + error.message);
+                showNotification('error', errorTitle, 'Error updating order: ' + error.message);
             }
+        }
+
+        async function cancelOrder(orderId) {
+            if (!confirm('Are you sure you want to cancel this order?')) return;
+            await sendStatusUpdate(orderId, 'cancelled', {
+                successTitle: 'Order Cancelled',
+                successMessage: 'Your order has been cancelled successfully.',
+                errorTitle: 'Cancellation Failed'
+            });
+        }
+
+        async function markOrderReceived(orderId) {
+            if (!confirm('Have you received this order?')) return;
+            await sendStatusUpdate(orderId, 'completed', {
+                successTitle: 'Order Received',
+                successMessage: 'Thank you! We\'ve marked this order as completed.',
+                errorTitle: 'Update Failed'
+            });
+        }
+
+        async function adminUpdateOrderStatus(orderId, status) {
+            if (status === 'cancelled' && !confirm('Mark order #' + orderId + ' as Cancelled?')) {
+                return;
+            }
+
+            await sendStatusUpdate(orderId, status, {
+                successTitle: 'Status Updated',
+                successMessage: 'Order #' + orderId + ' marked as ' + getStatusLabel(status) + '.',
+                errorTitle: 'Update Failed'
+            });
         }
 
         // Delete Order Function
@@ -719,22 +899,20 @@
                 
                 const result = await response.json();
                 
-                if (result.success) {
+                if (response.ok && result.success) {
                     showNotification('success', 'Order Deleted', 'Order has been permanently deleted');
                     setTimeout(() => {
                         location.reload();
                     }, 1500);
                 } else {
-                    showNotification('error', 'Delete Failed', result.message);
+                    showNotification('error', 'Delete Failed', result.message || 'Failed to delete order');
                 }
             } catch (error) {
                 showNotification('error', 'Error', 'Error deleting order: ' + error.message);
             }
         }
 
-        // Event Listeners
         document.addEventListener('DOMContentLoaded', function() {
-            // Cancel order buttons
             document.querySelectorAll('.cancel-order-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const orderId = this.getAttribute('data-order-id');
@@ -742,7 +920,6 @@
                 });
             });
 
-            // Delete order buttons
             document.querySelectorAll('.delete-order-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const orderId = this.getAttribute('data-order-id');
@@ -751,16 +928,47 @@
                 });
             });
 
-            // Update order status colors based on status
+            document.querySelectorAll('.receive-order-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const orderId = this.getAttribute('data-order-id');
+                    markOrderReceived(orderId);
+                });
+            });
+
+            document.querySelectorAll('.apply-status-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const orderId = this.getAttribute('data-order-id');
+                    const controls = this.closest('.admin-status-controls');
+                    const select = controls ? controls.querySelector('.admin-status-select') : null;
+                    if (select) {
+                        const newStatus = select.value;
+                        adminUpdateOrderStatus(orderId, newStatus);
+                    }
+                });
+            });
+
+            document.querySelectorAll('.admin-quick-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const orderId = this.getAttribute('data-order-id');
+                    const status = this.getAttribute('data-status');
+                    const controls = this.closest('.admin-status-controls');
+                    const select = controls ? controls.querySelector('.admin-status-select') : null;
+                    if (select) {
+                        select.value = status;
+                    }
+                    adminUpdateOrderStatus(orderId, status);
+                });
+            });
+
             document.querySelectorAll('.order-status').forEach(statusElement => {
                 const status = statusElement.textContent.trim().toLowerCase();
                 statusElement.className = 'order-status status-' + status;
             });
         });
 
-        // Global functions for onclick attributes (backward compatibility)
         window.cancelOrder = cancelOrder;
         window.deleteOrder = deleteOrder;
+        window.markOrderReceived = markOrderReceived;
     </script>
 </body>
 </html>

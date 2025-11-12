@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "id": 1,
+    "userId": "1",
+    "items": [
+      {
+        "productId": 4,
+        "name": "Running Shoes",
+        "price": 89.99,
+        "quantity": 1,
+        "image": "/images/shoes.jpg"
+      }
+    ],
+    "totalAmount": 89.99,
+    "status": "cancelled",
+    "shippingAddress": "rumah\nfarisahilmi\n085642044608\ngegerbitun, 180\nsukabumi, indonesia 43197\nIndonesia",
+    "paymentMethod": "cash",
+    "createdAt": "2025-11-12T09:57:15.991Z",
+    "updatedAt": "2025-11-12T09:57:36.089Z",
+    "completedAt": "2025-11-12T09:57:27.075Z"
+  }
+]

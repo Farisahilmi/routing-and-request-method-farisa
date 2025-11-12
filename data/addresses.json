@@ -5,13 +5,13 @@
     "label": "rumah",
     "fullName": "farisahilmi",
     "phone": "085642044608",
-    "street": "indonesia/jawa barat/kota.sukabumi/kec.gegerbitung/des.cijurey/kp.pasir hideung",
+    "street": "gegerbitun, 180",
     "city": "sukabumi",
     "state": "indonesia",
     "postalCode": "43197",
     "country": "Indonesia",
     "isDefault": true,
-    "createdAt": "2025-11-12T08:42:52.536Z"
+    "createdAt": "2025-11-12T09:38:29.807Z"
   },
   {
     "id": 2,
@@ -25,6 +25,6 @@
     "postalCode": "43197",
     "country": "Indonesia",
     "isDefault": true,
-    "createdAt": "2025-11-12T09:06:01.161Z"
+    "createdAt": "2025-11-12T09:50:15.361Z"
   }
 ]
