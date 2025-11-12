@@ -3,7 +3,7 @@
     "id": "1",
     "username": "Admin User",
     "email": "admin@store.com",
-    "password": "$2b$12$zi7kLlUNIvyICTHlgb7XLex72wM8tvnX4DZxUTpR/Cl112FPTZ2Uq",
+    "password": "admin1234",
     "role": "admin",
     "createdAt": "2024-01-01T00:00:00.000Z",
     "language": "en",
