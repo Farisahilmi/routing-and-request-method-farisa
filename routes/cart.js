@@ -216,7 +216,7 @@ router.delete('/remove/:id', function(req, res, next) {
   }
 });
 
-// POST Checkout - CREATE REAL ORDER
+// POST Checkout - FIXED ORDER ID GENERATION
 router.post('/checkout', function(req, res, next) {
   try {
     // ✅ CEK USER LOGIN
@@ -269,10 +269,30 @@ router.post('/checkout', function(req, res, next) {
       product.stock -= cartItem.quantity;
     }
 
-    // Create new order - ✅ GUNAKAN USER YANG LOGIN
+    // ✅ FIXED: SIMPLE ORDER ID GENERATION - Start from 1
+    let newOrderId = 1;
+    
+    if (orders.length > 0) {
+      // Find the highest existing order ID
+      const existingIds = orders.map(order => {
+        const id = parseInt(order.id);
+        return isNaN(id) ? 0 : id;
+      }).filter(id => id > 0);
+      
+      if (existingIds.length > 0) {
+        newOrderId = Math.max(...existingIds) + 1;
+      } else {
+        newOrderId = orders.length + 1;
+      }
+    }
+
+    console.log(`🆕 Generated Order ID: ${newOrderId}`);
+    console.log(`📊 Current orders in system: ${orders.length}`);
+
+    // Create new order
     const newOrder = {
-      id: orders.length > 0 ? Math.max(...orders.map(o => parseInt(o.id))) + 1 : 1,
-      userId: req.session.user.id, // ✅ USER YANG SEDANG LOGIN
+      id: newOrderId,
+      userId: req.session.user.id,
       items: orderItems,
       totalAmount: parseFloat(totalAmount.toFixed(2)),
       status: "pending",
@@ -381,6 +401,32 @@ router.delete('/clear', function(req, res, next) {
   } catch (error) {
     console.error('❌ Error clearing cart:', error);
     res.json({ success: false, message: 'Error clearing cart' });
+  }
+});
+
+// RESET ORDERS (Admin only) - NEW
+router.post('/reset-orders', function(req, res, next) {
+  if (!req.session.user || req.session.user.role !== 'admin') {
+    return res.json({ 
+      success: false, 
+      message: 'Admin access required to reset orders' 
+    });
+  }
+
+  try {
+    // Reset orders to empty array
+    if (writeJSONFile('orders.json', [])) {
+      console.log('🔄 Orders reset successfully by admin');
+      res.json({ 
+        success: true, 
+        message: 'Orders reset successfully. Next order will start from ID 1.' 
+      });
+    } else {
+      res.json({ success: false, message: 'Failed to reset orders' });
+    }
+  } catch (error) {
+    console.error('❌ Reset orders error:', error);
+    res.json({ success: false, message: 'Error resetting orders' });
   }
 });
 

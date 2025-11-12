@@ -8,11 +8,19 @@
     "createdAt": "2024-01-01T00:00:00.000Z"
   },
   {
-    "id": "4",
-    "username": "iyan",
-    "email": "iyan@gmail.com",
-    "password": "$2b$10$OoXmXfdKOP/SyP0NDrQAOOZwuEZ6B/oKIakL8aAMgZPSl/gkfPS7.",
+    "id": "2",
+    "username": "aden@gmail.com",
+    "email": "aden@gmail.com",
+    "password": "$2b$10$bcLNCMo9mcwk7WrWclGeSehnK.eYxTPvvse.eKo6RBkXggloB650O",
     "role": "customer",
-    "createdAt": "2025-11-11T07:32:21.073Z"
+    "createdAt": "2025-11-11T08:51:23.768Z"
+  },
+  {
+    "id": "3",
+    "username": "risa@gmail.com",
+    "email": "risa@gmail.com",
+    "password": "$2b$10$J3HxTTE3Qkqhn5db9JEl4OnXreW/M5kM1MCe.bqqCAlV1nI1zJ.6m",
+    "role": "customer",
+    "createdAt": "2025-11-12T06:57:49.716Z"
   }
 ]

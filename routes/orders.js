@@ -48,27 +48,37 @@ router.get('/:id', function(req, res, next) {
   const ordersArray = readJSONFile('orders.json');
   const usersArray = readJSONFile('users.json');
   
-  const order = ordersArray.find(order => order.id == id);
+  // Convert id to number for comparison
+  const orderId = parseInt(id);
+  const order = ordersArray.find(order => parseInt(order.id) === orderId);
   
   if (!order) {
     return res.status(404).render('error', {
+      title: 'Order Not Found',
       message: 'Order not found',
       user: req.session.user
     });
   }
 
-  if (order.userId != req.session.user.id && req.session.user.role !== 'admin') {
+  // Check authorization
+  const currentUserId = req.session.user.id.toString();
+  const orderUserId = order.userId.toString();
+  
+  if (orderUserId !== currentUserId && req.session.user.role !== 'admin') {
     return res.status(403).render('error', {
+      title: 'Access Denied',
       message: 'Access denied. You can only view your own orders.',
       user: req.session.user
     });
   }
 
-  const user = usersArray.find(u => u.id == order.userId);
+  const user = usersArray.find(u => u.id.toString() === orderUserId);
+  
+  // Handle both items and products structure
   const orderItems = order.items || order.products || [];
   
   res.render('order-details', {
-    title: 'Order Details',
+    title: `Order #${order.id} Details`,
     order: {
       ...order,
       items: orderItems,

@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .order-details-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        .back-button {
+            color: #2c5aa0;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: 2px solid #2c5aa0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: #2c5aa0;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .order-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 1px solid #eaeaea;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .order-summary {
+            padding: 25px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .order-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .meta-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #2c5aa0;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .meta-content {
+            flex: 1;
+        }
+        
+        .meta-label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+        
+        .meta-value {
+            color: #2c5aa0;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+        
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-processing {
+            background: #cce7ff;
+            color: #004085;
+        }
+        
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .order-items {
+            padding: 25px;
+        }
+        
+        .items-title {
+            color: #2c5aa0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .items-list {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .order-item {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            gap: 20px;
+        }
+        
+        .item-image {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        
+        .item-details {
+            flex: 1;
+        }
+        
+        .item-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .item-meta {
+            display: flex;
+            gap: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .item-price {
+            font-weight: bold;
+            color: #2c5aa0;
+        }
+        
+        .order-total {
+            padding: 25px;
+            background: #f8f9fa;
+            border-top: 1px solid #eaeaea;
+            text-align: right;
+        }
+        
+        .total-amount {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #28a745;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #2c5aa0;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1e3d72;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #2c5aa0;
+            border: 2px solid #2c5aa0;
+        }
+        
+        .btn-outline:hover {
+            background: #2c5aa0;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .order-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .order-meta {
+                grid-template-columns: 1fr;
+            }
+            
+            .order-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .item-meta {
+                justify-content: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('nav') %>
+    <%- include('notification') %>
+
+    <div class="order-details-container">
+        <div class="order-header">
+            <h1 style="color: #2c5aa0; margin: 0; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-file-invoice"></i>
+                Order Details
+            </h1>
+            <a href="/orders" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                Back to Orders
+            </a>
+        </div>
+
+        <% if (order) { %>
+            <div class="order-card">
+                <!-- Order Summary -->
+                <div class="order-summary">
+                    <div class="order-meta">
+                        <div class="meta-item">
+                            <div class="meta-icon">
+                                <i class="fas fa-hashtag"></i>
+                            </div>
+                            <div class="meta-content">
+                                <div class="meta-label">Order Number</div>
+                                <div class="meta-value">#<%= order.id %></div>
+                            </div>
+                        </div>
+                        
+                        <div class="meta-item">
+                            <div class="meta-icon">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <div class="meta-content">
+                                <div class="meta-label">Order Date</div>
+                                <div class="meta-value">
+                                    <%= new Date(order.createdAt).toLocaleDateString('en-US', { 
+                                        year: 'numeric', 
+                                        month: 'long', 
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                    }) %>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="meta-item">
+                            <div class="meta-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="meta-content">
+                                <div class="meta-label">Customer</div>
+                                <div class="meta-value">
+                                    <%= order.user ? order.user.username : (user ? user.username : 'Unknown User') %>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="meta-item">
+                            <div class="meta-icon">
+                                <i class="fas fa-tag"></i>
+                            </div>
+                            <div class="meta-content">
+                                <div class="meta-label">Status</div>
+                                <div class="meta-value">
+                                    <span class="status-badge status-<%= order.status %>">
+                                        <i class="fas fa-circle"></i>
+                                        <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="meta-item">
+                            <div class="meta-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="meta-content">
+                                <div class="meta-label">Payment Method</div>
+                                <div class="meta-value">
+                                    <%= order.paymentMethod ? order.paymentMethod.charAt(0).toUpperCase() + order.paymentMethod.slice(1) : 'Cash' %>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="meta-item">
+                            <div class="meta-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="meta-content">
+                                <div class="meta-label">Shipping Address</div>
+                                <div class="meta-value" style="font-size: 0.9rem; line-height: 1.4;">
+                                    <%= order.shippingAddress || 'No address provided' %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Items -->
+                <div class="order-items">
+                    <h2 class="items-title">
+                        <i class="fas fa-shopping-bag"></i>
+                        Order Items (<%= (order.items || []).length %>)
+                    </h2>
+                    
+                    <div class="items-list">
+                        <% 
+                            const orderItems = order.items || order.products || []; 
+                        %>
+                        <% if (orderItems.length > 0) { %>
+                            <% orderItems.forEach(function(item, index) { %>
+                                <div class="order-item">
+                                    <div class="item-image">
+                                        <% if (item.image && item.image !== '/images/default.jpg') { %>
+                                            <img src="<%= item.image %>" alt="<%= item.name %>" 
+                                                 style="width: 100%; height: 100%; object-fit: cover;">
+                                        <% } else { %>
+                                            <i class="fas fa-box fa-2x" style="color: #666;"></i>
+                                        <% } %>
+                                    </div>
+                                    <div class="item-details">
+                                        <div class="item-name">
+                                            <%= item.name || 'Unknown Product' %>
+                                            <% if (item.productId) { %>
+                                                <small style="color: #666;">(ID: <%= item.productId %>)</small>
+                                            <% } %>
+                                        </div>
+                                        <div class="item-meta">
+                                            <span><strong>Quantity:</strong> <%= item.quantity %></span>
+                                            <span><strong>Price:</strong> $<%= item.price %></span>
+                                            <span class="item-price">
+                                                <strong>Subtotal:</strong> $<%= (item.price * item.quantity).toFixed(2) %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        <% } else { %>
+                            <div style="text-align: center; padding: 40px; color: #666;">
+                                <i class="fas fa-exclamation-circle fa-2x" style="margin-bottom: 15px;"></i>
+                                <p>No items found in this order</p>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Order Total -->
+                <div class="order-total">
+                    <div class="total-amount">
+                        <i class="fas fa-dollar-sign"></i>
+                        Total Amount: $<%= order.totalAmount ? order.totalAmount.toFixed(2) : '0.00' %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="/orders" class="btn btn-primary">
+                    <i class="fas fa-clipboard-list"></i>
+                    Back to Orders
+                </a>
+                
+                <% if (order.status === 'pending' || order.status === 'processing') { %>
+                    <button class="btn btn-danger" onclick="cancelOrder('<%= order.id %>')">
+                        <i class="fas fa-times"></i>
+                        Cancel Order
+                    </button>
+                <% } %>
+                
+                <button class="btn btn-outline" onclick="deleteOrder('<%= order.id %>', '<%= order.totalAmount %>')">
+                    <i class="fas fa-trash"></i>
+                    Delete Order
+                </button>
+                
+                <a href="/products" class="btn btn-outline">
+                    <i class="fas fa-shopping-bag"></i>
+                    Continue Shopping
+                </a>
+            </div>
+        <% } else { %>
+            <div style="text-align: center; padding: 60px 20px; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                <i class="fas fa-exclamation-triangle fa-3x" style="color: #dc3545; margin-bottom: 20px;"></i>
+                <h2 style="color: #dc3545; margin-bottom: 15px;">Order Not Found</h2>
+                <p style="color: #666; margin-bottom: 25px;">The order you're looking for doesn't exist or you don't have permission to view it.</p>
+                <a href="/orders" class="btn btn-primary">
+                    <i class="fas fa-clipboard-list"></i>
+                    Back to Orders
+                </a>
+            </div>
+        <% } %>
+    </div>
+
+    <script>
+        function cancelOrder(orderId) {
+            if (!confirm('Are you sure you want to cancel this order?')) return;
+            
+            fetch('/orders/' + orderId, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    status: 'cancelled'
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showNotification('success', 'Order Cancelled', 'Your order has been cancelled successfully');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showNotification('error', 'Cancellation Failed', result.message);
+                }
+            })
+            .catch(error => {
+                showNotification('error', 'Error', 'Error cancelling order');
+            });
+        }
+
+        function deleteOrder(orderId, orderTotal) {
+            if (!confirm(`Are you sure you want to DELETE order #${orderId} with total $${orderTotal}?\n\n⚠️ This action cannot be undone!`)) return;
+            
+            fetch('/orders/' + orderId, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showNotification('success', 'Order Deleted', 'Order has been permanently deleted');
+                    setTimeout(() => {
+                        window.location.href = '/orders';
+                    }, 1500);
+                } else {
+                    showNotification('error', 'Delete Failed', result.message);
+                }
+            })
+            .catch(error => {
+                showNotification('error', 'Error', 'Error deleting order');
+            });
+        }
+    </script>
+</body>
+</html>

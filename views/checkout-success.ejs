@@ -3,6 +3,7 @@
 <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .success-container {
             max-width: 600px;
@@ -17,6 +18,7 @@
         .success-icon {
             font-size: 4rem;
             margin-bottom: 20px;
+            color: #28a745;
         }
         
         .success-title {
@@ -164,7 +166,7 @@
 <body>
     <%- include('nav') %>
     <%- include('notification') %>
-    <%- include('head') %>
+    
     <div class="success-container">
         <div class="success-icon">🎉</div>
         
@@ -195,16 +197,17 @@
         </div>
         
         <div class="action-buttons">
+            <!-- ✅ PERBAIKAN: Gunakan orderId yang benar dari query parameter -->
             <a href="/orders/<%= orderId %>" class="btn-primary">
-                <span>📋</span>
+                <i class="fas fa-eye"></i>
                 View Order Details
             </a>
             <a href="/products" class="btn-success">
-                <span>🛍️</span>
+                <i class="fas fa-shopping-bag"></i>
                 Continue Shopping
             </a>
             <a href="/orders" class="btn-secondary">
-                <span>📦</span>
+                <i class="fas fa-clipboard-list"></i>
                 View All Orders
             </a>
         </div>
@@ -216,19 +219,18 @@
         </div>
     </div>
 
-    <%- include('footer') %>
-
     <script>
         // Update cart count to 0 after successful checkout
         document.addEventListener('DOMContentLoaded', function() {
             console.log('✅ Checkout success page loaded');
-            if (typeof updateCartCount === 'function') {
-                // Force cart count to 0
-                const cartCounter = document.getElementById('cartCount');
-                if (cartCounter) {
-                    cartCounter.textContent = '0';
-                    cartCounter.style.display = 'none';
-                }
+            console.log('Order ID:', '<%= orderId %>');
+            console.log('Order Total:', '<%= orderTotal %>');
+            
+            // Force cart count to 0
+            const cartCounter = document.querySelector('.cart-count');
+            if (cartCounter) {
+                cartCounter.textContent = '0';
+                cartCounter.style.display = 'none';
             }
         });
     </script>

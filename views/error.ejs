@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title><%= title || 'Error - Simple Store' %></title>
+    <title>Error - Simple Store</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <style>
         .error-container {
@@ -83,7 +83,6 @@
 </head>
 <body>
     <%- include('nav') %>
-    <%- include('head') %>
     <div class="error-container">
         <div class="error-icon">
             <% if (error && error.status === 404) { %>
@@ -102,7 +101,7 @@
         </h1>
         
         <p class="error-message">
-            <%= message %>
+            <%= message || 'An unexpected error occurred' %>
         </p>
         
         <div class="error-actions">
@@ -120,7 +119,6 @@
             </button>
         </div>
         
-        <!-- ✅ FIXED: Gunakan error.stack saja, tidak perlu cek process.env -->
         <% if (error && error.stack) { %>
             <div class="error-details">
                 <h3 style="margin: 0 0 10px 0; color: #dc3545;">Error Details:</h3>
