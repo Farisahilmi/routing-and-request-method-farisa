@@ -37,18 +37,89 @@ function readJSONFile(filename) {
   }
 }
 
-// GET all products (HTML)
+// GET all products (HTML) - WITH SEARCH & FILTER
 router.get('/', function(req, res, next) {
-  const products = readJSONFile('products.json');
+  let products = readJSONFile('products.json');
+  
+  // Get query parameters
+  const search = req.query.search || '';
+  const category = req.query.category || '';
+  const minPrice = req.query.minPrice ? parseFloat(req.query.minPrice) : null;
+  const maxPrice = req.query.maxPrice ? parseFloat(req.query.maxPrice) : null;
+  const inStock = req.query.inStock === 'true';
+  const sort = req.query.sort || 'newest'; // newest, price-asc, price-desc, name
+  
+  // Apply search filter
+  if (search) {
+    products = products.filter(p => 
+      p.name.toLowerCase().includes(search.toLowerCase()) ||
+      p.description.toLowerCase().includes(search.toLowerCase())
+    );
+  }
+  
+  // Apply category filter
+  if (category) {
+    products = products.filter(p => p.category.toLowerCase() === category.toLowerCase());
+  }
+  
+  // Apply price filter
+  if (minPrice !== null) {
+    products = products.filter(p => p.price >= minPrice);
+  }
+  if (maxPrice !== null) {
+    products = products.filter(p => p.price <= maxPrice);
+  }
+  
+  // Apply stock filter
+  if (inStock) {
+    products = products.filter(p => p.stock > 0);
+  }
+  
+  // Apply sorting
+  switch(sort) {
+    case 'price-asc':
+      products.sort((a, b) => a.price - b.price);
+      break;
+    case 'price-desc':
+      products.sort((a, b) => b.price - a.price);
+      break;
+    case 'name':
+      products.sort((a, b) => a.name.localeCompare(b.name));
+      break;
+    case 'newest':
+    default:
+      products.sort((a, b) => b.id - a.id);
+      break;
+  }
+  
+  // Get all categories for filter dropdown
+  const allProducts = readJSONFile('products.json');
+  const categories = [...new Set(allProducts.map(p => p.category))].sort();
+  
+  // Get price range for filter
+  const prices = allProducts.map(p => p.price);
+  const priceRange = {
+    min: Math.floor(Math.min(...prices)),
+    max: Math.ceil(Math.max(...prices))
+  };
   
   const lang = res.locals.language || 'en';
   const t = translations[lang] || translations['en'];
-  
   const currency = res.locals.currency || 'IDR';
   
   res.render('products', { 
     title: 'All Products', 
     products: products,
+    categories: categories,
+    priceRange: priceRange,
+    filters: {
+      search: search,
+      category: category,
+      minPrice: minPrice,
+      maxPrice: maxPrice,
+      inStock: inStock,
+      sort: sort
+    },
     t: t,
     currency: currency,
     language: lang

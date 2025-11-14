@@ -54,5 +54,16 @@
     "stock": 6,
     "image": "/images/mouse.jpg",
     "updatedAt": "2025-11-12T10:40:40.175Z"
+  },
+  {
+    "id": 7,
+    "name": "kaos kaki",
+    "description": "ini kaos baru",
+    "price": 50,
+    "category": "Fashion",
+    "stock": 15,
+    "image": "/images/default.jpg",
+    "createdAt": "2025-11-14T13:10:13.280Z",
+    "updatedAt": "2025-11-14T13:10:34.776Z"
   }
 ]

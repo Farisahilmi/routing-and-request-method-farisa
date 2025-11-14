@@ -22,10 +22,10 @@ function readJSONFile(filename) {
   }
 }
 
-// GET all products (API - JSON)
+// GET all products (API - JSON) WITH SEARCH & FILTER
 router.get('/', function(req, res, next) {
   try {
-    const products = readJSONFile('products.json');
+    let products = readJSONFile('products.json');
     
     if (!Array.isArray(products)) {
       return res.status(500).json({
@@ -34,10 +34,69 @@ router.get('/', function(req, res, next) {
       });
     }
     
+    // Get query parameters
+    const search = req.query.search || '';
+    const category = req.query.category || '';
+    const minPrice = req.query.minPrice ? parseFloat(req.query.minPrice) : null;
+    const maxPrice = req.query.maxPrice ? parseFloat(req.query.maxPrice) : null;
+    const inStock = req.query.inStock === 'true';
+    const sort = req.query.sort || 'newest';
+    
+    // Apply search filter
+    if (search) {
+      products = products.filter(p => 
+        p.name.toLowerCase().includes(search.toLowerCase()) ||
+        p.description.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    
+    // Apply category filter
+    if (category) {
+      products = products.filter(p => p.category.toLowerCase() === category.toLowerCase());
+    }
+    
+    // Apply price filter
+    if (minPrice !== null) {
+      products = products.filter(p => p.price >= minPrice);
+    }
+    if (maxPrice !== null) {
+      products = products.filter(p => p.price <= maxPrice);
+    }
+    
+    // Apply stock filter
+    if (inStock) {
+      products = products.filter(p => p.stock > 0);
+    }
+    
+    // Apply sorting
+    switch(sort) {
+      case 'price-asc':
+        products.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-desc':
+        products.sort((a, b) => b.price - a.price);
+        break;
+      case 'name':
+        products.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'newest':
+      default:
+        products.sort((a, b) => b.id - a.id);
+        break;
+    }
+    
     res.json({
       status: 'success',
       message: 'Products retrieved successfully',
       count: products.length,
+      filters: {
+        search,
+        category,
+        minPrice,
+        maxPrice,
+        inStock,
+        sort
+      },
       data: products
     });
   } catch (error) {
