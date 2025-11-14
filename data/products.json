@@ -5,7 +5,7 @@
     "description": "High-performance gaming laptop dengan graphics terbaru",
     "price": 1299.99,
     "category": "Electronics",
-    "stock": 11,
+    "stock": 10,
     "image": "/image/excel.png",
     "updatedAt": "2025-11-12T10:45:13.192Z"
   },
@@ -15,7 +15,7 @@
     "description": "Latest smartphone dengan kamera 108MP",
     "price": 699.99,
     "category": "Electronics",
-    "stock": 8,
+    "stock": 3,
     "image": "/images/phone.jpg"
   },
   {
@@ -51,7 +51,7 @@
     "description": "Mouse gaming dengan RGB lighting",
     "price": 79.99,
     "category": "Electronics",
-    "stock": 7,
+    "stock": 6,
     "image": "/images/mouse.jpg",
     "updatedAt": "2025-11-12T10:40:40.175Z"
   }

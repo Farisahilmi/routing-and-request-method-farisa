@@ -81,4 +81,120 @@ router.get('/:id', function(req, res, next) {
   });
 });
 
+// GET buy-now page (Quick checkout for single product)
+router.get('/:id/buy-now', function(req, res, next) {
+  // Check if user is logged in
+  if (!req.session.user) {
+    return res.redirect('/users/login?redirect=/products/' + req.params.id + '/buy-now');
+  }
+
+  const { id } = req.params;
+  const products = readJSONFile('products.json');
+  const product = products.find(p => p.id === parseInt(id));
+  
+  if (!product) {
+    return res.status(404).render('error', { 
+      message: 'Product not found' 
+    });
+  }
+
+  if (product.stock === 0) {
+    return res.status(400).render('error', { 
+      message: 'Product out of stock' 
+    });
+  }
+
+  const lang = res.locals.language || 'en';
+  const t = translations[lang] || translations['en'];
+  const currency = res.locals.currency || 'IDR';
+
+  // Redirect to checkout with product info in session
+  req.session.buyNowItem = {
+    productId: product.id,
+    quantity: 1,
+    price: product.price,
+    name: product.name,
+    stock: product.stock
+  };
+
+  res.redirect('/cart/checkout');
+});
+
+// POST buy-now - Handle quantity from product detail page
+router.post('/:id/buy-now', function(req, res, next) {
+  try {
+    // Check if user is logged in
+    if (!req.session.user) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Please login to checkout', 
+        redirectUrl: '/users/login' 
+      });
+    }
+
+    const { id } = req.params;
+    const quantity = req.body.quantity || 1;
+    
+    // Validate inputs
+    if (!id || isNaN(parseInt(id))) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Invalid product ID' 
+      });
+    }
+
+    if (!quantity || isNaN(parseInt(quantity)) || parseInt(quantity) < 1) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Invalid quantity' 
+      });
+    }
+
+    const products = readJSONFile('products.json');
+    const product = products.find(p => p.id === parseInt(id));
+    
+    if (!product) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Product not found' 
+      });
+    }
+
+    if (product.stock === 0) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Product out of stock' 
+      });
+    }
+
+    if (parseInt(quantity) > product.stock) {
+      return res.status(400).json({ 
+        success: false, 
+        message: `Not enough stock. Available: ${product.stock}` 
+      });
+    }
+
+    // Store in session
+    req.session.buyNowItem = {
+      productId: product.id,
+      quantity: parseInt(quantity),
+      price: product.price,
+      name: product.name,
+      stock: product.stock
+    };
+
+    res.status(200).json({ 
+      success: true, 
+      message: 'Redirecting to checkout',
+      redirectUrl: '/cart/checkout' 
+    });
+  } catch (error) {
+    console.error('Error in POST /products/:id/buy-now:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Internal server error' 
+    });
+  }
+});
+
 module.exports = router;

@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "id": 1,
+    "userId": "1",
+    "items": [
+      {
+        "productId": 2,
+        "name": "Smartphone 5G",
+        "price": 699.99,
+        "quantity": 1,
+        "image": "/images/phone.jpg"
+      }
+    ],
+    "totalAmount": 699.99,
+    "status": "pending",
+    "shippingAddress": "rumah\nfarisahilmi\n085642044608\ngegerbitun, 180\nsukabumi, indonesia 43197\nIndonesia",
+    "paymentMethod": "cash",
+    "createdAt": "2025-11-14T13:05:38.690Z"
+  }
+]

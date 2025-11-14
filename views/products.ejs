@@ -212,6 +212,39 @@
             box-shadow: none;
         }
 
+        .buy-now-btn {
+            background: #00D97E;
+            color: #ffffff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            box-shadow: 0 1px 3px rgba(0, 217, 126, 0.2);
+        }
+
+        .buy-now-btn:hover {
+            background: #00c26b;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0, 217, 126, 0.3);
+            text-decoration: none;
+            color: #ffffff;
+        }
+
+        .buy-now-btn:disabled {
+            background: #f6f9fc;
+            color: #8898aa;
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.6;
+            box-shadow: none;
+        }
+
         .no-products {
             text-align: center;
             padding: 80px 40px;
@@ -354,6 +387,12 @@
                             <a href="/api/products/<%= product.id %>" class="api-link" target="_blank">
                                 <i class="fas fa-code"></i> API
                             </a>
+                            <button class="buy-now-btn <%= product.stock === 0 ? 'disabled' : '' %>" 
+                                    data-product-id="<%= product.id %>"
+                                    data-buy-now="true"
+                                    <%= product.stock === 0 ? 'disabled' : '' %>>
+                                <i class="fas fa-bolt"></i> Buy Now
+                            </button>
                             <button class="add-to-cart-btn <%= product.stock === 0 ? 'disabled' : '' %>" 
                                     data-product-id="<%= product.id %>"
                                     <%= product.stock === 0 ? 'disabled' : '' %>>
@@ -378,8 +417,21 @@
     </div>
 
     <script>
+        // Buy Now - langsung ke checkout
+        function buyNow(productId) {
+            window.location.href = '/products/' + productId + '/buy-now';
+        }
+
         // Add to Cart functionality
         document.addEventListener('DOMContentLoaded', function() {
+            // Buy Now button handler
+            document.querySelectorAll('.buy-now-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-product-id');
+                    buyNow(productId);
+                });
+            });
+
             document.querySelectorAll('.add-to-cart-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const productId = this.getAttribute('data-product-id');

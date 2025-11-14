@@ -201,13 +201,24 @@ router.post('/checkout', function(req, res, next) {
     }
 
     const { addressId, shippingAddress, paymentMethod } = req.body;
+    
+    // Validate required fields
+    if (!paymentMethod) {
+      return res.json({ success: false, message: 'Payment method is required' });
+    }
+
+    if (!addressId && !shippingAddress) {
+      return res.json({ success: false, message: 'Shipping address is required' });
+    }
+
     const cartItems = readJSONFile('cart.json');
     const products = readJSONFile('products.json');
     const orders = readJSONFile('orders.json');
     
     logger.httpRequest('POST /checkout', { userId: req.session.user.id, itemsCount: cartItems.length });
 
-    if (cartItems.length === 0) {
+    // ✅ Check if there are items to checkout (either cart items or buy-now item)
+    if (cartItems.length === 0 && !req.session.buyNowItem) {
       return res.json({ success: false, message: 'Cart is empty' });
     }
 
@@ -236,7 +247,19 @@ router.post('/checkout', function(req, res, next) {
     const orderItems = [];
     const originalStock = {}; // Store original stock for rollback
     
-    for (const cartItem of cartItems) {
+    // Determine items to process (buy-now or cart)
+    let itemsToProcess = cartItems;
+    if (req.session.buyNowItem) {
+      const buyNowProduct = products.find(p => p.id === req.session.buyNowItem.productId);
+      if (buyNowProduct) {
+        itemsToProcess = [{
+          productId: buyNowProduct.id,
+          quantity: req.session.buyNowItem.quantity
+        }];
+      }
+    }
+    
+    for (const cartItem of itemsToProcess) {
       const product = products.find(p => p.id === cartItem.productId);
       if (!product) {
         return res.json({ success: false, message: `Product ${cartItem.productId} not found` });
@@ -290,8 +313,20 @@ router.post('/checkout', function(req, res, next) {
 
     // ✅ PHASE 3: COMMIT - Update stock and save order
     try {
+      // Determine items to process (buy-now or cart)
+      let itemsToProcess = cartItems;
+      if (req.session.buyNowItem) {
+        const buyNowProduct = products.find(p => p.id === req.session.buyNowItem.productId);
+        if (buyNowProduct) {
+          itemsToProcess = [{
+            productId: buyNowProduct.id,
+            quantity: req.session.buyNowItem.quantity
+          }];
+        }
+      }
+
       // Update product stock
-      for (const cartItem of cartItems) {
+      for (const cartItem of itemsToProcess) {
         const product = products.find(p => p.id === cartItem.productId);
         product.stock -= cartItem.quantity;
       }
@@ -319,8 +354,12 @@ router.post('/checkout', function(req, res, next) {
       clearCache('orders.json');
       clearCache('products.json');
       
-      // Clear cart
-      writeJSONFile('cart.json', []);
+      // Clear cart or buy-now item
+      if (req.session.buyNowItem) {
+        delete req.session.buyNowItem;
+      } else {
+        writeJSONFile('cart.json', []);
+      }
 
       logger.success(`Checkout successful! Order created`, { orderId: newOrder.id, userId: req.session.user.username });
 
@@ -351,7 +390,40 @@ router.get('/checkout', function(req, res, next) {
     const cartItems = readJSONFile('cart.json');
     const products = readJSONFile('products.json');
     
-    if (cartItems.length === 0) {
+    // ✅ Handle Buy Now Item - bypass cart.json
+    let itemsToCheckout = [];
+    let isBuyNow = false;
+
+    if (req.session.buyNowItem) {
+      // Buy Now flow - single product direct checkout
+      const buyNowItem = req.session.buyNowItem;
+      const product = products.find(p => p.id === buyNowItem.productId);
+      
+      if (!product || product.stock === 0) {
+        delete req.session.buyNowItem;
+        return res.redirect('/products?message=Product out of stock');
+      }
+
+      itemsToCheckout = [{
+        productId: buyNowItem.productId,
+        quantity: buyNowItem.quantity,
+        product: product
+      }];
+      isBuyNow = true;
+
+    } else if (cartItems.length > 0) {
+      // Normal cart checkout
+      itemsToCheckout = cartItems.map(item => {
+        const product = products.find(p => p.id === item.productId);
+        return {
+          ...item,
+          product: product || { 
+            name: 'Product Not Found', 
+            price: 0
+          }
+        };
+      });
+    } else {
       return res.redirect('/cart?message=Your cart is empty');
     }
 
@@ -360,30 +432,19 @@ router.get('/checkout', function(req, res, next) {
     const userAddresses = addresses.filter(addr => addr.userId === req.session.user.id);
     const defaultAddress = userAddresses.find(addr => addr.isDefault) || userAddresses[0];
 
-    // Enrich cart items with product details
-    const enrichedCart = cartItems.map(item => {
-      const product = products.find(p => p.id === item.productId);
-      return {
-        ...item,
-        product: product || { 
-          name: 'Product Not Found', 
-          price: 0
-        }
-      };
-    });
-
     // Calculate total
-    const totalAmount = enrichedCart.reduce((sum, item) => {
+    const totalAmount = itemsToCheckout.reduce((sum, item) => {
       return sum + (item.product.price * item.quantity);
     }, 0);
 
     res.render('checkout', {
       title: 'Checkout',
-      cartItems: enrichedCart,
+      cartItems: itemsToCheckout,
       totalAmount: totalAmount,
       addresses: userAddresses,
       defaultAddress: defaultAddress,
-      user: req.session.user
+      user: req.session.user,
+      isBuyNow: isBuyNow
     });
   } catch (error) {
     logger.error('Error loading checkout page', error);

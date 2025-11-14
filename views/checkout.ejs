@@ -41,7 +41,7 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #495057;
+            color: #0a2540;
         }
         
         .form-input, .form-select, .form-textarea {
@@ -56,8 +56,8 @@
         
         .form-input:focus, .form-select:focus, .form-textarea:focus {
             outline: none;
-            border-color: #2c5aa0;
-            box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+            border-color: #635BFF;
+            box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.1);
         }
         
         .address-option {
@@ -73,11 +73,11 @@
         }
         
         .address-option:hover {
-            border-color: #2c5aa0;
+            border-color: #635BFF;
         }
         
         .address-option.selected {
-            border-color: #2c5aa0;
+            border-color: #635BFF;
             background: #f8f9ff;
         }
         
@@ -87,7 +87,7 @@
         
         .address-details h4 {
             margin: 0 0 5px 0;
-            color: #2c5aa0;
+            color: #635BFF;
         }
         
         .address-details p {
@@ -97,7 +97,7 @@
         }
         
         .default-badge {
-            background: #28a745;
+            background: #00D97E;
             color: white;
             padding: 2px 8px;
             border-radius: 10px;
@@ -116,7 +116,7 @@
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #2c5aa0, #3a7bd5);
+            background: linear-gradient(135deg, #635BFF, #5851ea);
             color: white;
             border: none;
             padding: 15px 30px;
@@ -126,15 +126,22 @@
             cursor: pointer;
             transition: all 0.3s ease;
             width: 100%;
+            box-shadow: 0 4px 15px rgba(99, 91, 255, 0.3);
         }
         
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(44, 90, 160, 0.4);
+            box-shadow: 0 6px 20px rgba(99, 91, 255, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
         
         .btn-secondary {
-            background: #6c757d;
+            background: #635BFF;
             color: white;
             padding: 12px 24px;
             border-radius: 8px;
@@ -147,7 +154,7 @@
         }
         
         .btn-secondary:hover {
-            background: #5a6268;
+            background: #5851ea;
         }
         
         .cart-item {
@@ -183,45 +190,61 @@
     <%- include('notification') %>
     
     <div class="checkout-container">
-        <h1 style="color: #2c5aa0; margin-bottom: 30px;">
+        <h1 style="color: #635BFF; margin-bottom: 30px;">
             <i class="fas fa-shopping-cart"></i> Checkout
+            <% if (isBuyNow) { %>
+                <span style="background: #00D97E; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.7em; margin-left: 10px;">
+                    <i class="fas fa-bolt"></i> Direct Purchase
+                </span>
+            <% } %>
         </h1>
 
         <div class="checkout-layout">
             <!-- Order Summary -->
             <div class="order-summary">
-                <h2 style="color: #2c5aa0; margin-bottom: 20px;">
-                    <i class="fas fa-receipt"></i> Order Summary
+                <h2 style="color: #635BFF; margin-bottom: 20px;">
+                    <i class="fas fa-receipt"></i> <%= isBuyNow ? '📦 Product Details' : 'Order Summary' %>
                 </h2>
                 
                 <% if (cartItems && cartItems.length > 0) { %>
                     <% cartItems.forEach(item => { %>
                         <div class="cart-item">
-                            <div>
-                                <strong><%= item.name %></strong>
-                                <div style="color: #666; font-size: 0.9rem;">Qty: <%= item.quantity %></div>
+                            <div style="flex: 1;">
+                                <strong><%= item.product ? item.product.name : item.name %></strong>
+                                <div style="color: #666; font-size: 0.9rem;">
+                                    Qty: <%= item.quantity %> 
+                                    <% if (isBuyNow) { %>
+                                        <span style="color: #00D97E; margin-left: 5px;">✓</span>
+                                    <% } %>
+                                </div>
                             </div>
-                            <div style="font-weight: bold; color: #2c5aa0;">
-                                $<%= (item.price * item.quantity).toFixed(2) %>
+                            <div style="font-weight: bold; color: #635BFF;">
+                                $<%= ((item.product ? item.product.price : item.price) * item.quantity).toFixed(2) %>
                             </div>
                         </div>
                     <% }) %>
                     <div class="total">
-                        Total: $<%= totalAmount.toFixed(2) %>
+                        <i class="fas fa-dollar-sign"></i> Total: $<%= totalAmount.toFixed(2) %>
                     </div>
                 <% } else { %>
                     <p>Your cart is empty</p>
                 <% } %>
                 
-                <a href="/cart" class="btn-secondary" style="display: block; text-align: center;">
-                    <i class="fas fa-arrow-left"></i> Back to Cart
-                </a>
+                <% if (!isBuyNow) { %>
+                    <a href="/cart" class="btn-secondary" style="display: block; text-align: center;">
+                        <i class="fas fa-arrow-left"></i> Back to Cart
+                    </a>
+                <% } else { %>
+                    <a href="/products" class="btn-secondary" style="display: block; text-align: center;">
+                        <i class="fas fa-arrow-left"></i> Back to Products
+                    </a>
+                <% } %>
             </div>
 
             <!-- Checkout Form -->
             <div class="checkout-form">
-                <h2 style="color: #2c5aa0; margin-bottom: 20px;">
-                    <i class="fas fa-shipping-fast"></i> Shipping Information
+                <h2 style="color: #635BFF; margin-bottom: 20px;">
+                    <i class="fas fa-shipping-fast"></i> <%= isBuyNow ? '🚀 Complete Your Purchase' : 'Shipping Information' %>
                 </h2>
                 
                 <form id="checkoutForm">
@@ -284,17 +307,24 @@
 
                     <!-- Payment Method -->
                     <div class="form-group">
-                        <label for="paymentMethod" class="form-label">Payment Method</label>
+                        <label for="paymentMethod" class="form-label">
+                            <i class="fas fa-credit-card"></i> Payment Method
+                        </label>
                         <select id="paymentMethod" name="paymentMethod" class="form-select" required>
-                            <option value="">Select payment method</option>
-                            <option value="cash">Cash on Delivery</option>
-                            <option value="bank">Bank Transfer</option>
-                            <option value="card">Credit Card</option>
+                            <option value="">-- Select Payment Method --</option>
+                            <option value="cash">💵 Cash on Delivery (Pay when item arrives)</option>
+                            <option value="bank">🏦 Bank Transfer (Transfer to our account)</option>
+                            <option value="card">💳 Credit Card (Secure payment)</option>
                         </select>
                     </div>
 
                     <button type="submit" class="btn-primary">
-                        <i class="fas fa-check"></i> Place Order
+                        <i class="fas fa-check"></i> 
+                        <% if (isBuyNow) { %>
+                            Complete Purchase Now
+                        <% } else { %>
+                            Place Order
+                        <% } %>
                     </button>
                 </form>
             </div>
@@ -340,26 +370,43 @@
         }
 
         async function processCheckout() {
-            const formData = new FormData(document.getElementById('checkoutForm'));
-            const data = {
-                addressId: formData.get('addressId'),
-                shippingAddress: formData.get('shippingAddress'),
-                paymentMethod: formData.get('paymentMethod')
-            };
-
-            // Validation
-            if (!data.paymentMethod) {
-                showNotification('error', 'Validation Error', 'Please select payment method');
-                return;
-            }
-
-            if (data.addressId === 'new' && !data.shippingAddress) {
-                showNotification('error', 'Validation Error', 'Please enter shipping address');
-                return;
-            }
-
             try {
-                // ✅ PERBAIKAN: Gunakan endpoint /cart/checkout bukan /checkout/process
+                const checkoutForm = document.getElementById('checkoutForm');
+                if (!checkoutForm) {
+                    showNotification('error', 'Error', 'Form not found');
+                    return;
+                }
+
+                const addressId = document.querySelector('input[name="addressId"]:checked');
+                const paymentMethod = document.getElementById('paymentMethod').value;
+                const shippingAddress = document.getElementById('shippingAddress').value;
+
+                // Validation
+                if (!addressId) {
+                    showNotification('error', 'Validation Error', 'Please select an address');
+                    return;
+                }
+
+                if (!paymentMethod) {
+                    showNotification('error', 'Validation Error', 'Please select a payment method');
+                    return;
+                }
+
+                if (addressId.value === 'new' && !shippingAddress) {
+                    showNotification('error', 'Validation Error', 'Please enter a new shipping address');
+                    return;
+                }
+
+                const data = {
+                    addressId: addressId.value !== 'new' ? parseInt(addressId.value) : 'new',
+                    shippingAddress: addressId.value === 'new' ? shippingAddress : null,
+                    paymentMethod: paymentMethod
+                };
+
+                // Disable button during request
+                const submitBtn = checkoutForm.querySelector('button[type="submit"]');
+                if (submitBtn) submitBtn.disabled = true;
+
                 const response = await fetch('/cart/checkout', {
                     method: 'POST',
                     headers: {
@@ -373,14 +420,17 @@
                 if (result.success) {
                     showNotification('success', 'Order Placed!', 'Your order has been successfully placed');
                     setTimeout(() => {
-                        // ✅ PERBAIKAN: Gunakan redirectUrl dari response
                         window.location.href = result.redirectUrl || `/cart/checkout/success?order_id=${result.orderId}&total=${result.orderTotal}`;
                     }, 1500);
                 } else {
-                    showNotification('error', 'Checkout Failed', result.message);
+                    if (submitBtn) submitBtn.disabled = false;
+                    showNotification('error', 'Checkout Failed', result.message || 'Failed to place order');
                 }
             } catch (error) {
-                showNotification('error', 'Checkout Error', 'An error occurred during checkout');
+                console.error('Checkout error:', error);
+                const submitBtn = document.getElementById('checkoutForm')?.querySelector('button[type="submit"]');
+                if (submitBtn) submitBtn.disabled = false;
+                showNotification('error', 'Checkout Error', 'An error occurred during checkout. Please try again.');
             }
         }
     </script>

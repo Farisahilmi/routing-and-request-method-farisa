@@ -1,0 +1,65 @@
+simple-store/
+├── 📁 bin/
+│   └── 🟢 www                    # Entry point server
+├── 📁 data/                      # Database JSON files
+│   ├── 🟡 cart.json
+│   ├── 🟡 orders.json
+│   ├── 🟡 products.json
+│   └── 🟡 users.json
+├── 📁 helpers/                   # Utility functions
+│   ├── 🟢 currency.js
+│   └── 🟢 database.js
+├── 📁 locales/                   # Internationalization
+│   ├── 🟡 en.json
+│   └── 🟡 id.json
+├── 📁 middleware/               # Custom middleware
+│   ├── 🟢 auth.js
+│   └── 🟢 upload.js
+├── 📁 public/
+│   └── 📁 stylesheets/
+│       └── 🟡 style.css
+├── 📁 routes/                   # Route handlers
+│   ├── 📁 api/                 # API endpoints
+│   │   ├── 🟢 orders.js
+│   │   ├── 🟢 products.js
+│   │   └── 🟢 users.js
+│   ├── 🟢 admin.js
+│   ├── 🟢 auth.js
+│   ├── 🟢 cart.js
+│   ├── 🟢 checkout.js
+│   ├── 🟢 index.js
+│   ├── 🟢 orders.js
+│   ├── 🟢 products.js
+│   └── 🟢 users.js
+└── 📁 views/                   # EJS templates
+    ├── 🟡 about.ejs
+    ├── 🟡 admin-dashboard.ejs
+    ├── 🟡 admin-products.ejs
+    ├── 🟡 admin-users.ejs
+    ├── 🟡 cart.ejs
+    ├── 🟡 checkout-success.ejs    
+    ├── 🟡 checkout.ejs
+    ├── 🟡 contact.ejs
+    ├── 🟡 error.ejs
+    ├── 🟡 footer.ejs
+    ├── 🟡 head.ejs
+    ├── 🟡 index.ejs
+    ├── 🟡 login.ejs
+    ├── 🟡 nav.ejs
+    ├── 🟡 notification.ejs
+    ├── 🟡 order-details.ejs
+    ├── 🟡 orders.ejs
+    ├── 🟡 privacy.ejs
+    ├── 🟡 product-detail.ejs
+    ├── 🟡 products.ejs
+    ├── 🟡 register.ejs
+    ├── 🟡 returns.ejs
+    ├── 🟡 shipping.ejs
+    ├── 🟡 sitemap.ejs
+    ├── 🟡 terms.ejs
+    ├── 🟡 update.ejs
+    └── 🟡 usres.ejs
+
+root 
+    ├── 🟢 app.js
+    └── 🟢 package.json

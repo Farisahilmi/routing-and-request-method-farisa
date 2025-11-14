@@ -18,11 +18,11 @@
         .success-icon {
             font-size: 4rem;
             margin-bottom: 20px;
-            color: #28a745;
+            color: #00D97E;
         }
         
         .success-title {
-            color: #28a745;
+            color: #00D97E;
             margin-bottom: 15px;
             font-size: 2rem;
         }
@@ -47,7 +47,7 @@
             border-bottom: none;
             font-weight: bold;
             font-size: 1.2rem;
-            color: #2c5aa0;
+            color: #635BFF;
         }
         
         .action-buttons {
@@ -59,7 +59,7 @@
         }
         
         .btn-success {
-            background: linear-gradient(135deg, #28a745, #20c997);
+            background: linear-gradient(135deg, #00D97E, #00c368);
             color: white;
             padding: 12px 24px;
             border-radius: 8px;
@@ -72,10 +72,11 @@
             border: none;
             cursor: pointer;
             font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0, 217, 126, 0.3);
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #2c5aa0, #3a7bd5);
+            background: linear-gradient(135deg, #635BFF, #5851ea);
             color: white;
             padding: 12px 24px;
             border-radius: 8px;
@@ -85,10 +86,11 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            box-shadow: 0 4px 12px rgba(99, 91, 255, 0.3);
         }
         
         .btn-secondary {
-            background: #6c757d;
+            background: #635BFF;
             color: white;
             padding: 12px 24px;
             border-radius: 8px;
@@ -98,6 +100,7 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            box-shadow: 0 4px 12px rgba(99, 91, 255, 0.3);
         }
         
         .btn-success:hover, .btn-primary:hover, .btn-secondary:hover {
@@ -184,7 +187,7 @@
             </div>
             <div class="order-info">
                 <span>Order Total:</span>
-                <span style="font-weight: bold; color: #28a745;">$<%= orderTotal %></span>
+                <span style="font-weight: bold; color: #00D97E;">$<%= orderTotal %></span>
             </div>
             <div class="order-info">
                 <span>Status:</span>
@@ -212,8 +215,8 @@
             </a>
         </div>
         
-        <div style="margin-top: 30px; padding: 15px; background: #e7f3ff; border-radius: 8px;">
-            <p style="margin: 0; color: #2c5aa0; font-size: 14px;">
+        <div style="margin-top: 30px; padding: 15px; background: #f0f4ff; border-radius: 8px; border-left: 4px solid #635BFF;">
+            <p style="margin: 0; color: #635BFF; font-size: 14px;">
                 💡 <strong>Need help?</strong> Contact our support team at support@simplestore.com
             </p>
         </div>
