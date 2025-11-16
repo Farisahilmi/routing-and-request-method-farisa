@@ -310,7 +310,7 @@
         
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            console.log('Form submitted'); // Debug log
+            // Form submitted
             
             const formData = new FormData(form);
             const data = {
@@ -325,7 +325,7 @@
                 isDefault: formData.get('isDefault') === 'on'
             };
             
-            console.log('Form data:', data); // Debug log
+            // Form data prepared
             
             // Validasi
             if (!data.label || !data.fullName || !data.phone || !data.street || !data.city || !data.postalCode || !data.country) {
@@ -335,7 +335,7 @@
             
             // Tentukan mode berdasarkan hidden input
             const isEditMode = document.getElementById('isEditMode').value === 'true';
-            console.log('Is Edit Mode:', isEditMode); // Debug log
+            // Check edit mode
             
             if (isEditMode) {
                 updateAddress(data);
@@ -347,7 +347,7 @@
 
     async function addAddress(data) {
         try {
-            console.log('Adding address:', data); // Debug log
+            // Adding new address
             const response = await fetch('/addresses/add', {
                 method: 'POST',
                 headers: {
@@ -357,7 +357,7 @@
             });
             
             const result = await response.json();
-            console.log('Add address response:', result); // Debug log
+            // Address added successfully
             
             if (result.success) {
                 showNotification('success', 'Success!', 'Address added successfully');
@@ -376,7 +376,7 @@
     async function updateAddress(data) {
         try {
             const addressId = document.getElementById('addressId').value;
-            console.log('Updating address ID:', addressId, data); // Debug log
+            // Updating existing address
             
             const response = await fetch('/addresses/edit/' + addressId, {
                 method: 'PUT',
@@ -387,7 +387,7 @@
             });
             
             const result = await response.json();
-            console.log('Update address response:', result); // Debug log
+            // Address updated successfully
             
             if (result.success) {
                 showNotification('success', 'Success!', 'Address updated successfully');

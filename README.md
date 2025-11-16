@@ -24,16 +24,30 @@ Setup Steps
    ```bash
    git clone <your-repository-url>
    cd routing-and-request-method-farisa
-2. install dependencies
-    npm install
-3.start the application 
-    # development mode (with auto-restart)
-    npm run dev
+   ```
 
-    #production mode
-    npm start
-4.Access the application 
-    open browser and go to http://localhost:3000
+2. Install dependencies
+   ```bash
+   npm install
+   ```
+
+3. Create environment file (optional)
+   ```bash
+   cp .env.example .env
+   # Edit .env and set your configuration
+   ```
+
+4. Start the application 
+   ```bash
+   # Development mode (with auto-restart)
+   npm run dev
+
+   # Production mode
+   npm start
+   ```
+
+5. Access the application 
+   Open browser and go to http://localhost:3000
 
 
 API Endpoints

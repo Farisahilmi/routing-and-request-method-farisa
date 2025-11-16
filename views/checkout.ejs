@@ -219,12 +219,12 @@
                                 </div>
                             </div>
                             <div style="font-weight: bold; color: #635BFF;">
-                                $<%= ((item.product ? item.product.price : item.price) * item.quantity).toFixed(2) %>
+                                <%= formatCurrency((item.product ? item.product.price : item.price) * item.quantity, currency) %>
                             </div>
                         </div>
                     <% }) %>
                     <div class="total">
-                        <i class="fas fa-dollar-sign"></i> Total: $<%= totalAmount.toFixed(2) %>
+                        Total: <%= formatCurrency(totalAmount, currency) %>
                     </div>
                 <% } else { %>
                     <p>Your cart is empty</p>

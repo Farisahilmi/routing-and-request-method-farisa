@@ -395,6 +395,426 @@
             line-height: 1.6;
         }
 
+        /* Reviews Section */
+        .reviews-section {
+            padding: 40px;
+            border-top: 2px solid #e6ebf1;
+            background: linear-gradient(135deg, #f9fafb 0%, #f6f9fc 100%);
+        }
+
+        .reviews-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #0a2540;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reviews-title i {
+            color: #635BFF;
+        }
+
+        /* Review Stats */
+        .review-stats {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 40px;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e6ebf1;
+        }
+
+        .rating-summary {
+            display: flex;
+            justify-content: center;
+        }
+
+        .average-rating {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 2px solid #e6ebf1;
+        }
+
+        .rating-number {
+            font-size: 48px;
+            font-weight: 800;
+            color: #635BFF;
+            margin-bottom: 10px;
+        }
+
+        .rating-stars {
+            margin-bottom: 15px;
+            letter-spacing: 4px;
+        }
+
+        .star {
+            color: #ffd700;
+            font-size: 20px;
+            display: inline-block;
+        }
+
+        .star.empty {
+            color: #e6ebf1;
+        }
+
+        .review-count {
+            color: #8898aa;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .review-count span {
+            color: #0a2540;
+            font-weight: 800;
+        }
+
+        /* Rating Breakdown */
+        .rating-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .rating-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .rating-bar-label {
+            min-width: 60px;
+            text-align: right;
+            font-size: 14px;
+            font-weight: 600;
+            color: #0a2540;
+        }
+
+        .rating-bar-container {
+            flex: 1;
+            height: 24px;
+            background: #e6ebf1;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .rating-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #635BFF 0%, #7c73ff 100%);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .rating-bar-count {
+            min-width: 40px;
+            text-align: right;
+            font-size: 13px;
+            color: #8898aa;
+            font-weight: 600;
+        }
+
+        /* Add Review Form */
+        .add-review-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 2px solid #e6ebf1;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .review-form-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0a2540;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .review-form-title i {
+            color: #635BFF;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #0a2540;
+            font-size: 14px;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .star-input {
+            cursor: pointer;
+            font-size: 32px;
+            color: #e6ebf1;
+            transition: all 0.2s ease;
+            line-height: 1;
+        }
+
+        .star-input:hover,
+        .star-input.active {
+            color: #ffd700;
+            transform: scale(1.1);
+        }
+
+        .review-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e6ebf1;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 120px;
+            transition: all 0.2s ease;
+        }
+
+        .review-textarea:focus {
+            outline: none;
+            border-color: #635BFF;
+            box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.1);
+        }
+
+        .char-count {
+            font-size: 12px;
+            color: #8898aa;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-submit-review {
+            background: linear-gradient(135deg, #635BFF 0%, #7c73ff 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .btn-submit-review:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 91, 255, 0.3);
+        }
+
+        .btn-submit-review:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-cancel-review {
+            background: white;
+            color: #8898aa;
+            padding: 12px 24px;
+            border: 2px solid #e6ebf1;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-cancel-review:hover {
+            border-color: #cbd5e0;
+            color: #0a2540;
+        }
+
+        .login-message {
+            background: #f9fafb;
+            border: 2px solid #e6ebf1;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            color: #8898aa;
+            font-size: 14px;
+        }
+
+        .login-message a {
+            color: #635BFF;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .login-message a:hover {
+            text-decoration: underline;
+        }
+
+        /* Reviews List */
+        .reviews-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .review-item {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #e6ebf1;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .review-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-color: #cbd5e0;
+        }
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .review-user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .review-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #635BFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .review-user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .review-user-name {
+            font-weight: 700;
+            color: #0a2540;
+            font-size: 14px;
+        }
+
+        .review-date {
+            font-size: 12px;
+            color: #8898aa;
+        }
+
+        .review-rating {
+            display: flex;
+            gap: 4px;
+        }
+
+        .review-rating .star {
+            font-size: 16px;
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .btn-edit-review {
+            background: #f0f4f8;
+            color: #635BFF;
+            border: 1px solid #cbd5e0;
+        }
+
+        .btn-edit-review:hover {
+            background: #e6ebf1;
+            border-color: #635BFF;
+        }
+
+        .btn-delete-review {
+            background: #fef2f2;
+            color: #DF1C41;
+            border: 1px solid #fee2e2;
+        }
+
+        .btn-delete-review:hover {
+            background: #fee2e2;
+            border-color: #DF1C41;
+        }
+
+        .review-text {
+            color: #0a2540;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 12px 0;
+        }
+
+        .no-reviews {
+            background: #f9fafb;
+            border: 2px dashed #e6ebf1;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            color: #8898aa;
+        }
+
+        .no-reviews i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+
+        .no-reviews p {
+            font-size: 15px;
+            margin: 10px 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #8898aa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .product-header {
@@ -482,18 +902,7 @@
                     <!-- Price -->
                     <div class="product-price-section">
                         <div class="product-price">
-                            <span class="price-currency">
-                                <% if (currency === 'IDR') { %>
-                                    Rp
-                                <% } else { %>
-                                    $
-                                <% } %>
-                            </span>
-                            <% if (currency === 'IDR') { %>
-                                <%= (product.price * 15000).toLocaleString('id-ID') %>
-                            <% } else { %>
-                                <%= product.price %>
-                            <% } %>
+                            <%= formatCurrency(product.price, currency) %>
                         </div>
                     </div>
 
@@ -560,6 +969,44 @@
                 <div class="info-card">
                     <h4><i class="fas fa-headset"></i> 24/7 Support</h4>
                     <p>Our customer support team is available round the clock to help you.</p>
+                </div>
+            </div>
+
+            <!-- Reviews Section -->
+            <div class="reviews-section">
+                <h2 class="reviews-title">
+                    <i class="fas fa-star"></i> Customer Reviews & Ratings
+                </h2>
+
+                <!-- Review Stats -->
+                <div class="review-stats">
+                    <div class="rating-summary">
+                        <div class="average-rating">
+                            <div class="rating-number" id="averageRating">0</div>
+                            <div class="rating-stars" id="ratingStars"></div>
+                            <div class="review-count">
+                                <span id="totalReviews">0</span> reviews
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rating Breakdown -->
+                    <div class="rating-breakdown" id="ratingBreakdown">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Add Review Form (Only for logged-in users) -->
+                <div class="add-review-section" id="addReviewSection">
+                    <!-- Will show form for logged-in users who purchased -->
+                    <!-- Will show message for guests or non-buyers -->
+                </div>
+
+                <!-- Reviews List -->
+                <div class="reviews-list" id="reviewsList">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i> Loading reviews...
+                    </div>
                 </div>
             </div>
 
@@ -709,6 +1156,361 @@
             } catch (error) {
                 console.error('Error updating cart count:', error);
             }
+        }
+
+        // ===== REVIEWS FUNCTIONALITY =====
+        let currentRating = 0;
+        const productId = '<%= product.id %>';
+
+        // Initialize reviews on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadReviews();
+            setupAddReviewForm();
+        });
+
+        // Load reviews
+        async function loadReviews() {
+            try {
+                const response = await fetch(`/api/reviews/product/${productId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayReviews(data);
+                } else {
+                    showReviewsError('Failed to load reviews');
+                }
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+                showReviewsError('Failed to load reviews');
+            }
+        }
+
+        // Display reviews
+        function displayReviews(data) {
+            // Update rating stats
+            updateRatingStats(data.averageRating, data.reviews.length, data.ratingCounts);
+            
+            // Display reviews list
+            displayReviewsList(data.reviews);
+        }
+
+        // Update rating stats
+        function updateRatingStats(avgRating, totalCount, ratingCounts) {
+            // Update average rating
+            document.getElementById('averageRating').textContent = avgRating.toFixed(1);
+            
+            // Update stars
+            const starsHtml = renderStars(avgRating);
+            document.getElementById('ratingStars').innerHTML = starsHtml;
+            
+            // Update total reviews
+            document.getElementById('totalReviews').textContent = totalCount;
+            
+            // Update rating breakdown
+            updateRatingBreakdown(ratingCounts, totalCount);
+        }
+
+        // Render stars
+        function renderStars(rating) {
+            let html = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= Math.round(rating)) {
+                    html += '<i class="fas fa-star star"></i>';
+                } else if (i - 0.5 <= rating) {
+                    html += '<i class="fas fa-star-half-alt star"></i>';
+                } else {
+                    html += '<i class="far fa-star star empty"></i>';
+                }
+            }
+            return html;
+        }
+
+        // Update rating breakdown
+        function updateRatingBreakdown(ratingCounts, totalCount) {
+            let html = '';
+            for (let stars = 5; stars >= 1; stars--) {
+                const count = ratingCounts[stars] || 0;
+                const percentage = totalCount > 0 ? (count / totalCount) * 100 : 0;
+                
+                html += `
+                    <div class="rating-bar">
+                        <div class="rating-bar-label">${stars} <i class="fas fa-star" style="color: #ffd700; font-size: 12px;"></i></div>
+                        <div class="rating-bar-container">
+                            <div class="rating-bar-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        <div class="rating-bar-count">${count}</div>
+                    </div>
+                `;
+            }
+            document.getElementById('ratingBreakdown').innerHTML = html;
+        }
+
+        // Display reviews list
+        function displayReviewsList(reviews) {
+            const reviewsListDiv = document.getElementById('reviewsList');
+            
+            if (reviews.length === 0) {
+                reviewsListDiv.innerHTML = `
+                    <div class="no-reviews">
+                        <div><i class="fas fa-comment-slash"></i></div>
+                        <p>No reviews yet</p>
+                        <small>Be the first to review this product!</small>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            reviews.forEach(review => {
+                html += `
+                    <div class="review-item">
+                        <div class="review-header">
+                            <div class="review-user-info">
+                                <div class="review-avatar">
+                                    ${review.userName.charAt(0).toUpperCase()}
+                                </div>
+                                <div class="review-user-details">
+                                    <div class="review-user-name">${escapeHtml(review.userName)}</div>
+                                    <div class="review-date">${formatDate(new Date(review.createdAt))}</div>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                ${renderStars(review.rating)}
+                            </div>
+                        </div>
+                        <div class="review-text">${escapeHtml(review.reviewText)}</div>
+                    </div>
+                `;
+            });
+            
+            reviewsListDiv.innerHTML = html;
+        }
+
+        // Setup add review form
+        async function setupAddReviewForm() {
+            const addReviewSection = document.getElementById('addReviewSection');
+            
+            try {
+                // Check if user is logged in and has purchased
+                const response = await fetch('/api/reviews/check-user-status?productId=' + productId);
+                const data = await response.json();
+                
+                if (data.loggedIn && data.canReview) {
+                    // Show review form
+                    addReviewSection.innerHTML = createReviewForm();
+                    setupStarRating();
+                    setupReviewFormListeners();
+                } else if (!data.loggedIn) {
+                    // Show login prompt
+                    addReviewSection.innerHTML = `
+                        <div class="login-message">
+                            <i class="fas fa-lock"></i> 
+                            Please <a href="/login">login</a> to write a review
+                        </div>
+                    `;
+                } else {
+                    // User hasn't purchased
+                    addReviewSection.innerHTML = `
+                        <div class="login-message">
+                            <i class="fas fa-shopping-bag"></i> 
+                            Only verified buyers can write reviews. <a href="/orders">View your orders</a>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error checking user status:', error);
+            }
+        }
+
+        // Create review form HTML
+        function createReviewForm() {
+            return `
+                <h3 class="review-form-title">
+                    <i class="fas fa-pencil-alt"></i> Share Your Review
+                </h3>
+                <form id="reviewForm" onsubmit="submitReview(event)">
+                    <div class="form-group">
+                        <label>Rating</label>
+                        <div class="star-rating" id="starRating">
+                            <i class="fas fa-star star-input" data-rating="1"></i>
+                            <i class="fas fa-star star-input" data-rating="2"></i>
+                            <i class="fas fa-star star-input" data-rating="3"></i>
+                            <i class="fas fa-star star-input" data-rating="4"></i>
+                            <i class="fas fa-star star-input" data-rating="5"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reviewText">Your Review (Max 500 characters)</label>
+                        <textarea 
+                            id="reviewText" 
+                            class="review-textarea" 
+                            placeholder="Share your experience with this product..."
+                            maxlength="500"
+                            required
+                        ></textarea>
+                        <div class="char-count">
+                            <span id="charCount">0</span>/500
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel-review" onclick="resetReviewForm()">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn-submit-review" id="submitReviewBtn">
+                            <i class="fas fa-check"></i> Submit Review
+                        </button>
+                    </div>
+                </form>
+            `;
+        }
+
+        // Setup star rating
+        function setupStarRating() {
+            const stars = document.querySelectorAll('.star-input');
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    currentRating = parseInt(this.dataset.rating);
+                    updateStarRating(currentRating);
+                });
+                
+                star.addEventListener('mouseover', function() {
+                    const hoverRating = parseInt(this.dataset.rating);
+                    updateStarRating(hoverRating);
+                });
+            });
+            
+            document.getElementById('starRating').addEventListener('mouseout', function() {
+                updateStarRating(currentRating);
+            });
+        }
+
+        // Update star rating UI
+        function updateStarRating(rating) {
+            const stars = document.querySelectorAll('.star-input');
+            stars.forEach(star => {
+                const starRating = parseInt(star.dataset.rating);
+                if (starRating <= rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        // Setup review form listeners
+        function setupReviewFormListeners() {
+            const reviewText = document.getElementById('reviewText');
+            if (reviewText) {
+                reviewText.addEventListener('input', function() {
+                    document.getElementById('charCount').textContent = this.value.length;
+                });
+            }
+        }
+
+        // Submit review
+        async function submitReview(event) {
+            event.preventDefault();
+            
+            if (currentRating === 0) {
+                showNotification('error', 'Error', 'Please select a rating');
+                return;
+            }
+            
+            const reviewText = document.getElementById('reviewText').value.trim();
+            if (!reviewText) {
+                showNotification('error', 'Error', 'Please write a review');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submitReviewBtn');
+            if (submitBtn) submitBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/reviews', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        productId: productId,
+                        rating: currentRating,
+                        reviewText: reviewText
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('success', 'Success', 'Review submitted! Waiting for admin approval.');
+                    resetReviewForm();
+                    loadReviews();
+                } else {
+                    showNotification('error', 'Error', data.message || 'Failed to submit review');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('error', 'Error', 'Failed to submit review');
+            } finally {
+                if (submitBtn) submitBtn.disabled = false;
+            }
+        }
+
+        // Reset review form
+        function resetReviewForm() {
+            currentRating = 0;
+            const form = document.getElementById('reviewForm');
+            if (form) form.reset();
+            
+            const stars = document.querySelectorAll('.star-input');
+            stars.forEach(star => star.classList.remove('active'));
+            
+            document.getElementById('charCount').textContent = '0';
+        }
+
+        // Show reviews error
+        function showReviewsError(message) {
+            document.getElementById('reviewsList').innerHTML = `
+                <div class="no-reviews">
+                    <div><i class="fas fa-exclamation-circle"></i></div>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        // Format date
+        function formatDate(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 0) {
+                const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                if (diffHours === 0) {
+                    const diffMins = Math.floor(diffMs / (1000 * 60));
+                    return diffMins > 0 ? `${diffMins}m ago` : 'just now';
+                }
+                return `${diffHours}h ago`;
+            } else if (diffDays === 1) {
+                return 'yesterday';
+            } else if (diffDays < 30) {
+                return `${diffDays}d ago`;
+            } else {
+                return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            }
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
         }
     </script>
 </body>

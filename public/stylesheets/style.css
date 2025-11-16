@@ -314,33 +314,63 @@ table {
     }
 
 }
-    /* Tambahkan style untuk tombol delete */
-.btn-danger {
-    background: #eebbc3;
-    color: #232946;
+
+/* Modern Product Grid & Card Spacing */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 32px;
+    padding: 32px 0;
 }
 
-.btn-danger:hover {
-    background: #fffffe;
-    color: #232946;
-    transform: translateY(-2px);
+.product-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 32px 24px 24px 24px;
+    box-shadow: 0 2px 12px rgba(99,91,255,0.08);
+    border: 1px solid #e6ebf1;
+    transition: box-shadow 0.2s, transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+}
+
+.product-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 8px 24px rgba(99,91,255,0.15);
+    border-color: #cbd5e0;
 }
 
 .action-buttons {
     display: flex;
-    gap: 8px;
+    gap: 12px;
+    margin-top: auto;
     flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
-.btn-sm {
-    padding: 8px 12px;
-    font-size: 12px;
-    border-radius: 6px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
+@media (max-width: 1024px) {
+    .products-grid {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+    }
+    .product-card {
+        padding: 20px 12px 16px 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .products-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    .product-card {
+        padding: 12px 8px 12px 8px;
+    }
+    .action-buttons {
+        flex-direction: column;
+        gap: 8px;
+        justify-content: stretch;
+    }
 }

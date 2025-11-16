@@ -541,9 +541,24 @@
                 </div>
                 <div class="form-group">
                     <label for="productImage" class="form-label">
-                        <i class="fas fa-image"></i> Image URL
+                        <i class="fas fa-image"></i> Product Image
                     </label>
-                    <input type="text" id="productImage" class="form-control" placeholder="/images/default.jpg">
+                    <div style="margin-bottom: 10px;">
+                        <input type="file" id="productImageFile" class="form-control" accept="image/*" style="padding: 8px;">
+                        <small style="color: #666; font-size: 12px;">Supported formats: JPEG, PNG, WebP. Max size: 10MB</small>
+                    </div>
+                    <div id="imagePreview" style="display: none; margin-top: 10px;">
+                        <img id="previewImg" src="" alt="Preview" style="max-width: 200px; max-height: 200px; border: 2px solid #ddd; border-radius: 8px;">
+                        <button type="button" id="removeImageBtn" style="margin-left: 10px; background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                            <i class="fas fa-times"></i> Remove
+                        </button>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <label style="font-size: 12px; color: #666;">
+                            <input type="checkbox" id="useUrlInstead" style="margin-right: 5px;"> Or enter image URL instead
+                        </label>
+                    </div>
+                    <input type="text" id="productImage" class="form-control" placeholder="/images/default.jpg" style="display: none; margin-top: 10px;">
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <button type="submit" class="btn-admin-action" id="productFormSubmit">
@@ -631,15 +646,16 @@
                                     </span>
                                 </td>
                                 <td style="font-weight: bold; color: #2c5aa0;">
-                                    <% if (currency === 'IDR') { %>
-                                        <span style="display: flex; align-items: center; gap: 5px;">
-                                            <i class="fas fa-money-bill-wave"></i> Rp <%= (product.price * 15000).toLocaleString('id-ID') %>
-                                        </span>
-                                    <% } else { %>
-                                        <span style="display: flex; align-items: center; gap: 5px;">
-                                            <i class="fas fa-dollar-sign"></i> $<%= product.price.toFixed(2) %>
-                                        </span>
-                                    <% } %>
+                                    <span style="display: flex; align-items: center; gap: 5px;">
+                                        <% if (currency === 'IDR') { %>
+                                            <i class="fas fa-money-bill-wave"></i>
+                                        <% } else if (currency === 'EUR') { %>
+                                            <i class="fas fa-euro-sign"></i>
+                                        <% } else { %>
+                                            <i class="fas fa-dollar-sign"></i>
+                                        <% } %>
+                                        <%= formatCurrency(product.price, currency) %>
+                                    </span>
                                 </td>
                                 <td class="<%= product.stock <= 5 ? 'stock-low' : 'stock-good' %>">
                                     <span style="display: flex; align-items: center; gap: 5px;">
@@ -702,24 +718,67 @@
 
         let formMode = 'add';
         let editingProductId = null;
+        let selectedFile = null;
 
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Admin Products Page Loaded');
-            
+
             document.getElementById('showAddProductBtn')?.addEventListener('click', () => openProductForm('add'));
             document.getElementById('showAddProductEmptyBtn')?.addEventListener('click', () => openProductForm('add'));
-            
+
             cancelProductFormBtn?.addEventListener('click', hideProductForm);
             productForm?.addEventListener('submit', submitProductForm);
             document.getElementById('exportProductsBtn')?.addEventListener('click', exportProducts);
-            
+
+            // Image upload handling
+            const imageFileInput = document.getElementById('productImageFile');
+            const useUrlCheckbox = document.getElementById('useUrlInstead');
+            const imageUrlInput = document.getElementById('productImage');
+            const imagePreview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+            const removeImageBtn = document.getElementById('removeImageBtn');
+
+            imageFileInput?.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    selectedFile = file;
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImg.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            removeImageBtn?.addEventListener('click', function() {
+                selectedFile = null;
+                imageFileInput.value = '';
+                imagePreview.style.display = 'none';
+                previewImg.src = '';
+            });
+
+            useUrlCheckbox?.addEventListener('change', function() {
+                if (this.checked) {
+                    imageFileInput.style.display = 'none';
+                    imagePreview.style.display = 'none';
+                    imageUrlInput.style.display = 'block';
+                    selectedFile = null;
+                    imageFileInput.value = '';
+                } else {
+                    imageFileInput.style.display = 'block';
+                    imageUrlInput.style.display = 'none';
+                    imageUrlInput.value = '';
+                }
+            });
+
             document.querySelectorAll('.edit-product-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const productId = this.getAttribute('data-product-id');
                     openProductForm('edit', productId);
                 });
             });
-            
+
             document.querySelectorAll('.delete-product-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const productId = this.getAttribute('data-product-id');
@@ -733,7 +792,7 @@
                     this.style.borderColor = '#2c5aa0';
                     this.style.boxShadow = '0 0 0 3px rgba(44, 90, 160, 0.1)';
                 });
-                
+
                 input.addEventListener('blur', function() {
                     this.style.borderColor = '#e9ecef';
                     this.style.boxShadow = 'none';
@@ -770,8 +829,22 @@
             productFormContainer.style.display = 'none';
             formMode = 'add';
             editingProductId = null;
+            selectedFile = null;
             productFormTitle.innerHTML = '<i class="fas fa-plus-circle"></i> Add New Product';
             productFormSubmit.innerHTML = '<i class="fas fa-save"></i> Add Product';
+
+            // Reset image fields
+            const imageFileInput = document.getElementById('productImageFile');
+            const imageUrlInput = document.getElementById('productImage');
+            const useUrlCheckbox = document.getElementById('useUrlInstead');
+            const imagePreview = document.getElementById('imagePreview');
+
+            imageFileInput.value = '';
+            imageUrlInput.value = '';
+            useUrlCheckbox.checked = false;
+            imageFileInput.style.display = 'block';
+            imageUrlInput.style.display = 'none';
+            imagePreview.style.display = 'none';
         }
 
         function fillProductForm(product) {
@@ -780,9 +853,28 @@
             document.getElementById('productPrice').value = product.price || 0;
             document.getElementById('productCategory').value = product.category || '';
             document.getElementById('productStock').value = product.stock || 0;
-            document.getElementById('productImage').value = product.image && product.image !== '/images/default.jpg'
-                ? product.image
-                : '';
+
+            // Handle image field
+            const imageUrlInput = document.getElementById('productImage');
+            const useUrlCheckbox = document.getElementById('useUrlInstead');
+            const imageFileInput = document.getElementById('productImageFile');
+            const imagePreview = document.getElementById('imagePreview');
+
+            if (product.image && product.image !== '/images/default.jpg') {
+                // If product has an uploaded image, show URL option
+                useUrlCheckbox.checked = true;
+                imageFileInput.style.display = 'none';
+                imageUrlInput.style.display = 'block';
+                imageUrlInput.value = product.image;
+                imagePreview.style.display = 'none';
+            } else {
+                // Default state
+                useUrlCheckbox.checked = false;
+                imageFileInput.style.display = 'block';
+                imageUrlInput.style.display = 'none';
+                imageUrlInput.value = '';
+                imagePreview.style.display = 'none';
+            }
         }
 
         async function submitProductForm(event) {
@@ -793,8 +885,7 @@
                 description: document.getElementById('productDescription').value.trim(),
                 price: parseFloat(document.getElementById('productPrice').value),
                 category: document.getElementById('productCategory').value.trim(),
-                stock: parseInt(document.getElementById('productStock').value, 10),
-                image: document.getElementById('productImage').value.trim() || '/images/default.jpg'
+                stock: parseInt(document.getElementById('productStock').value, 10)
             };
 
             if (!productData.name || !productData.description || Number.isNaN(productData.price) || !productData.category || Number.isNaN(productData.stock)) {
@@ -813,13 +904,35 @@
                     : '/admin/products';
                 const method = formMode === 'edit' ? 'PUT' : 'POST';
 
-                const response = await fetch(endpoint, {
-                    method,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(productData)
-                });
+                let response;
+                if (selectedFile) {
+                    // Use FormData for file upload
+                    const formData = new FormData();
+                    formData.append('image', selectedFile);
+                    formData.append('name', productData.name);
+                    formData.append('description', productData.description);
+                    formData.append('price', productData.price.toString());
+                    formData.append('category', productData.category);
+                    formData.append('stock', productData.stock.toString());
+
+                    response = await fetch(endpoint, {
+                        method,
+                        body: formData
+                    });
+                } else {
+                    // Use JSON for URL-based image
+                    const useUrlCheckbox = document.getElementById('useUrlInstead');
+                    const imageUrl = document.getElementById('productImage').value.trim();
+                    productData.image = useUrlCheckbox.checked ? (imageUrl || '/images/default.jpg') : '/images/default.jpg';
+
+                    response = await fetch(endpoint, {
+                        method,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(productData)
+                    });
+                }
 
                 const result = await response.json();
 

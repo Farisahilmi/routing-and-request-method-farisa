@@ -13,7 +13,12 @@ var ordersRouter = require('./routes/orders');
 var cartRouter = require('./routes/cart');
 var adminRouter = require('./routes/admin');
 var authRouter = require('./routes/auth');
-var addressesRouter = require('./routes/addresses')
+var addressesRouter = require('./routes/addresses');
+var reviewsRouter = require('./routes/reviews');
+
+// Import translation helper and language middleware
+const { getTranslation, getTranslations } = require('./helpers/translation');
+const { languageMiddleware } = require('./middleware/language');
 
 // Simple translations
 const translations = {
@@ -102,28 +107,68 @@ app.use(cookieParser());
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Session middleware
+// Session middleware - MUST be before languageMiddleware
+// For Vercel production, use secure cookies
+const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL;
 app.use(session({
   secret: process.env.SESSION_SECRET || 'simple-store-secret-key-change-in-production',
   resave: false,
   saveUninitialized: false,
   cookie: { 
-    secure: false,
+    secure: isProduction ? true : false, // Use secure cookies in production
+    httpOnly: true,
+    sameSite: 'lax',
     maxAge: 24 * 60 * 60 * 1000
   }
 }));
 
-// Global middleware
+// Use language middleware after session is set up
+app.use(languageMiddleware);
+
+// Import currency helper
+const { getCurrencyByLanguage, formatCurrency } = require('./helpers/currency');
+
+// Global middleware - Use language from languageMiddleware
 app.use(function(req, res, next) {
   const sessionUser = req.session.user || null;
 
-  const language = sessionUser && sessionUser.language ? sessionUser.language : 'en';
-  const currency = sessionUser && sessionUser.currency ? sessionUser.currency : 'IDR';
+  // Get language from res.locals (set by languageMiddleware) or fallback
+  let language = res.locals.language || 'en';
 
+  // Get currency from session or cookie, or auto-detect from language
+  let currency = 'IDR';
+  if (sessionUser && sessionUser.currency) {
+    currency = sessionUser.currency;
+  } else if (req.cookies && req.cookies.currency) {
+    currency = req.cookies.currency;
+  } else {
+    // Auto-detect currency from language
+    currency = getCurrencyByLanguage(language);
+  }
+
+  // Ensure language is set (should already be set by languageMiddleware)
   res.locals.language = language;
   res.locals.currency = currency;
-  res.locals.t = translations[language] || translations['en'];
+  // Use full translations from JSON files instead of simple translations object
+  const fullTranslations = getTranslations(language);
+  
+  // Flatten nested translation objects (common, nav, auth, etc.) to top level
+  // so we can access t.admin_dashboard instead of t.nav.admin_dashboard
+  const flattenedTranslations = {};
+  for (const key in fullTranslations) {
+    if (typeof fullTranslations[key] === 'object' && fullTranslations[key] !== null) {
+      // Merge nested objects to top level
+      Object.assign(flattenedTranslations, fullTranslations[key]);
+    } else {
+      // Direct key-value pairs
+      flattenedTranslations[key] = fullTranslations[key];
+    }
+  }
+  
+  // Merge with simple translations for backward compatibility
+  res.locals.t = { ...flattenedTranslations, ...(translations[language] || translations['en']) };
   res.locals.user = sessionUser;
+  res.locals.formatCurrency = formatCurrency; // Make formatCurrency available in all views
   
   // Security headers
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -137,6 +182,7 @@ app.use(function(req, res, next) {
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/products', require('./routes/api/products'));
 app.use('/api/orders', require('./routes/api/orders'));
+app.use('/api/reviews', reviewsRouter);
 
 // Public routes
 app.use('/', indexRouter);
@@ -147,6 +193,7 @@ app.use('/cart', cartRouter);
 app.use('/admin', adminRouter);
 app.use('/', authRouter);
 app.use('/addresses', addressesRouter);
+app.use('/reviews', reviewsRouter);
 
 // Redirect routes untuk URL pendek
 app.get('/register', function(req, res) {

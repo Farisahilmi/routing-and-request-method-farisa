@@ -1,27 +1,8 @@
 var express = require('express');
 var router = express.Router();
-const fs = require('fs');
-const path = require('path');
 const { requireAuth } = require('../../middleware/auth');
-
-function readJSONFile(filename) {
-  const filePath = path.join(__dirname, '../../data', filename);
-  
-  if (!fs.existsSync(filePath)) {
-    return [];
-  }
-  
-  try {
-    const data = fs.readFileSync(filePath, 'utf8').trim();
-    if (!data) {
-      return [];
-    }
-    return JSON.parse(data);
-  } catch (error) {
-    console.error(`Error reading ${filename}:`, error);
-    return [];
-  }
-}
+const { readJSONFile } = require('../../helpers/database');
+const logger = require('../../helpers/logger');
 
 // GET all orders (API - JSON) - PROTECTED
 router.get('/', requireAuth, function(req, res, next) {
@@ -40,6 +21,7 @@ router.get('/', requireAuth, function(req, res, next) {
       data: userOrders
     });
   } catch (error) {
+    logger.error('Failed to fetch orders', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch orders'
@@ -78,6 +60,7 @@ router.get('/:id', requireAuth, function(req, res, next) {
       data: order
     });
   } catch (error) {
+    logger.error('Failed to fetch order', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch order'

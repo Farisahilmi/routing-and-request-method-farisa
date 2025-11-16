@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin - Review Management</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .admin-header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .admin-header h1 {
+            color: #0a2540;
+            margin-bottom: 10px;
+            font-size: 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .admin-header h1 i {
+            color: #635BFF;
+        }
+
+        .admin-header p {
+            color: #8898aa;
+            font-size: 14px;
+        }
+
+        .controls {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .control-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .control-label {
+            font-weight: 600;
+            color: #0a2540;
+            font-size: 14px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e6ebf1;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #0a2540;
+            transition: all 0.2s ease;
+            font-size: 13px;
+        }
+
+        .filter-btn:hover {
+            border-color: #635BFF;
+            color: #635BFF;
+        }
+
+        .filter-btn.active {
+            background: #635BFF;
+            color: white;
+            border-color: #635BFF;
+        }
+
+        .reviews-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .review-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #e6ebf1;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        .review-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            border-color: #cbd5e0;
+        }
+
+        .review-card.pending {
+            border-left: 4px solid #ffd700;
+        }
+
+        .review-card.approved {
+            border-left: 4px solid #00D97E;
+        }
+
+        .review-card.rejected {
+            border-left: 4px solid #DF1C41;
+        }
+
+        .review-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .review-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .review-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #635BFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 700;
+            color: #0a2540;
+            font-size: 14px;
+        }
+
+        .user-email {
+            font-size: 12px;
+            color: #8898aa;
+        }
+
+        .review-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .status-pending {
+            background: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fcd34d;
+        }
+
+        .status-approved {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #dcfce7;
+        }
+
+        .status-rejected {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fee2e2;
+        }
+
+        .review-content {
+            margin-bottom: 15px;
+        }
+
+        .review-product {
+            background: #f6f9fc;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #0a2540;
+        }
+
+        .review-product-label {
+            font-weight: 600;
+            color: #635BFF;
+        }
+
+        .review-rating {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+
+        .star {
+            color: #ffd700;
+            font-size: 14px;
+        }
+
+        .star.empty {
+            color: #e6ebf1;
+        }
+
+        .review-text {
+            color: #0a2540;
+            font-size: 14px;
+            line-height: 1.6;
+            background: #f9fafb;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid #635BFF;
+        }
+
+        .review-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 15px;
+            border-top: 1px solid #e6ebf1;
+            margin-top: 15px;
+        }
+
+        .review-date {
+            font-size: 12px;
+            color: #8898aa;
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-approve {
+            background: #f0fdf4;
+            color: #00D97E;
+            border: 1px solid #dcfce7;
+        }
+
+        .btn-approve:hover {
+            background: #dcfce7;
+        }
+
+        .btn-reject {
+            background: #fef2f2;
+            color: #DF1C41;
+            border: 1px solid #fee2e2;
+        }
+
+        .btn-reject:hover {
+            background: #fee2e2;
+        }
+
+        .btn-delete {
+            background: #f6f9fc;
+            color: #8898aa;
+            border: 1px solid #e6ebf1;
+        }
+
+        .btn-delete:hover {
+            background: #e6ebf1;
+            color: #0a2540;
+        }
+
+        .empty-state {
+            background: white;
+            border-radius: 12px;
+            padding: 60px 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #e6ebf1;
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            color: #8898aa;
+            font-size: 16px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #8898aa;
+        }
+
+        @media (max-width: 768px) {
+            .admin-header h1 {
+                font-size: 24px;
+            }
+
+            .review-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .review-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .review-actions {
+                width: 100%;
+            }
+
+            .btn-small {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .control-group {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('nav') %>
+    <%- include('notification') %>
+
+    <div class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <h1>
+                <i class="fas fa-star"></i> Review Management
+            </h1>
+            <p>Moderate product reviews and manage customer feedback</p>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div class="control-group">
+                <span class="control-label">Filter by Status:</span>
+                <button class="filter-btn active" data-filter="all">
+                    <i class="fas fa-list"></i> All Reviews
+                </button>
+                <button class="filter-btn" data-filter="pending">
+                    <i class="fas fa-clock"></i> Pending
+                </button>
+                <button class="filter-btn" data-filter="approved">
+                    <i class="fas fa-check"></i> Approved
+                </button>
+                <button class="filter-btn" data-filter="rejected">
+                    <i class="fas fa-times"></i> Rejected
+                </button>
+            </div>
+        </div>
+
+        <!-- Reviews Grid -->
+        <div class="reviews-grid" id="reviewsGrid">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i> Loading reviews...
+            </div>
+        </div>
+    </div>
+
+    <%- include('footer') %>
+
+    <script>
+        let allReviews = [];
+        let currentFilter = 'all';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadReviews();
+            setupFilterButtons();
+        });
+
+        // Load reviews
+        async function loadReviews() {
+            try {
+                const response = await fetch('/api/reviews/admin/all');
+                const data = await response.json();
+
+                if (data.success) {
+                    allReviews = data.reviews || [];
+                    displayReviews(allReviews);
+                } else {
+                    showError('Failed to load reviews');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error loading reviews');
+            }
+        }
+
+        // Setup filter buttons
+        function setupFilterButtons() {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    displayReviews(allReviews);
+                });
+            });
+        }
+
+        // Display reviews
+        function displayReviews(reviews) {
+            const grid = document.getElementById('reviewsGrid');
+
+            // Filter reviews
+            let filtered = reviews;
+            if (currentFilter !== 'all') {
+                filtered = reviews.filter(r => {
+                    if (currentFilter === 'pending') return !r.approved && r.rejected !== true;
+                    if (currentFilter === 'approved') return r.approved === true;
+                    if (currentFilter === 'rejected') return r.rejected === true;
+                    return true;
+                });
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div><i class="fas fa-inbox"></i></div>
+                        <p>No reviews found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(review => {
+                const isApproved = review.approved === true;
+                const isRejected = review.rejected === true;
+                const statusClass = isRejected ? 'rejected' : (isApproved ? 'approved' : 'pending');
+                const statusLabel = isRejected ? 'Rejected' : (isApproved ? 'Approved' : 'Pending');
+                const statusText = `<i class="fas fa-${isRejected ? 'times' : (isApproved ? 'check' : 'clock')}"></i> ${statusLabel}`;
+
+                html += `
+                    <div class="review-card ${statusClass}">
+                        <div class="review-card-header">
+                            <div class="review-meta">
+                                <div class="review-user">
+                                    <div class="user-avatar">
+                                        ${review.userName.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div class="user-info">
+                                        <div class="user-name">${escapeHtml(review.userName)}</div>
+                                        <div class="review-date">${formatDate(new Date(review.createdAt))}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="review-status ${statusClass === 'pending' ? 'status-pending' : (statusClass === 'approved' ? 'status-approved' : 'status-rejected')}">
+                                ${statusText}
+                            </div>
+                        </div>
+
+                        <div class="review-content">
+                            <div class="review-product">
+                                <span class="review-product-label">Product:</span> Product #${review.productId}
+                            </div>
+
+                            <div class="review-rating">
+                                ${renderStars(review.rating)}
+                            </div>
+
+                            <div class="review-text">
+                                ${escapeHtml(review.reviewText)}
+                            </div>
+                        </div>
+
+                        <div class="review-footer">
+                            <div class="review-date">
+                                <i class="fas fa-calendar"></i> ${formatDate(new Date(review.createdAt))}
+                            </div>
+                            <div class="review-actions">
+                                ${!isApproved ? `<button class="btn-small btn-approve" onclick="approveReview(${review.id})">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>` : ''}
+                                ${!isRejected && !isApproved ? `<button class="btn-small btn-reject" onclick="rejectReview(${review.id})">
+                                    <i class="fas fa-times"></i> Reject
+                                </button>` : ''}
+                                <button class="btn-small btn-delete" onclick="deleteReview(${review.id})">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            grid.innerHTML = html;
+        }
+
+        // Approve review
+        async function approveReview(reviewId) {
+            if (!confirm('Approve this review?')) return;
+
+            try {
+                const response = await fetch(`/api/reviews/admin/approve/${reviewId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ approved: true })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showNotification('success', 'Success', 'Review approved');
+                    loadReviews();
+                } else {
+                    showNotification('error', 'Error', data.message || 'Failed to approve review');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('error', 'Error', 'Failed to approve review');
+            }
+        }
+
+        // Reject review
+        async function rejectReview(reviewId) {
+            if (!confirm('Reject this review?')) return;
+
+            try {
+                const response = await fetch(`/api/reviews/admin/approve/${reviewId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ rejected: true })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showNotification('success', 'Success', 'Review rejected');
+                    loadReviews();
+                } else {
+                    showNotification('error', 'Error', data.message || 'Failed to reject review');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('error', 'Error', 'Failed to reject review');
+            }
+        }
+
+        // Delete review
+        async function deleteReview(reviewId) {
+            if (!confirm('Delete this review permanently?')) return;
+
+            try {
+                const response = await fetch(`/api/reviews/admin/${reviewId}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showNotification('success', 'Success', 'Review deleted');
+                    loadReviews();
+                } else {
+                    showNotification('error', 'Error', data.message || 'Failed to delete review');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('error', 'Error', 'Failed to delete review');
+            }
+        }
+
+        // Render stars
+        function renderStars(rating) {
+            let html = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= Math.round(rating)) {
+                    html += '<i class="fas fa-star star"></i>';
+                } else if (i - 0.5 <= rating) {
+                    html += '<i class="fas fa-star-half-alt star"></i>';
+                } else {
+                    html += '<i class="far fa-star star empty"></i>';
+                }
+            }
+            return html;
+        }
+
+        // Format date
+        function formatDate(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+            if (diffDays === 0) {
+                const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                if (diffHours === 0) {
+                    const diffMins = Math.floor(diffMs / (1000 * 60));
+                    return diffMins > 0 ? `${diffMins}m ago` : 'just now';
+                }
+                return `${diffHours}h ago`;
+            } else if (diffDays === 1) {
+                return 'yesterday';
+            } else if (diffDays < 30) {
+                return `${diffDays}d ago`;
+            } else {
+                return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            }
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Show error
+        function showError(message) {
+            document.getElementById('reviewsGrid').innerHTML = `
+                <div class="empty-state">
+                    <div><i class="fas fa-exclamation-circle"></i></div>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

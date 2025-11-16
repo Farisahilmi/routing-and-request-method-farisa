@@ -2,68 +2,121 @@
   {
     "id": 1,
     "name": "Laptop Gaming RTX 4080",
-    "description": "High-performance gaming laptop dengan graphics terbaru",
-    "price": 1299.99,
+    "description": "Laptop gaming performa tinggi dengan GPU NVIDIA RTX 4080, processor Intel Core i9 generasi terbaru, dan layar 240Hz untuk pengalaman gaming yang mulus",
+    "price": 3299.99,
     "category": "Electronics",
-    "stock": 10,
-    "image": "/image/excel.png",
-    "updatedAt": "2025-11-12T10:45:13.192Z"
+    "stock": 7,
+    "image": "/uploads/1763127404598-707371883.webp",
+    "updatedAt": "2025-11-14T13:36:44.691Z"
   },
   {
     "id": 2,
-    "name": "Smartphone 5G",
-    "description": "Latest smartphone dengan kamera 108MP",
-    "price": 699.99,
+    "name": "Smartphone 5G Flagship",
+    "description": "Smartphone flagship dengan kamera triple 108MP, chipset Snapdragon 8 Gen 3, dan baterai 5000mAh yang tahan seharian penuh",
+    "price": 1199.99,
     "category": "Electronics",
-    "stock": 3,
-    "image": "/images/phone.jpg"
+    "stock": 5,
+    "image": "/uploads/1763127466268-110595908.webp",
+    "updatedAt": "2025-11-14T13:37:46.297Z"
   },
   {
     "id": 3,
-    "name": "Wireless Headphones",
-    "description": "Noise-cancelling headphones dengan battery 30 jam",
-    "price": 199.99,
+    "name": "Wireless Noise-Cancelling Headphones",
+    "description": "Headphone premium dengan teknologi noise cancellation adaptif, kualitas audio Hi-Res, dan battery life hingga 30 jam",
+    "price": 349.99,
     "category": "Electronics",
-    "stock": 8,
-    "image": "/images/headphones.jpg"
+    "stock": 12,
+    "image": "/uploads/1763127490713-967971846.webp",
+    "updatedAt": "2025-11-14T13:38:10.741Z"
   },
   {
     "id": 4,
-    "name": "Running Shoes",
-    "description": "Sepatu lari dengan cushioning terbaik",
-    "price": 89.99,
+    "name": "Running Shoes Performance",
+    "description": "Sepatu lari dengan teknologi cushioning terbaru, desain breathable, dan sole yang responsif untuk kenyamanan maksimal saat berlari",
+    "price": 149.99,
     "category": "Fashion",
-    "stock": 9,
-    "image": "/images/shoes.jpg"
+    "stock": 15,
+    "image": "/uploads/1763127513151-441057516.webp",
+    "updatedAt": "2025-11-14T13:38:33.176Z"
   },
   {
     "id": 5,
-    "name": "Smart Watch",
-    "description": "Smartwatch dengan health monitoring",
-    "price": 299.99,
+    "name": "Smart Watch Pro",
+    "description": "Smartwatch dengan EKG monitoring, blood oxygen sensor, GPS terintegrasi, dan battery life hingga 7 hari",
+    "price": 449.99,
     "category": "Electronics",
-    "stock": 7,
-    "image": "/images/watch.jpg"
+    "stock": 6,
+    "image": "/uploads/1763127539860-158772789.webp",
+    "updatedAt": "2025-11-14T13:38:59.886Z"
   },
   {
     "id": 6,
-    "name": "Gaming Mouse",
-    "description": "Mouse gaming dengan RGB lighting",
-    "price": 79.99,
+    "name": "Gaming Mouse RGB",
+    "description": "Mouse gaming dengan sensor 25.000 DPI, 8 programmable buttons, dan RGB lighting yang dapat dikustomisasi",
+    "price": 89.99,
     "category": "Electronics",
-    "stock": 6,
-    "image": "/images/mouse.jpg",
-    "updatedAt": "2025-11-12T10:40:40.175Z"
+    "stock": 10,
+    "image": "/uploads/1763127563815-707680217.webp",
+    "updatedAt": "2025-11-14T13:39:23.844Z"
   },
   {
     "id": 7,
-    "name": "kaos kaki",
-    "description": "ini kaos baru",
-    "price": 50,
+    "name": "Kaos Kaki Sport Performance",
+    "description": "Kaos kaki sport dengan bahan moisture-wicking, padding strategic, dan desain ergonomis untuk kenyamanan sehari-hari",
+    "price": 24.99,
     "category": "Fashion",
-    "stock": 15,
-    "image": "/images/default.jpg",
-    "createdAt": "2025-11-14T13:10:13.280Z",
-    "updatedAt": "2025-11-14T13:10:34.776Z"
+    "stock": 25,
+    "image": "/uploads/1763127914348-359451265.webp",
+    "updatedAt": "2025-11-14T13:45:14.377Z"
+  },
+  {
+    "id": 8,
+    "name": "Mechanical Keyboard Pro",
+    "description": "Keyboard mechanical dengan switch Red linear, aluminium frame, dan RGB backlighting yang dapat dikustomisasi",
+    "price": 129.99,
+    "category": "Electronics",
+    "stock": 7,
+    "image": "/uploads/1763128000000-123456789.webp",
+    "createdAt": "2025-11-14T13:46:40.000Z"
+  },
+  {
+    "id": 9,
+    "name": "Backpack Laptop Anti-Theft",
+    "description": "Tas laptop dengan kompartemen anti-curi, waterproof material, dan desain ergonomis dengan banyak organizer pockets",
+    "price": 79.99,
+    "category": "Fashion",
+    "stock": 14,
+    "image": "/uploads/1763128100000-987654321.webp",
+    "createdAt": "2025-11-14T13:48:20.000Z"
+  },
+  {
+    "id": 10,
+    "name": "Tablet Drawing Pro",
+    "description": "Tablet dengan stylus pressure-sensitive 8192 levels, layar 2.5K resolution, perfect untuk digital artist dan designer",
+    "price": 899.99,
+    "category": "Electronics",
+    "stock": 4,
+    "image": "/uploads/1763128200000-456789123.webp",
+    "createdAt": "2025-11-14T13:50:00.000Z"
+  },
+  {
+    "id": 11,
+    "name": "Kemeja Casual Linen",
+    "description": "Kemeja casual dari bahan linen premium, desain modern, dan cutting yang pas untuk penampilan kasual yang elegan",
+    "price": 69.99,
+    "category": "Fashion",
+    "stock": 18,
+    "image": "/uploads/1763128300000-789123456.webp",
+    "createdAt": "2025-11-14T13:51:40.000Z"
+  },
+  {
+    "id": 12,
+    "name": "Power Bank 20000mAh",
+    "description": "Power bank high-capacity dengan fast charging 45W, multiple ports, dan desain compact yang mudah dibawa traveling",
+    "price": 49.99,
+    "category": "Electronics",
+    "stock": 20,
+    "image": "/uploads/1763128400000-321654987.webp",
+    "createdAt": "2025-11-14T13:53:20.000Z"
   }
 ]

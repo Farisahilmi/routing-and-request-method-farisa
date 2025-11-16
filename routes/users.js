@@ -215,20 +215,63 @@ router.get('/html', function(req, res, next) {
   });
 });
 
-router.get('/:id', function(req, res, next) {
-  const { id } = req.params;
-  const usersArray = readJSONFile('users.json');
-  const user = usersArray.find(user => user.id === id);
+// Import currency helper
+const { getCurrencyByLanguage } = require('../helpers/currency');
+
+// SWITCH LANGUAGE - Auto update currency based on language
+// IMPORTANT: This route must be defined BEFORE /:id route to avoid route conflict
+router.get('/switch-language', function(req, res, next) {
+  const { lang } = req.query;
+  const { isLanguageSupported } = require('../helpers/translation');
   
-  if (!user) {
-    return res.status(404).json({
-      status: 'error',
-      message: 'User not found'
+  if (!lang || !isLanguageSupported(lang)) {
+    return res.redirect(req.headers.referer || '/');
+  }
+
+  // Get currency based on language
+  const currency = getCurrencyByLanguage(lang);
+
+  // If user is logged in, update in database and session
+  if (req.session && req.session.user) {
+    const usersArray = readJSONFile('users.json');
+    const userIndex = usersArray.findIndex(u => u.id === req.session.user.id);
+
+    if (userIndex !== -1) {
+      usersArray[userIndex] = {
+        ...usersArray[userIndex],
+        language: lang,
+        currency: currency,
+        updatedAt: new Date().toISOString()
+      };
+
+      writeJSONFile('users.json', usersArray);
+
+      // Update session
+      req.session.user = {
+        ...req.session.user,
+        language: lang,
+        currency: currency
+      };
+    }
+  } else {
+    // For non-logged in users, set cookie
+    res.cookie('language', lang, {
+      maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
+    });
+    res.cookie('currency', currency, {
+      maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
     });
   }
-  
-  const { password, ...userWithoutPassword } = user;
-  res.json(userWithoutPassword);
+
+  // Redirect back to previous page or home
+  const redirectUrl = req.headers.referer || '/';
+  res.redirect(redirectUrl);
 });
 
 router.get('/update/:id', function(req, res, next) {
@@ -249,12 +292,28 @@ router.get('/update/:id', function(req, res, next) {
   });
 });
 
+router.get('/:id', function(req, res, next) {
+  const { id } = req.params;
+  const usersArray = readJSONFile('users.json');
+  const user = usersArray.find(user => user.id === id);
+  
+  if (!user) {
+    return res.status(404).json({
+      status: 'error',
+      message: 'User not found'
+    });
+  }
+  
+  const { password, ...userWithoutPassword } = user;
+  res.json(userWithoutPassword);
+});
+
 // UPDATE user using PUT method
 router.put('/preferences', requireAuth, function(req, res, next) {
   const { language, currency } = req.body || {};
 
-  const validLanguages = ['en', 'id'];
-  const validCurrencies = ['IDR', 'USD'];
+  const validLanguages = ['en', 'id', 'es'];
+  const validCurrencies = ['IDR', 'USD', 'EUR', 'MXN'];
 
   const selectedLanguage = (language || '').toLowerCase();
   const selectedCurrency = (currency || '').toUpperCase();

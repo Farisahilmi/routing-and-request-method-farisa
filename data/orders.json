@@ -4,17 +4,17 @@
     "userId": "1",
     "items": [
       {
-        "productId": 2,
-        "name": "Smartphone 5G",
-        "price": 699.99,
+        "productId": 1,
+        "name": "Laptop Gaming RTX 4080",
+        "price": 3299.99,
         "quantity": 1,
-        "image": "/images/phone.jpg"
+        "image": "/uploads/1763127404598-707371883.webp"
       }
     ],
-    "totalAmount": 699.99,
+    "totalAmount": 3299.99,
     "status": "pending",
     "shippingAddress": "rumah\nfarisahilmi\n085642044608\ngegerbitun, 180\nsukabumi, indonesia 43197\nIndonesia",
-    "paymentMethod": "cash",
-    "createdAt": "2025-11-14T13:05:38.690Z"
+    "paymentMethod": "bank",
+    "createdAt": "2025-11-16T08:35:28.554Z"
   }
 ]

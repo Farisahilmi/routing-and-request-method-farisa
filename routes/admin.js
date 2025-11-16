@@ -3,6 +3,7 @@ var router = express.Router();
 const fs = require('fs');
 const path = require('path');
 const { requireAdmin } = require('../middleware/auth');
+const { upload, processImage, deleteImageFiles } = require('../middleware/upload');
 
 // Simple translations
 const translations = {
@@ -135,15 +136,18 @@ router.get('/products', requireAdmin, function(req, res, next) {
   });
 });
 
-// POST Add New Product
-router.post('/products', requireAdmin, function(req, res, next) {
-  const { name, description, price, category, stock, image } = req.body;
-  
+// POST Add New Product (with image upload)
+router.post('/products', requireAdmin, upload.single('image'), processImage, function(req, res, next) {
+  const { name, description, price, category, stock } = req.body;
+
   const products = readJSONFile('products.json');
-  
+
   // Generate new ID
   const id = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-  
+
+  // Use processed image path if uploaded, otherwise default
+  const imagePath = req.processedImages ? req.processedImages.webp : '/images/default.jpg';
+
   const newProduct = {
     id: id,
     name: name,
@@ -151,30 +155,30 @@ router.post('/products', requireAdmin, function(req, res, next) {
     price: parseFloat(price),
     category: category,
     stock: parseInt(stock),
-    image: image || '/images/default.jpg',
+    image: imagePath,
     createdAt: new Date().toISOString()
   };
-  
+
   products.push(newProduct);
-  
+
   if (writeJSONFile('products.json', products)) {
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: 'Product added successfully',
       product: newProduct
     });
   } else {
-    res.json({ 
-      success: false, 
-      message: 'Failed to add product' 
+    res.json({
+      success: false,
+      message: 'Failed to add product'
     });
   }
 });
 
-// PUT Update Existing Product
-router.put('/products/:id', requireAdmin, function(req, res, next) {
+// PUT Update Existing Product (with image upload support)
+router.put('/products/:id', requireAdmin, upload.single('image'), processImage, function(req, res, next) {
   const productId = parseInt(req.params.id);
-  const { name, description, price, category, stock, image } = req.body;
+  const { name, description, price, category, stock } = req.body;
 
   if (Number.isNaN(productId)) {
     return res.json({
@@ -200,6 +204,9 @@ router.put('/products/:id', requireAdmin, function(req, res, next) {
     });
   }
 
+  // Use new uploaded image if provided, otherwise keep existing
+  const imagePath = req.processedImages ? req.processedImages.webp : products[productIndex].image;
+
   const updatedProduct = {
     ...products[productIndex],
     name: name,
@@ -207,7 +214,7 @@ router.put('/products/:id', requireAdmin, function(req, res, next) {
     price: parseFloat(price),
     category: category,
     stock: parseInt(stock),
-    image: image || products[productIndex].image || '/images/default.jpg',
+    image: imagePath,
     updatedAt: new Date().toISOString()
   };
 
@@ -227,32 +234,37 @@ router.put('/products/:id', requireAdmin, function(req, res, next) {
   }
 });
 
-// DELETE Product
+// DELETE Product (with image cleanup)
 router.delete('/products/:id', requireAdmin, function(req, res, next) {
   const productId = parseInt(req.params.id);
-  
+
   const products = readJSONFile('products.json');
   const productIndex = products.findIndex(p => p.id === productId);
-  
+
   if (productIndex === -1) {
-    return res.json({ 
-      success: false, 
-      message: 'Product not found' 
+    return res.json({
+      success: false,
+      message: 'Product not found'
     });
   }
-  
+
   const deletedProduct = products.splice(productIndex, 1)[0];
-  
+
+  // Clean up associated image files
+  if (deletedProduct.image && deletedProduct.image !== '/images/default.jpg') {
+    deleteImageFiles(deletedProduct.image);
+  }
+
   if (writeJSONFile('products.json', products)) {
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: 'Product deleted successfully',
       product: deletedProduct
     });
   } else {
-    res.json({ 
-      success: false, 
-      message: 'Failed to delete product' 
+    res.json({
+      success: false,
+      message: 'Failed to delete product'
     });
   }
 });
@@ -460,6 +472,14 @@ router.put('/orders/:id/status', requireAdmin, function(req, res, next) {
             message: 'Failed to update order status' 
         });
     }
+});
+
+// GET Admin Reviews Management Page
+router.get('/reviews', requireAdmin, function(req, res, next) {
+    res.render('admin-reviews', {
+        title: 'Admin - Review Management',
+        user: req.session.user
+    });
 });
 
 module.exports = router;

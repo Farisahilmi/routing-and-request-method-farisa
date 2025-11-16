@@ -36,6 +36,44 @@
 
             <!-- User Actions - Right Side -->
             <div style="display: flex; align-items: center; gap: 12px;">
+                                <!-- Language Switcher - Available for all users -->
+                                <% const currentLanguage = (typeof language !== 'undefined' && language) ? language : 'en'; %>
+                                <div class="language-switcher" style="position: relative;">
+                    <button class="language-btn" style="background: #f6f9fc; color: #0a2540; border: 1px solid #e6ebf1; padding: 8px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 500; transition: all 0.2s ease; font-size: 14px;">
+                        <i class="fas fa-globe"></i>
+                        <span class="language-text">
+                            <% if (currentLanguage === 'en') { %>EN<% } else if (currentLanguage === 'id') { %>ID<% } else if (currentLanguage === 'es') { %>ES<% } else { %>EN<% } %>
+                        </span>
+                        <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i>
+                    </button>
+                    <div class="language-dropdown" style="position: absolute; top: 100%; right: 0; background: #ffffff; color: #0a2540; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.12); min-width: 180px; display: none; z-index: 1001; margin-top: 8px; border: 1px solid #e6ebf1;">
+                        <a href="/users/switch-language?lang=en" class="language-option <%= currentLanguage === 'en' ? 'active' : '' %>" style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; color: #0a2540; text-decoration: none; transition: background 0.2s ease; border-bottom: 1px solid #e6ebf1;">
+                                                        <% if (currentLanguage === 'en') { %>
+                                                            <i class="fas fa-check" style="color: #635BFF; width: 16px;"></i>
+                                                        <% } else { %>
+                                                            <span style="width: 16px;"></span>
+                                                        <% } %>
+                            <span>🇺🇸 English</span>
+                        </a>
+                        <a href="/users/switch-language?lang=id" class="language-option <%= currentLanguage === 'id' ? 'active' : '' %>" style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; color: #0a2540; text-decoration: none; transition: background 0.2s ease; border-bottom: 1px solid #e6ebf1;">
+                                                        <% if (currentLanguage === 'id') { %>
+                                                            <i class="fas fa-check" style="color: #635BFF; width: 16px;"></i>
+                                                        <% } else { %>
+                                                            <span style="width: 16px;"></span>
+                                                        <% } %>
+                            <span>🇮🇩 Bahasa Indonesia</span>
+                        </a>
+                        <a href="/users/switch-language?lang=es" class="language-option <%= currentLanguage === 'es' ? 'active' : '' %>" style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; color: #0a2540; text-decoration: none; transition: background 0.2s ease;">
+                                                        <% if (currentLanguage === 'es') { %>
+                                                            <i class="fas fa-check" style="color: #635BFF; width: 16px;"></i>
+                                                        <% } else { %>
+                                                            <span style="width: 16px;"></span>
+                                                        <% } %>
+                            <span>🇪🇸 Español</span>
+                        </a>
+                    </div>
+                </div>
+
                 <!-- Cart Icon -->
                 <a href="/cart" style="color: #0a2540; text-decoration: none; position: relative; padding: 8px 16px; border-radius: 6px; transition: background 0.2s ease;">
                     <i class="fas fa-shopping-cart" style="font-size: 1.2rem;"></i>
@@ -63,31 +101,30 @@
                                     <i class="fas fa-envelope"></i> <%= user.email %>
                                 </div>
                             </div>
-                            <% const currentLanguage = (typeof language !== 'undefined' && language) ? language : 'en'; %>
                             <% const currentCurrency = (typeof currency !== 'undefined' && currency) ? currency : 'IDR'; %>
-                            <% const prefTitle = currentLanguage === 'id' ? 'Preferensi Akun' : 'Account Preferences'; %>
-                            <% const langLabel = currentLanguage === 'id' ? 'Bahasa' : 'Language'; %>
-                            <% const currencyLabel = currentLanguage === 'id' ? 'Mata Uang' : 'Currency'; %>
-                            <% const saveLabel = currentLanguage === 'id' ? 'Simpan' : 'Save'; %>
-                            <% const savingLabel = currentLanguage === 'id' ? 'Menyimpan...' : 'Saving...'; %>
-                            <% const savedMessage = currentLanguage === 'id' ? 'Preferensi diperbarui!' : 'Preferences updated!'; %>
-                            <% const saveErrorMessage = currentLanguage === 'id' ? 'Gagal memperbarui preferensi' : 'Failed to update preferences'; %>
+                            <% const prefTitle = currentLanguage === 'id' ? 'Preferensi Akun' : currentLanguage === 'es' ? 'Preferencias de Cuenta' : 'Account Preferences'; %>
+                            <% const langLabel = currentLanguage === 'id' ? 'Bahasa' : currentLanguage === 'es' ? 'Idioma' : 'Language'; %>
+                            <% const currencyLabel = currentLanguage === 'id' ? 'Mata Uang' : currentLanguage === 'es' ? 'Moneda' : 'Currency'; %>
+                            <% const saveLabel = currentLanguage === 'id' ? 'Simpan' : currentLanguage === 'es' ? 'Guardar' : 'Save'; %>
+                            <% const savingLabel = currentLanguage === 'id' ? 'Menyimpan...' : currentLanguage === 'es' ? 'Guardando...' : 'Saving...'; %>
+                            <% const savedMessage = currentLanguage === 'id' ? 'Preferensi diperbarui!' : currentLanguage === 'es' ? '¡Preferencias actualizadas!' : 'Preferences updated!'; %>
+                            <% const saveErrorMessage = currentLanguage === 'id' ? 'Gagal memperbarui preferensi' : currentLanguage === 'es' ? 'Error al actualizar preferencias' : 'Failed to update preferences'; %>
                             
                             <% if (user.role === 'admin') { %>
                                 <a href="/admin" style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; color: #0a2540; text-decoration: none; transition: background 0.2s ease; border-bottom: 1px solid #e6ebf1;">
                                     <i class="fas fa-crown" style="color: #635BFF;"></i> 
-                                    <span>Admin Dashboard</span>
+                                    <span><%= t.admin_dashboard %></span>
                                 </a>
                             <% } %>
                             
                             <a href="/orders" style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; color: #0a2540; text-decoration: none; transition: background 0.2s ease; border-bottom: 1px solid #e6ebf1;">
                                 <i class="fas fa-clipboard-list" style="color: #635BFF;"></i> 
-                                <span>My Orders</span>
+                                <span><%= t.my_orders %></span>
                             </a>
                             <!-- Di dalam dropdown menu, setelah "My Orders" -->
                             <a href="/addresses" style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; color: #0a2540; text-decoration: none; transition: background 0.2s ease; border-bottom: 1px solid #e6ebf1;">
                                 <i class="fas fa-map-marker-alt" style="color: #635BFF;"></i> 
-                                <span>My Addresses</span>
+                                <span><%= t.my_addresses %></span>
                             </a>
                             <div class="dropdown-divider"></div>
                             <div class="dropdown-section-title">
@@ -98,14 +135,17 @@
                             <form id="userPreferencesForm" class="preferences-form" data-saving-label="<%= savingLabel %>" data-success-label="<%= savedMessage %>" data-error-label="<%= saveErrorMessage %>" data-success-title="<%= successTitle %>" data-error-title="<%= errorTitle %>">
                                 <label class="preferences-label" for="preferenceLanguage"><%= langLabel %></label>
                                 <select id="preferenceLanguage" name="language" class="preferences-select">
-                                    <option value="en" <%= currentLanguage === 'en' ? 'selected' : '' %>>English</option>
-                                    <option value="id" <%= currentLanguage === 'id' ? 'selected' : '' %>>Bahasa Indonesia</option>
+                                    <option value="en" <% if (currentLanguage === 'en') { %>selected<% } %>>English</option>
+                                    <option value="id" <% if (currentLanguage === 'id') { %>selected<% } %>>Bahasa Indonesia</option>
+                                    <option value="es" <% if (currentLanguage === 'es') { %>selected<% } %>>Español</option>
                                 </select>
                                 
                                 <label class="preferences-label" for="preferenceCurrency"><%= currencyLabel %></label>
                                 <select id="preferenceCurrency" name="currency" class="preferences-select">
-                                    <option value="IDR" <%= currentCurrency === 'IDR' ? 'selected' : '' %>>IDR (Rp)</option>
-                                    <option value="USD" <%= currentCurrency === 'USD' ? 'selected' : '' %>>USD ($)</option>
+                                    <option value="IDR" <% if (currentCurrency === 'IDR') { %>selected<% } %>>IDR (Rp)</option>
+                                    <option value="USD" <% if (currentCurrency === 'USD') { %>selected<% } %>>USD ($)</option>
+                                    <option value="EUR" <% if (currentCurrency === 'EUR') { %>selected<% } %>>EUR (€)</option>
+                                    <option value="MXN" <% if (currentCurrency === 'MXN') { %>selected<% } %>>MXN ($)</option>
                                 </select>
                                 
                                 <button type="submit" class="preferences-submit"><i class="fas fa-save"></i> <span><%= saveLabel %></span></button>
@@ -113,7 +153,7 @@
                             <div class="dropdown-divider"></div>
                             <a href="/users/logout" style="display: flex; align-items: center; gap: 10px; padding: 10px 15px; color: #635BFF; text-decoration: none; transition: background 0.2s ease;">
                                 <i class="fas fa-sign-out-alt"></i> 
-                                <span>Sign Out</span>
+                                <span><%= t.sign_out %></span>
                             </a>
                         </div>
                     </div>
@@ -157,7 +197,49 @@
             });
         }
 
+        // Language switcher dropdown
+        const languageSwitcher = document.querySelector('.language-switcher');
+        const languageBtn = document.querySelector('.language-btn');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        
+        if (languageBtn && languageDropdown) {
+            languageBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isVisible = languageDropdown.style.display === 'block';
+                languageDropdown.style.display = isVisible ? 'none' : 'block';
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!languageSwitcher.contains(event.target)) {
+                    languageDropdown.style.display = 'none';
+                }
+            });
+        }
+
+        // Auto-update currency when language changes in preferences form
         if (preferencesForm) {
+            const languageSelect = document.getElementById('preferenceLanguage');
+            const currencySelect = document.getElementById('preferenceCurrency');
+            
+            // Mapping bahasa ke currency
+            const languageToCurrency = {
+                'en': 'USD',
+                'id': 'IDR',
+                'es': 'MXN'
+            };
+            
+            // Auto-update currency when language changes
+            if (languageSelect && currencySelect) {
+                languageSelect.addEventListener('change', function() {
+                    const selectedLanguage = this.value;
+                    const autoCurrency = languageToCurrency[selectedLanguage];
+                    if (autoCurrency) {
+                        currencySelect.value = autoCurrency;
+                    }
+                });
+            }
+            
             preferencesForm.addEventListener('submit', async function(event) {
                 event.preventDefault();
 
@@ -292,6 +374,22 @@
         transform: translateY(-1px);
     }
     
+    /* Language switcher styles */
+    .language-btn:hover {
+        background: #f6f9fc !important;
+        border-color: #cbd5e0 !important;
+    }
+    
+    .language-dropdown a:hover {
+        background: #f6f9fc !important;
+    }
+    
+    .language-dropdown a.active {
+        background: #f6f9fc !important;
+        color: #635BFF !important;
+        font-weight: 600;
+    }
+
     /* User menu button hover */
     .user-menu-btn:hover {
         background: #f6f9fc !important;
